@@ -6,9 +6,10 @@
       "type": "firefox",
       "request": "launch",
       "reAttach": true,
-      "file": "${workspaceFolder}/src/index.html",
+      "file": "${workspaceFolder}/index.html",
       "reloadOnChange": {
         "watch": [
+          "${workspaceFolder/index.html",
           "${workspaceFolder}/src/*",
           "${workspaceFolder}/src/**/*"
         ]
