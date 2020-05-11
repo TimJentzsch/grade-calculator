@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Grade Calculator</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script type="module" src="scripts/index.js"></script>
+  </head>
+  <body>
+    <h1>Grade Calculator</h1>
+    <div id="settings">
+      <div class="settings-container">
+        <label id="template-container">
+          Load curriculum:
+          <button
+            id="new-curriculum-button"
+            class="template-button"
+            title="Create a new curriculum"
+          >
+            New Curriculum
+          </button>
+        </label>
+      </div>
+      <div class="settings-container">
+        <label>
+          Upload curriculum:
+          <label class="load-button">
+            Upload...
+            <input
+              id="load-config"
+              type="file"
+              accept=".json"
+              name="configurationInput"
+              style="display: none;"
+            />
+          </label>
+        </label>
+      </div>
+      <div class="settings-container">
+        <label>
+          Save curriculum:
+          <a
+            id="save-config"
+            class="save-button"
+            href="#"
+            download="curriculum.json"
+            target="_blank"
+          >
+            Save...
+          </a>
+        </label>
+      </div>
+    </div>
+    <div id="content">
+      <div id="curriculum"></div>
+    </div>
+  </body>
+</html>

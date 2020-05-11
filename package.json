@@ -1,0 +1,11 @@
+{
+  "name": "grade-calculator",
+  "version": "0.1.0",
+  "description": "A calculator for curriculum grades.",
+  "main": "src/index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tim Jentzsch",
+  "license": "MIT"
+}
