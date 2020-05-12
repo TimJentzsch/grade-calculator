@@ -33,6 +33,13 @@ body {
   max-width: 1000px;
 }
 
+#header-content {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #js-error-container {
   background-color: var(--light-error);
   color: var(--light-on-error);

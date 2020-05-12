@@ -9,7 +9,7 @@
       "file": "${workspaceFolder}/index.html",
       "reloadOnChange": {
         "watch": [
-          "${workspaceFolder/index.html",
+          "${workspaceFolder}/index.html",
           "${workspaceFolder}/src/*",
           "${workspaceFolder}/src/**/*"
         ]
