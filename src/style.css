@@ -27,8 +27,10 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-#body-container {
+#body-container, #header-content {
   padding: 10px;
+  margin: auto;
+  max-width: 1000px;
 }
 
 #js-error-container {
@@ -43,9 +45,7 @@ body {
 }
 
 #content {
-  display: inline-block;
-  padding: 10px;
-  min-width: 700px;
+  display: block;
 }
 
 .module-input-container {
@@ -147,7 +147,7 @@ body {
 }
 
 .curriculum-container {
-  margin: 10px;
+  margin: 10px 0;
   padding: 5px;
   box-shadow: var(--shadow-1);
 }
@@ -197,4 +197,9 @@ input[type="text"], input[type="number"], select {
 
 input:disabled, select:disabled {
   border: solid lightgray 1px;
+}
+
+header {
+  background-color: var(--light-primary);
+  color: var(--light-on-primary);
 }
