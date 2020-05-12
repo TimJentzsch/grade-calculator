@@ -8,16 +8,16 @@ export default class Curriculum {
 
   get credits() {
     let credits = 0;
-    for (const moduleArea of this.moduleAreas) {
+
+    this.moduleAreas.forEach((moduleArea) => {
       credits += moduleArea.credits;
-    }
+    });
+
     return credits;
   }
 
   get partiallyCompletedModuleAreas() {
-    return this.moduleAreas.filter(
-      (moduleArea) => moduleArea.gradePartiallyCompleted
-    );
+    return this.moduleAreas.filter((moduleArea) => moduleArea.gradePartiallyCompleted);
   }
 
   get completedModuleAreas() {
@@ -29,15 +29,11 @@ export default class Curriculum {
   }
 
   get partiallyCompletedGradedModuleAreas() {
-    return this.partiallyCompletedModuleAreas.filter(
-      (moduleArea) => moduleArea.isGraded
-    );
+    return this.partiallyCompletedModuleAreas.filter((moduleArea) => moduleArea.isGraded);
   }
 
   get completedGradedModuleAreas() {
-    return this.completedModuleAreas.filter(
-      (moduleArea) => moduleArea.isGraded
-    );
+    return this.completedModuleAreas.filter((moduleArea) => moduleArea.isGraded);
   }
 
   get ungradedModuleAreas() {
@@ -45,15 +41,11 @@ export default class Curriculum {
   }
 
   get partiallyCompletetUngradedModuleAreas() {
-    return this.partiallyCompletedModuleAreas.filter(
-      (moduleArea) => !moduleArea.isGraded
-    );
+    return this.partiallyCompletedModuleAreas.filter((moduleArea) => !moduleArea.isGraded);
   }
 
   get completedUngradedModuleAreas() {
-    return this.completedModuleAreas.filter(
-      (moduleArea) => !moduleArea.isGraded
-    );
+    return this.completedModuleAreas.filter((moduleArea) => !moduleArea.isGraded);
   }
 
   get weightedCredits() {
@@ -62,9 +54,11 @@ export default class Curriculum {
     }
 
     let weightedCredits = 0;
-    for (const moduleArea of this.partiallyCompletedGradedModuleAreas) {
+
+    this.partiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
       weightedCredits += moduleArea.weightedCredits;
-    }
+    });
+
     return weightedCredits;
   }
 
@@ -73,25 +67,24 @@ export default class Curriculum {
   }
 
   get gradeCompleted() {
-    return (
-      this.completedGradedModuleAreas.length === this.gradedModuleAreas.length
-    );
+    return this.completedGradedModuleAreas.length === this.gradedModuleAreas.length;
   }
 
   get gradePartiallyCompleted() {
-    return (
-      this.gradeCompleted || this.partiallyCompletedGradedModuleAreas.length > 0
-    );
+    return this.gradeCompleted || this.partiallyCompletedGradedModuleAreas.length > 0;
   }
 
   get grade() {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
+
     let weightedGrade = 0;
-    for (const moduleArea of this.partiallyCompletedGradedModuleAreas) {
+
+    this.partiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
       weightedGrade += moduleArea.weightedGrade;
-    }
+    });
+
     return weightedGrade / this.weightedCredits;
   }
 
@@ -117,9 +110,7 @@ export default class Curriculum {
   static fromObject(obj) {
     const curriculum = new Curriculum(
       obj.name,
-      obj.moduleAreas.map((moduleAreaObj) =>
-        ModuleArea.fromObject(moduleAreaObj)
-      )
+      obj.moduleAreas.map((moduleAreaObj) => ModuleArea.fromObject(moduleAreaObj)),
     );
 
     return curriculum;
@@ -132,21 +123,21 @@ export default class Curriculum {
   bestCase() {
     return new Curriculum(
       this.name,
-      this.moduleAreas.map((moduleArea) => moduleArea.bestCase())
+      this.moduleAreas.map((moduleArea) => moduleArea.bestCase()),
     );
   }
 
   worstCase() {
     return new Curriculum(
       this.name,
-      this.moduleAreas.map((moduleArea) => moduleArea.worstCase())
+      this.moduleAreas.map((moduleArea) => moduleArea.worstCase()),
     );
   }
 
   clone() {
     return new Curriculum(
       this.name,
-      this.moduleAreas.map((moduleArea) => moduleArea.clone())
+      this.moduleAreas.map((moduleArea) => moduleArea.clone()),
     );
   }
 }

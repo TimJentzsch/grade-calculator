@@ -26,7 +26,7 @@ export default class CurriculumView {
     const headerView = new CurriculumDisplayHeader(
       this.curriculum,
       () => this.onModuleAreaAdd(),
-      () => this.edit()
+      () => this.edit(),
     );
     this.headerView = headerView;
 
@@ -55,7 +55,7 @@ export default class CurriculumView {
     const headerView = new CurriculumEditorHeader(
       this.curriculum,
       () => this.save(),
-      () => this.discard()
+      () => this.discard(),
     );
     this.headerView = headerView;
 
@@ -80,10 +80,10 @@ export default class CurriculumView {
           (moduleAreaView) => this.onModuleAreaRemove(moduleAreaView),
           (moduleAreaView) => this.onModuleAreaEdit(moduleAreaView),
           (moduleAreaView) => this.onModuleAreaSave(moduleAreaView),
-          (moduleAreaView) => this.onModuleAreaDiscard(moduleAreaView)
-        )
+          (moduleAreaView) => this.onModuleAreaDiscard(moduleAreaView),
+        ),
     );
-    moduleAreaViews.map((moduleAreaView) => {
+    moduleAreaViews.forEach((moduleAreaView) => {
       moduleAreaContainer.appendChild(moduleAreaView.createDisplay());
     });
     this.moduleAreaViews = moduleAreaViews;
@@ -134,7 +134,7 @@ export default class CurriculumView {
       (moduleAreaView) => this.onModuleAreaRemove(moduleAreaView),
       (moduleAreaView) => this.onModuleAreaEdit(moduleAreaView),
       (moduleAreaView) => this.onModuleAreaSave(moduleAreaView),
-      (moduleAreaView) => this.onModuleAreaDiscard(moduleAreaView)
+      (moduleAreaView) => this.onModuleAreaDiscard(moduleAreaView),
     );
     this.moduleAreaViews.push(newModuleAreaView);
     this.moduleAreaContainer.appendChild(newModuleAreaView.createEditor());
@@ -151,13 +151,11 @@ export default class CurriculumView {
     if (moduleAreaElement) {
       // Remove from curriculum
       const elementIndex = moduleAreaView.getElementIndex();
-      console.debug(
-        `Removing module area '${this.curriculum.moduleAreas[elementIndex].name}'.`
-      );
+      console.debug(`Removing module area '${this.curriculum.moduleAreas[elementIndex].name}'.`);
       this.curriculum.moduleAreas.splice(elementIndex, 1);
       // Remove from module area views
       console.debug(
-        `Removing module area view '${this.moduleAreaViews[elementIndex].moduleArea.name}'.`
+        `Removing module area view '${this.moduleAreaViews[elementIndex].moduleArea.name}'.`,
       );
       this.moduleAreaViews.splice(elementIndex, 1);
       // Remove from View
@@ -171,10 +169,8 @@ export default class CurriculumView {
     const displayHeaderElement = moduleAreaView.header;
     const editorHeaderElement = moduleAreaView.createEditorHeader();
 
-    moduleAreaView.element.replaceChild(
-      editorHeaderElement,
-      displayHeaderElement
-    );
+    moduleAreaView.element.replaceChild(editorHeaderElement, displayHeaderElement);
+    this.updateView();
   }
 
   onModuleAreaSave(moduleAreaView) {
@@ -184,10 +180,7 @@ export default class CurriculumView {
     const editorHeaderElement = moduleAreaView.header;
     const displayHeaderElement = moduleAreaView.createDisplayHeader();
 
-    moduleAreaView.element.replaceChild(
-      displayHeaderElement,
-      editorHeaderElement
-    );
+    moduleAreaView.element.replaceChild(displayHeaderElement, editorHeaderElement);
     this.updateView();
   }
 
@@ -200,9 +193,6 @@ export default class CurriculumView {
     const editorHeaderElement = moduleAreaView.header;
     const displayHeaderElement = moduleAreaView.createDisplayHeader();
 
-    moduleAreaView.element.replaceChild(
-      displayHeaderElement,
-      editorHeaderElement
-    );
+    moduleAreaView.element.replaceChild(displayHeaderElement, editorHeaderElement);
   }
 }

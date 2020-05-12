@@ -1,9 +1,9 @@
 export default class Module {
   constructor(name, credits, grade, weight, notGraded, passed) {
     this.name = name;
-    this.credits = credits ?? 0;
+    this.credits = credits === undefined ? 0 : credits;
     this.grade = grade;
-    this.weight = weight ?? 1;
+    this.weight = weight === undefined ? 1 : weight;
     this.isGraded = !notGraded;
     this.passed = passed;
   }
@@ -67,7 +67,7 @@ export default class Module {
       this.grade,
       this.weight,
       this.notGraded,
-      this.passed
+      this.passed,
     );
   }
 
@@ -83,13 +83,6 @@ export default class Module {
   }
 
   static fromObject(obj) {
-    return new Module(
-      obj.name,
-      obj.credits,
-      obj.grade,
-      obj.weight,
-      obj.notGraded,
-      obj.passed
-    );
+    return new Module(obj.name, obj.credits, obj.grade, obj.weight, obj.notGraded, obj.passed);
   }
 }

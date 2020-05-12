@@ -7,5 +7,20 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tim Jentzsch",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/TimJentzsch/grade-calculator#readme",
+  "bugs": {
+    "url": "https://github.com/TimJentzsch/grade-calculator/issues"
+  },
+  "repository": "github:TimJentzsch/grade-calculator",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-prettier": "^3.1.3"
+  },
+  "dependencies": {
+    "prettier": "^1.19.1"
+  }
 }

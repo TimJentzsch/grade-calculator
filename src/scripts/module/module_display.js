@@ -58,10 +58,7 @@ export default class ModuleDisplayView {
 
   createCredits() {
     this.creditsContainer = document.createElement('div');
-    this.creditsContainer.classList.add(
-      'module-credits-container',
-      'credits-container'
-    );
+    this.creditsContainer.classList.add('module-credits-container', 'credits-container');
     this.creditsContainer.title = 'The credit points of this module';
 
     this.creditValue = document.createElement('span');

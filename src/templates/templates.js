@@ -1,5 +1,5 @@
-import computer_science_bsc from './computer_science_bsc.js';
+import computerScienceBsc from './computer_science_bsc.js';
 
-const templates = [computer_science_bsc];
+const templates = [computerScienceBsc];
 
 export default templates;

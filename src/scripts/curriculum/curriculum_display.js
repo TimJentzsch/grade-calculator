@@ -26,16 +26,6 @@ export default class CurriculumDisplayHeader {
     return this.data;
   }
 
-  createInfo() {
-    this.info = document.createElement('div');
-    this.info.classList.add('info-container');
-
-    this.createCredits();
-    this.createGrade();
-
-    return this.info;
-  }
-
   createTitle() {
     const title = document.createElement('h2');
     title.classList.add('curriculum-title');
@@ -57,10 +47,7 @@ export default class CurriculumDisplayHeader {
 
   createGrade() {
     const gradeContainer = document.createElement('div');
-    gradeContainer.classList.add(
-      'curriculum-grade-container',
-      'grade-container'
-    );
+    gradeContainer.classList.add('curriculum-grade-container', 'grade-container');
     this.gradeContainer = gradeContainer;
 
     const gradeValue = document.createElement('span');
@@ -70,11 +57,7 @@ export default class CurriculumDisplayHeader {
     this.gradeValue = gradeValue;
 
     const gradeLimits = document.createElement('span');
-    gradeLimits.classList.add(
-      'curriculum-grade-limits',
-      'grade-limits',
-      'grade'
-    );
+    gradeLimits.classList.add('curriculum-grade-limits', 'grade-limits', 'grade');
     gradeLimits.title = 'The best/worst possible grade in this curriculum';
     gradeContainer.appendChild(gradeLimits);
     this.gradeLimits = gradeLimits;
@@ -84,10 +67,7 @@ export default class CurriculumDisplayHeader {
 
   createCredits() {
     const creditsContainer = document.createElement('div');
-    creditsContainer.classList.add(
-      'curriculum-credits-container',
-      'credits-container'
-    );
+    creditsContainer.classList.add('curriculum-credits-container', 'credits-container');
     creditsContainer.title = 'The total credit points of this curriculum';
     this.creditsContainer = creditsContainer;
 
@@ -149,7 +129,7 @@ export default class CurriculumDisplayHeader {
     this.creditValue.innerHTML = this.curriculum.credits;
 
     // Update grade
-    const gradeText = this.curriculum.gradeText;
+    const { gradeText } = this.curriculum;
     this.gradeValue.innerHTML = gradeText;
 
     const bestGrade = this.curriculum.bestCase().gradeText;

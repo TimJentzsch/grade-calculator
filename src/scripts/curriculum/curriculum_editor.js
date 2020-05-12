@@ -83,7 +83,7 @@ export default class CurriculumEditorHeader {
   }
 
   save() {
-    const curriculum = this.curriculum;
+    const { curriculum } = this;
     curriculum.name = this.nameInput.value;
     this.curriculum = curriculum;
     return curriculum;

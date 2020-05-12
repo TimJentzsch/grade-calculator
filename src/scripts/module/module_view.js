@@ -1,5 +1,5 @@
-import ModuleDisplayView from "./module_display.js";
-import ModuleEditView from "./module_editor.js";
+import ModuleDisplayView from './module_display.js';
+import ModuleEditView from './module_editor.js';
 
 export default class ModuleView {
   constructor(module, onRemove, onEdit, onSave, onDiscard) {
@@ -11,13 +11,21 @@ export default class ModuleView {
   }
 
   createDisplay() {
-    this.view = new ModuleDisplayView(this.module, () => this.onRemove(this), () => this.onEdit(this));
+    this.view = new ModuleDisplayView(
+      this.module,
+      () => this.onRemove(this),
+      () => this.onEdit(this),
+    );
     this.element = this.view.createElement();
     return this.element;
   }
 
   createEditor() {
-    this.view = new ModuleEditView(this.module, () => this.onSave(this), () => this.onDiscard(this));
+    this.view = new ModuleEditView(
+      this.module,
+      () => this.onSave(this),
+      () => this.onDiscard(this),
+    );
     this.element = this.view.createElement();
     return this.element;
   }
@@ -26,8 +34,9 @@ export default class ModuleView {
     let node = this.element;
 
     let index = 0;
-    while ((node = node.previousElementSibling)) {
-      index++;
+    while (node.previousElementSibling) {
+      node = node.previousElementSibling;
+      index += 1;
     }
     return index;
   }

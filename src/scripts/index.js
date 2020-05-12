@@ -4,7 +4,7 @@ import TemplateView from '../templates/template_view.js';
 
 let curriculumView;
 
-function newCurriculum() {
+function displayNewCurriculum() {
   const newCurriculum = new Curriculum(undefined, []);
   curriculumView = new CurriculumView('curriculum', newCurriculum);
   curriculumView.createEditor();
@@ -29,7 +29,7 @@ function loadConfiguration(event) {
   const input = event.target;
 
   const reader = new FileReader();
-  reader.onload = function () {
+  reader.onload = () => {
     loadConfig(JSON.parse(reader.result));
   };
   if (input.files && input.files.length > 0) {
@@ -40,17 +40,15 @@ function loadConfiguration(event) {
   }
 }
 
-function saveConfiguration(event) {
-  const curriculum = curriculumView.curriculum;
+function saveConfiguration() {
+  const { curriculum } = curriculumView;
 
   const jsonFile = JSON.stringify(curriculum.toObject(), null, 2);
-  const href = `data:application/json;charset=utf-8,${encodeURIComponent(
-    jsonFile
-  )}`;
+  const href = `data:application/json;charset=utf-8,${encodeURIComponent(jsonFile)}`;
   const curriculumName = curriculum.name
     .toLowerCase()
     .replace(/\s+/g, '-')
-    .replace(/[\.\?\!\;]/g, '');
+    .replace(/[.?!;]/g, '');
   const fileName = `${curriculumName}.json`;
 
   const saveButton = document.getElementById('save-config');
@@ -65,7 +63,7 @@ function loadTemplates() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadTemplates();
-  newCurriculum();
+  displayNewCurriculum();
 
   const loadConfigButton = document.getElementById('load-config');
   loadConfigButton.addEventListener('change', (event) => loadConfiguration(event));
@@ -74,5 +72,5 @@ document.addEventListener('DOMContentLoaded', () => {
   saveConfigButton.addEventListener('click', (event) => saveConfiguration(event));
 
   const newCurriculumButton = document.getElementById('new-curriculum-button');
-  newCurriculumButton.addEventListener('click', () => newCurriculum());
+  newCurriculumButton.addEventListener('click', () => displayNewCurriculum());
 });

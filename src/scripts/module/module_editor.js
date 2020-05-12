@@ -94,7 +94,7 @@ export default class ModuleEditView {
     weightInput.min = 0;
     weightInput.placeholder = 'CP';
     weightInput.size = 3;
-    weightInput.value = this.module.weight ?? 1;
+    weightInput.value = this.module.weight === undefined ? 1 : this.module.weight;
 
     this.weightInput = weightInput;
     weightInputLabel.appendChild(weightInput);
@@ -114,9 +114,7 @@ export default class ModuleEditView {
     isGradedInput.name = 'is-graded-input';
     isGradedInput.type = 'checkbox';
     isGradedInput.checked = this.module.isGraded;
-    isGradedInput.addEventListener('click', () =>
-      this.updateGradeSelectorStatus()
-    );
+    isGradedInput.addEventListener('click', () => this.updateGradeSelectorStatus());
 
     this.isGradedInput = isGradedInput;
     isGradedLabel.appendChild(isGradedInput);
@@ -136,9 +134,7 @@ export default class ModuleEditView {
     hasCompletedInput.name = 'has-completed-input';
     hasCompletedInput.type = 'checkbox';
     hasCompletedInput.checked = this.module.completed;
-    hasCompletedInput.addEventListener('click', () =>
-      this.updateGradeSelectorStatus()
-    );
+    hasCompletedInput.addEventListener('click', () => this.updateGradeSelectorStatus());
 
     this.hasCompletedInput = hasCompletedInput;
     hasCompletedLabel.appendChild(hasCompletedInput);
@@ -147,7 +143,7 @@ export default class ModuleEditView {
   }
 
   updateGradeSelectorStatus() {
-    const gradeSelection = this.gradeSelection;
+    const { gradeSelection } = this;
 
     if (this.isGradedInput.checked && this.hasCompletedInput.checked) {
       gradeSelection.disabled = false;
@@ -158,7 +154,11 @@ export default class ModuleEditView {
 
   createGradeSelection() {
     const gradeSelectionLabel = document.createElement('label');
-    gradeSelectionLabel.classList.add('label', 'grade-selection-label', 'module-grade-selection-label');
+    gradeSelectionLabel.classList.add(
+      'label',
+      'grade-selection-label',
+      'module-grade-selection-label',
+    );
     gradeSelectionLabel.appendChild(document.createTextNode('Grade: '));
     this.gradeSelectionLabel = gradeSelectionLabel;
 
@@ -270,7 +270,7 @@ export default class ModuleEditView {
   }
 
   save() {
-    const module = this.module;
+    const { module } = this;
 
     module.name = this.nameInput.value;
     module.credits = this.creditsInput.valueAsNumber;

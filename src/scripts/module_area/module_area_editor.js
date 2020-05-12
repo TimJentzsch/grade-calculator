@@ -83,7 +83,7 @@ export default class ModuleAreaEditorView {
   }
 
   save() {
-    const moduleArea = this.moduleArea;
+    const { moduleArea } = this;
     moduleArea.name = this.nameInput.value;
     this.moduleArea = moduleArea;
     return moduleArea;

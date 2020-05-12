@@ -29,7 +29,7 @@ export default class ModuleAreaView {
       () => this.onChange(),
       () => this.onModuleAdd(),
       () => this.onRemove(this),
-      () => this.onEdit(this)
+      () => this.onEdit(this),
     );
     this.header = this.headerView.createHeader();
     this.editing = false;
@@ -54,7 +54,7 @@ export default class ModuleAreaView {
     this.headerView = new ModuleAreaEditorView(
       this.moduleArea,
       () => this.onSave(this),
-      () => this.onDiscard(this)
+      () => this.onDiscard(this),
     );
     this.header = this.headerView.createHeader();
     this.editing = true;
@@ -74,10 +74,10 @@ export default class ModuleAreaView {
           (moduleView) => this.onModuleRemove(moduleView),
           (moduleView) => this.onModuleEdit(moduleView),
           (moduleView) => this.onModuleSave(moduleView),
-          (moduleView) => this.onModuleDiscard(moduleView)
-        )
+          (moduleView) => this.onModuleDiscard(moduleView),
+        ),
     );
-    moduleViews.map((moduleView) => {
+    moduleViews.forEach((moduleView) => {
       const moduleViewElement = moduleView.createDisplay();
       moduleContainer.appendChild(moduleViewElement);
     });
@@ -88,7 +88,7 @@ export default class ModuleAreaView {
 
   updateView() {
     this.onChange();
-  
+
     if (this.editing) {
       return;
     }
@@ -100,7 +100,7 @@ export default class ModuleAreaView {
     this.headerView.creditValue.innerHTML = this.moduleArea.credits;
 
     // Update grade
-    const gradeText = this.moduleArea.gradeText;
+    const { gradeText } = this.moduleArea;
     this.headerView.gradeValue.innerHTML = gradeText;
 
     const bestGrade = this.moduleArea.bestCase().gradeText;
@@ -122,7 +122,7 @@ export default class ModuleAreaView {
       (moduleView) => this.onModuleRemove(moduleView),
       (moduleView) => this.onModuleEdit(moduleView),
       (moduleView) => this.onModuleSave(moduleView),
-      (moduleView) => this.onModuleDiscard(moduleView)
+      (moduleView) => this.onModuleDiscard(moduleView),
     );
     this.moduleViews.push(newModuleView);
     this.moduleContainer.appendChild(newModuleView.createEditor());
@@ -139,14 +139,10 @@ export default class ModuleAreaView {
     if (moduleElement) {
       // Remove from module area
       const elementIndex = moduleView.getElementIndex();
-      console.debug(
-        `Removing module '${this.moduleArea.modules[elementIndex].name}'.`
-      );
+      console.debug(`Removing module '${this.moduleArea.modules[elementIndex].name}'.`);
       this.moduleArea.modules.splice(elementIndex, 1);
       // Remove from module views
-      console.debug(
-        `Removing module view '${this.moduleViews[elementIndex].module.name}'.`
-      );
+      console.debug(`Removing module view '${this.moduleViews[elementIndex].module.name}'.`);
       this.moduleViews.splice(elementIndex, 1);
       // Remove from View
       this.moduleContainer.removeChild(moduleElement);
@@ -189,8 +185,9 @@ export default class ModuleAreaView {
     let node = this.element;
 
     let index = 0;
-    while ((node = node.previousElementSibling)) {
-      index++;
+    while (node.previousElementSibling) {
+      node = node.previousElementSibling;
+      index += 1;
     }
     return index;
   }

@@ -46,10 +46,7 @@ export default class ModuleAreaDisplayView {
 
   createGrade() {
     this.gradeContainer = document.createElement('div');
-    this.gradeContainer.classList.add(
-      'module-area-grade-container',
-      'grade-container'
-    );
+    this.gradeContainer.classList.add('module-area-grade-container', 'grade-container');
 
     this.gradeValue = document.createElement('span');
     this.gradeValue.classList.add('module-area-grade-value', 'grade-value', 'grade');
@@ -66,10 +63,7 @@ export default class ModuleAreaDisplayView {
 
   createCredits() {
     this.creditsContainer = document.createElement('div');
-    this.creditsContainer.classList.add(
-      'module-area-credits-container',
-      'credits-container'
-    );
+    this.creditsContainer.classList.add('module-area-credits-container', 'credits-container');
     this.creditsContainer.title = 'The total credit points of this module area';
 
     this.creditValue = document.createElement('span');
@@ -104,7 +98,7 @@ export default class ModuleAreaDisplayView {
     addButton.title = 'Add a new module';
 
     addButton.addEventListener('click', () => this.onAdd());
-    this.addButton = addButton
+    this.addButton = addButton;
 
     return addButton;
   }

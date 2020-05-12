@@ -8,9 +8,9 @@ export default class ModuleArea {
 
   get credits() {
     let credits = 0;
-    for (const module of this.modules) {
+    this.modules.forEach((module) => {
       credits += module.credits;
-    }
+    });
     return credits;
   }
 
@@ -40,9 +40,11 @@ export default class ModuleArea {
     }
 
     let weightedCredits = 0;
-    for (const module of this.completedGradedModules) {
+
+    this.completedGradedModules.forEach((module) => {
       weightedCredits += module.weightedCredits;
-    }
+    });
+
     return weightedCredits;
   }
 
@@ -63,9 +65,9 @@ export default class ModuleArea {
       return undefined;
     }
     let weightedGrade = 0;
-    for (const module of this.completedGradedModules) {
+    this.completedGradedModules.forEach((module) => {
       weightedGrade += module.weightedGrade;
-    }
+    });
     return weightedGrade / this.weightedCredits;
   }
 
@@ -100,21 +102,21 @@ export default class ModuleArea {
   bestCase() {
     return new ModuleArea(
       this.name,
-      this.modules.map((module) => module.bestCase())
+      this.modules.map((module) => module.bestCase()),
     );
   }
 
   worstCase() {
     return new ModuleArea(
       this.name,
-      this.modules.map((module) => module.worstCase())
+      this.modules.map((module) => module.worstCase()),
     );
   }
 
   clone() {
     return new ModuleArea(
       this.name,
-      this.modules.map((module) => module.clone())
+      this.modules.map((module) => module.clone()),
     );
   }
 
@@ -128,7 +130,7 @@ export default class ModuleArea {
   static fromObject(obj) {
     return new ModuleArea(
       obj.name,
-      obj.modules.map((moduleObj) => Module.fromObject(moduleObj))
+      obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),
     );
   }
 }

@@ -9,9 +9,9 @@ export default class TemplateView {
   createElement() {
     const element = document.getElementById(this.elementID);
 
-    for (const template of templates) {
+    templates.forEach((template) => {
       element.appendChild(this.createButton(template));
-    }
+    });
   }
 
   createButton(template) {
