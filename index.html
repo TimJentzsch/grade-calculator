@@ -20,15 +20,23 @@
     <header>
       <div id="header-content">
         <h1>Grade Calculator</h1>
-        <a href="https://github.com/TimJentzsch/grade-calculator" title="Check out the project on GitHub">
-          <img width="35px" height="35px" src="images/github-icon.png" alt="GitHub icon">
+        <a
+          href="https://github.com/TimJentzsch/grade-calculator"
+          title="Check out the project on GitHub"
+        >
+          <img
+            width="35px"
+            height="35px"
+            src="images/github-icon.png"
+            alt="GitHub icon"
+          />
         </a>
       </div>
     </header>
     <div id="body-container">
       <div id="settings">
         <div class="settings-container">
-          <label id="template-container">
+          <div id="template-container">
             Load curriculum:
             <button
               id="new-curriculum-button"
@@ -37,12 +45,12 @@
             >
               New Curriculum
             </button>
-          </label>
+          </div>
         </div>
         <div class="settings-container">
           <label>
             Upload curriculum:
-            <label class="load-button">
+            <label class="upload-button" title="Upload a saved curriculum">
               Upload...
               <input
                 id="load-config"
@@ -63,6 +71,7 @@
               href="#"
               download="curriculum.json"
               target="_blank"
+              title="Download the curriculum configuration"
             >
               Save...
             </a>
