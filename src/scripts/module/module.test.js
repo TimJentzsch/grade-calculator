@@ -90,6 +90,16 @@ describe('Module', () => {
         const module = new Module('Test module', 5, undefined, 3, true, true);
         expect(module.gradeText).toEqual('B');
       });
+      describe('isEmpty', () => {
+        test('empty module', () => {
+          const module = new Module('', 5, undefined, 3, undefined, undefined);
+          expect(module.isEmpty).toBeTruthy();
+        });
+        test('non-empty module', () => {
+          const module = new Module('Test module', 5, undefined, 3, undefined, undefined);
+          expect(module.isEmpty).toBeFalsy();
+        });
+      });
     });
   });
   // --- Functions ---
