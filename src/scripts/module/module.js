@@ -66,7 +66,7 @@ export default class Module {
       this.credits,
       this.grade,
       this.weight,
-      this.notGraded,
+      !this.isGraded,
       this.passed,
     );
   }
