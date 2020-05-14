@@ -8,6 +8,4 @@ jobs:
 
     steps:
       - name: Run Tests
-        run: |
-        npm install
-        npm test
+        run: npm install && npm test
