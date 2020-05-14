@@ -1,10 +1,11 @@
 {
   "name": "grade-calculator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A calculator for curriculum grades.",
   "main": "src/index.html",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint \"./\""
   },
   "author": "Tim Jentzsch",
   "license": "MIT",
