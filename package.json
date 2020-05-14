@@ -14,6 +14,7 @@
   },
   "repository": "github:TimJentzsch/grade-calculator",
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.9.6",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.1.0",
     "eslint-config-prettier": "^6.11.0",
@@ -23,5 +24,14 @@
   },
   "dependencies": {
     "prettier": "^1.19.1"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "plugins": [
+          "@babel/plugin-transform-modules-commonjs"
+        ]
+      }
+    }
   }
 }
