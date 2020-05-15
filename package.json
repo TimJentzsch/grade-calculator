@@ -4,7 +4,8 @@
   "description": "A calculator for curriculum grades.",
   "main": "src/index.html",
   "scripts": {
-    "test": "jest",
+    "test": "npx jest",
+    "coverage": "npm run test --coverage",
     "lint": "eslint \"./\""
   },
   "author": "Tim Jentzsch",

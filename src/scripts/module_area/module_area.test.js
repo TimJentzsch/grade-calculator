@@ -185,7 +185,7 @@ describe('ModuleArea', () => {
           new Module('Test module 6', 3, undefined, undefined, true, undefined),
         ]);
 
-        expect(moduleArea.weightedGrade).toBeCloseTo(53.8, 2);
+        expect(moduleArea.weightedGrade).toBe(51.1);
       });
       test('undefined for ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
