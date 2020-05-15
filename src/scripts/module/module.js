@@ -2,7 +2,9 @@ export default class Module {
   constructor(name, credits, grade, weight, notGraded, passed) {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
-    this.grade = grade;
+    if (!notGraded) {
+      this.grade = grade;
+    }
     this.weight = weight === undefined ? 1 : weight;
     this.isGraded = !notGraded;
     this.passed = passed;

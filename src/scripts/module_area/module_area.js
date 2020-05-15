@@ -53,11 +53,17 @@ export default class ModuleArea {
   }
 
   get gradeCompleted() {
-    return this.completedGradedModules.length === this.gradedModules.length;
+    if (this.isGraded) {
+      return this.completedGradedModules.length === this.gradedModules.length;
+    }
+    return this.completedModules.length === this.modules.length;
   }
 
   get gradePartiallyCompleted() {
-    return this.gradeCompleted || this.completedGradedModules.length > 0;
+    if (this.isGraded) {
+      return this.completedGradedModules.length > 0;
+    }
+    return this.completedModules.length > 0;
   }
 
   get grade() {
