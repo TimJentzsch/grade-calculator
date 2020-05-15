@@ -16,6 +16,29 @@ describe('Module', () => {
         const module = new Module('Test module', 5, 2.3, 1, undefined, undefined);
         expect(module.credits).toBe(5);
       });
+      test('default assignment is 0', () => {
+        const module = new Module('Test module', undefined, 2.3, 1, undefined, undefined);
+        expect(module.credits).toBe(0);
+      });
+    });
+    // Has grade
+    describe('hasGrade', () => {
+      test('false for ungraded module', () => {
+        const module = new Module('Test module', 5, undefined, 1, true, true);
+        expect(module.hasGrade).toBeFalsy();
+      });
+      test('false for graded module without credits', () => {
+        const module = new Module('Test module', 0, 2.3, 1, undefined, undefined);
+        expect(module.hasGrade).toBeFalsy();
+      });
+      test('false for graded incomplete module', () => {
+        const module = new Module('Test module', 5, undefined, 1, undefined, undefined);
+        expect(module.hasGrade).toBeFalsy();
+      });
+      test('true for graded complete module', () => {
+        const module = new Module('Test module', 5, 2.3, 1, undefined, undefined);
+        expect(module.hasGrade).toBeTruthy();
+      });
     });
     // Is graded
     describe('isGraded', () => {
@@ -117,28 +140,36 @@ describe('Module', () => {
     });
     // Best case
     describe('bestCase', () => {
-      test('Incomplete graded module recieves 1.0 as grade', () => {
+      test('incomplete graded module recieves 1.0 as grade', () => {
         const module = new Module('Test module', 5, undefined, 3, undefined, undefined);
         expect(module.bestCase().grade).toBe(1.0);
       });
-      test('no changes for module with grade', () => {
+      test('no changes for graded module with grade', () => {
         const module = new Module('Test module', 5, 2.3, 3, undefined, undefined);
         expect(module.bestCase()).toEqual(module);
       });
-      test('no changes for ungraded module', () => {
+      test('incomplete ungraded module passes', () => {
+        const module = new Module('Test module', 5, undefined, 3, true, undefined);
+        expect(module.bestCase().passed).toBeTruthy();
+      });
+      test('no changes for ungraded passed module', () => {
         const module = new Module('Test module', 5, undefined, 3, true, true);
         expect(module.bestCase()).toEqual(module);
       });
     });
     // Worst case
     describe('worstCase', () => {
-      test('Incomplete graded module recieves 4.0 as grade', () => {
+      test('incomplete graded module recieves 4.0 as grade', () => {
         const module = new Module('Test module', 5, undefined, 3, undefined, undefined);
         expect(module.worstCase().grade).toBe(4.0);
       });
       test('no changes for module with grade', () => {
         const module = new Module('Test module', 5, 2.3, 3, undefined, undefined);
         expect(module.worstCase()).toEqual(module);
+      });
+      test('incomplete ungraded module passes', () => {
+        const module = new Module('Test module', 5, undefined, 3, true, undefined);
+        expect(module.worstCase().passed).toBeTruthy();
       });
       test('no changes for ungraded module', () => {
         const module = new Module('Test module', 5, undefined, 3, true, true);

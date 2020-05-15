@@ -2,7 +2,9 @@ export default class Module {
   constructor(name, credits, grade, weight, notGraded, passed) {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
-    this.grade = grade;
+    if (!notGraded) {
+      this.grade = grade;
+    }
     this.weight = weight === undefined ? 1 : weight;
     this.isGraded = !notGraded;
     this.passed = passed;
@@ -17,14 +19,10 @@ export default class Module {
   }
 
   get weightedCredits() {
-    if (!this.credits) return 0;
-
     return this.credits * this.weight;
   }
 
   get weightedGrade() {
-    if (!this.credits) return 0;
-
     return this.grade * this.weightedCredits;
   }
 
@@ -46,16 +44,24 @@ export default class Module {
 
   bestCase() {
     const clone = this.clone();
-    if (this.credits && this.isGraded && !this.grade) {
-      clone.grade = 1.0;
+    if (!clone.completed) {
+      if (clone.isGraded) {
+        clone.grade = 1.0;
+      } else {
+        clone.passed = true;
+      }
     }
     return clone;
   }
 
   worstCase() {
     const clone = this.clone();
-    if (this.credits && this.isGraded && !this.grade) {
-      clone.grade = 4.0;
+    if (!clone.completed) {
+      if (clone.isGraded) {
+        clone.grade = 4.0;
+      } else {
+        clone.passed = true;
+      }
     }
     return clone;
   }
