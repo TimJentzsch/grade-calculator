@@ -44,16 +44,24 @@ export default class Module {
 
   bestCase() {
     const clone = this.clone();
-    if (this.credits && this.isGraded && !this.grade) {
-      clone.grade = 1.0;
+    if (!clone.completed) {
+      if (clone.isGraded) {
+        clone.grade = 1.0;
+      } else {
+        clone.passed = true;
+      }
     }
     return clone;
   }
 
   worstCase() {
     const clone = this.clone();
-    if (this.credits && this.isGraded && !this.grade) {
-      clone.grade = 4.0;
+    if (!clone.completed) {
+      if (clone.isGraded) {
+        clone.grade = 4.0;
+      } else {
+        clone.passed = true;
+      }
     }
     return clone;
   }

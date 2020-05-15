@@ -439,85 +439,137 @@ describe('ModuleArea', () => {
       ]);
       expect(moduleArea.bestCase()).toEqual(bestCase);
     });
-    // Worst case
-    describe('worstCase', () => {
-      test('fills incomplete graded modules with 4.0', () => {
-        const moduleArea = new ModuleArea('Test module area', [
-          new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
-          new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
-          new Module('Test module 3', 3, undefined, undefined, undefined, undefined),
-        ]);
-        const worstCase = new ModuleArea('Test module area', [
-          new Module('Test module 1', 6, 4.0, 1.5, undefined, undefined),
-          new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
-          new Module('Test module 3', 3, 4.0, undefined, undefined, undefined),
-        ]);
-        expect(moduleArea.worstCase()).toEqual(worstCase);
-      });
+    test('fills incomplete ungraded modules with B', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, undefined),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, undefined, undefined, true, undefined),
+      ]);
+      const bestCase = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, true),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, undefined, undefined, true, true),
+      ]);
+      expect(moduleArea.bestCase()).toEqual(bestCase);
     });
-    // To object
-    describe('toObject', () => {
-      test('mixed moduleArea equality', () => {
-        const moduleArea = new ModuleArea('Test module area', [
-          new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
-          new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
-          new Module('Test module 3', 3, undefined, undefined, true, true),
-        ]);
-        const expectedObj = {
-          name: 'Test module area',
-          modules: [
-            {
-              name: 'Test module 1',
-              credits: 6,
-              weight: 1.5,
-            },
-            {
-              name: 'Test module 2',
-              credits: 7,
-              grade: 2.3,
-            },
-            {
-              name: 'Test module 3',
-              credits: 3,
-              notGraded: true,
-              passed: true,
-            },
-          ],
-        };
-        expect(moduleArea.toObject()).toEqual(expectedObj);
-      });
+    test('fills mixed modules with 1.0 / B', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, undefined),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, undefined, undefined, undefined, undefined),
+      ]);
+      const bestCase = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, true),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, 1.0, undefined, undefined, undefined),
+      ]);
+      expect(moduleArea.bestCase()).toEqual(bestCase);
     });
-    // From object
-    describe('fromObject', () => {
-      test('mixed moduleArea equality', () => {
-        const obj = {
-          name: 'Test module area',
-          modules: [
-            {
-              name: 'Test module 1',
-              credits: 6,
-              weight: 1.5,
-            },
-            {
-              name: 'Test module 2',
-              credits: 7,
-              grade: 2.3,
-            },
-            {
-              name: 'Test module 3',
-              credits: 3,
-              notGraded: true,
-              passed: true,
-            },
-          ],
-        };
-        const expectedModuleArea = new ModuleArea('Test module area', [
-          new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
-          new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
-          new Module('Test module 3', 3, undefined, undefined, true, true),
-        ]);
-        expect(ModuleArea.fromObject(obj)).toEqual(expectedModuleArea);
-      });
+  });
+  // Worst case
+  describe('worstCase', () => {
+    test('fills incomplete graded modules with 4.0', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
+        new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
+        new Module('Test module 3', 3, undefined, undefined, undefined, undefined),
+      ]);
+      const worstCase = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, 4.0, 1.5, undefined, undefined),
+        new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
+        new Module('Test module 3', 3, 4.0, undefined, undefined, undefined),
+      ]);
+      expect(moduleArea.worstCase()).toEqual(worstCase);
+    });
+    test('fills incomplete ungraded modules with B', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, undefined),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, undefined, undefined, true, undefined),
+      ]);
+      const worstCase = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, true),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, undefined, undefined, true, true),
+      ]);
+      expect(moduleArea.worstCase()).toEqual(worstCase);
+    });
+    test('fills mixed modules with 4.0 / B', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, undefined),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, undefined, undefined, undefined, undefined),
+      ]);
+      const worstCase = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, true, true),
+        new Module('Test module 2', 7, undefined, undefined, true, true),
+        new Module('Test module 3', 3, 4.0, undefined, undefined, undefined),
+      ]);
+      expect(moduleArea.worstCase()).toEqual(worstCase);
+    });
+  });
+  // To object
+  describe('toObject', () => {
+    test('mixed moduleArea equality', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
+        new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
+        new Module('Test module 3', 3, undefined, undefined, true, true),
+      ]);
+      const expectedObj = {
+        name: 'Test module area',
+        modules: [
+          {
+            name: 'Test module 1',
+            credits: 6,
+            weight: 1.5,
+          },
+          {
+            name: 'Test module 2',
+            credits: 7,
+            grade: 2.3,
+          },
+          {
+            name: 'Test module 3',
+            credits: 3,
+            notGraded: true,
+            passed: true,
+          },
+        ],
+      };
+      expect(moduleArea.toObject()).toEqual(expectedObj);
+    });
+  });
+  // From object
+  describe('fromObject', () => {
+    test('mixed moduleArea equality', () => {
+      const obj = {
+        name: 'Test module area',
+        modules: [
+          {
+            name: 'Test module 1',
+            credits: 6,
+            weight: 1.5,
+          },
+          {
+            name: 'Test module 2',
+            credits: 7,
+            grade: 2.3,
+          },
+          {
+            name: 'Test module 3',
+            credits: 3,
+            notGraded: true,
+            passed: true,
+          },
+        ],
+      };
+      const expectedModuleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
+        new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
+        new Module('Test module 3', 3, undefined, undefined, true, true),
+      ]);
+      expect(ModuleArea.fromObject(obj)).toEqual(expectedModuleArea);
     });
   });
 });
