@@ -67,11 +67,17 @@ export default class Curriculum {
   }
 
   get gradeCompleted() {
-    return this.completedGradedModuleAreas.length === this.gradedModuleAreas.length;
+    if (this.isGraded) {
+      return this.completedGradedModuleAreas.length === this.gradedModuleAreas.length;
+    }
+    return this.completedModuleAreas.length === this.moduleAreas.length;
   }
 
   get gradePartiallyCompleted() {
-    return this.gradeCompleted || this.partiallyCompletedGradedModuleAreas.length > 0;
+    if (this.isGraded) {
+      return this.partiallyCompletedGradedModuleAreas.length > 0;
+    }
+    return this.partiallyCompletedModuleAreas.length > 0;
   }
 
   get grade() {
