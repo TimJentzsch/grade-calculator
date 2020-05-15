@@ -198,7 +198,7 @@ describe('ModuleArea', () => {
     });
     // Grade partially completed
     describe('gradePartiallyCompleted', () => {
-      test('for incomplete graded module', () => {
+      test('for incomplete graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
           new Module('Test module 2', 7, undefined, undefined, undefined, undefined),
@@ -209,7 +209,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradePartiallyCompleted).toBeFalsy();
       });
-      test('for partially completed graded module', () => {
+      test('for partially completed graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, 2.3, 1.5, undefined, undefined),
           new Module('Test module 2', 7, 4.0, undefined, undefined, undefined),
@@ -221,7 +221,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradePartiallyCompleted).toBeTruthy();
       });
-      test('for completed graded module', () => {
+      test('for completed graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, 2.3, 1.5, undefined, undefined),
           new Module('Test module 2', 7, 4.0, undefined, undefined, undefined),
@@ -230,7 +230,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradePartiallyCompleted).toBeTruthy();
       });
-      test('for incomplete ungraded module', () => {
+      test('for incomplete ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, false),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
@@ -238,7 +238,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradePartiallyCompleted).toBeFalsy();
       });
-      test('for partially completed ungraded module', () => {
+      test('for partially completed ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
@@ -246,7 +246,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradePartiallyCompleted).toBeTruthy();
       });
-      test('for completed ungraded module', () => {
+      test('for completed ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, true),
@@ -257,7 +257,7 @@ describe('ModuleArea', () => {
     });
     // Grade completed
     describe('gradeCompleted', () => {
-      test('for incomplete graded module', () => {
+      test('for incomplete graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
           new Module('Test module 2', 7, undefined, undefined, undefined, undefined),
@@ -268,7 +268,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeCompleted).toBeFalsy();
       });
-      test('for partially completed graded module', () => {
+      test('for partially completed graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, 2.3, 1.5, undefined, undefined),
           new Module('Test module 2', 7, 4.0, undefined, undefined, undefined),
@@ -280,7 +280,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeCompleted).toBeFalsy();
       });
-      test('for completed graded module', () => {
+      test('for completed graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, 2.3, 1.5, undefined, undefined),
           new Module('Test module 2', 7, 4.0, undefined, undefined, undefined),
@@ -289,7 +289,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeCompleted).toBeTruthy();
       });
-      test('for incomplete ungraded module', () => {
+      test('for incomplete ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, false),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
@@ -297,7 +297,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeCompleted).toBeFalsy();
       });
-      test('for partially completed ungraded module', () => {
+      test('for partially completed ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
@@ -305,7 +305,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeCompleted).toBeFalsy();
       });
-      test('for completed ungraded module', () => {
+      test('for completed ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, true),
@@ -316,7 +316,7 @@ describe('ModuleArea', () => {
     });
     // Grade text
     describe('gradeText', () => {
-      test('for incomplete graded module', () => {
+      test('for incomplete graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
           new Module('Test module 2', 7, undefined, undefined, undefined, undefined),
@@ -327,7 +327,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeText).toEqual('TBD');
       });
-      test('for partially completed graded module', () => {
+      test('for partially completed graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, 2.3, 1.5, undefined, undefined),
           new Module('Test module 2', 7, 4.0, undefined, undefined, undefined),
@@ -339,7 +339,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeText).toEqual('2.83');
       });
-      test('for completed graded module', () => {
+      test('for completed graded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 6, 2.3, 1.5, undefined, undefined),
           new Module('Test module 2', 7, 4.0, undefined, undefined, undefined),
@@ -348,7 +348,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeText).toEqual('2.83');
       });
-      test('for incomplete ungraded module', () => {
+      test('for incomplete ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, false),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
@@ -356,7 +356,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeText).toEqual('TBD');
       });
-      test('for partially completed ungraded module', () => {
+      test('for partially completed ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
@@ -364,7 +364,7 @@ describe('ModuleArea', () => {
 
         expect(moduleArea.gradeText).toEqual('B');
       });
-      test('for completed ungraded module', () => {
+      test('for completed ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
           new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, true),
