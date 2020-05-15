@@ -606,4 +606,280 @@ describe('Curriculum', () => {
       });
     });
   });
+  // --- Functions ---
+  describe('functions', () => {
+    // To object
+    describe('toObject', () => {
+      test('equality for mixed curriculum', () => {
+        const curriculum = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area 1', [
+            new Module('Test module 1', 8, 2.0, 1.5, undefined, undefined),
+            new Module('Test module 2', 4, 2.7, undefined, undefined, undefined),
+          ]),
+          new ModuleArea('Test module area 2', [
+            new Module('Test module 3', 6, 4.0, undefined, undefined, undefined),
+            new Module('Test module 4', 3, undefined, undefined, true, true),
+          ]),
+          new ModuleArea('Test module area 3', [
+            new Module('Test module 5', 6, undefined, undefined, true, true),
+            new Module('Test module 6', 3, undefined, 3, true, undefined),
+          ]),
+        ]);
+
+        const expectedObj = {
+          name: 'Test curriculum',
+          moduleAreas: [
+            {
+              name: 'Test module area 1',
+              modules: [
+                {
+                  name: 'Test module 1',
+                  credits: 8,
+                  grade: 2.0,
+                  weight: 1.5,
+                },
+                {
+                  name: 'Test module 2',
+                  credits: 4,
+                  grade: 2.7,
+                },
+              ],
+            },
+            {
+              name: 'Test module area 2',
+              modules: [
+                {
+                  name: 'Test module 3',
+                  credits: 6,
+                  grade: 4.0,
+                },
+                {
+                  name: 'Test module 4',
+                  credits: 3,
+                  notGraded: true,
+                  passed: true,
+                },
+              ],
+            },
+            {
+              name: 'Test module area 3',
+              modules: [
+                {
+                  name: 'Test module 5',
+                  credits: 6,
+                  notGraded: true,
+                  passed: true,
+                },
+                {
+                  name: 'Test module 6',
+                  credits: 3,
+                  weight: 3,
+                  notGraded: true,
+                },
+              ],
+            },
+          ],
+        };
+
+        expect(curriculum.toObject()).toEqual(expectedObj);
+      });
+    });
+    // From object
+    describe('fromObject', () => {
+      test('equality for mixed object', () => {
+        const obj = {
+          name: 'Test curriculum',
+          moduleAreas: [
+            {
+              name: 'Test module area 1',
+              modules: [
+                {
+                  name: 'Test module 1',
+                  credits: 8,
+                  grade: 2.0,
+                  weight: 1.5,
+                },
+                {
+                  name: 'Test module 2',
+                  credits: 4,
+                  grade: 2.7,
+                },
+              ],
+            },
+            {
+              name: 'Test module area 2',
+              modules: [
+                {
+                  name: 'Test module 3',
+                  credits: 6,
+                  grade: 4.0,
+                },
+                {
+                  name: 'Test module 4',
+                  credits: 3,
+                  notGraded: true,
+                  passed: true,
+                },
+              ],
+            },
+            {
+              name: 'Test module area 3',
+              modules: [
+                {
+                  name: 'Test module 5',
+                  credits: 6,
+                  notGraded: true,
+                  passed: true,
+                },
+                {
+                  name: 'Test module 6',
+                  credits: 3,
+                  weight: 3,
+                  notGraded: true,
+                },
+              ],
+            },
+          ],
+        };
+
+        const expectedCurriculum = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area 1', [
+            new Module('Test module 1', 8, 2.0, 1.5, undefined, undefined),
+            new Module('Test module 2', 4, 2.7, undefined, undefined, undefined),
+          ]),
+          new ModuleArea('Test module area 2', [
+            new Module('Test module 3', 6, 4.0, undefined, undefined, undefined),
+            new Module('Test module 4', 3, undefined, undefined, true, true),
+          ]),
+          new ModuleArea('Test module area 3', [
+            new Module('Test module 5', 6, undefined, undefined, true, true),
+            new Module('Test module 6', 3, undefined, 3, true, undefined),
+          ]),
+        ]);
+
+        expect(Curriculum.fromObject(obj)).toEqual(expectedCurriculum);
+      });
+    });
+    describe('addModuleArea', () => {
+      test('to empty curriculum', () => {
+        const curriculum = new Curriculum('Test curriculum', []);
+        const moduleArea = new ModuleArea('Test module area 1', [
+          new Module('Test module 1', 6, 4.0, undefined, undefined, undefined),
+          new Module('Test module 2', 3, undefined, undefined, true, true),
+        ]);
+        const expectedCurriculum = new Curriculum('Test curriculum', [moduleArea]);
+
+        curriculum.addModuleArea(moduleArea);
+        expect(curriculum).toEqual(expectedCurriculum);
+      });
+      test('to filled curriculum', () => {
+        const moduleArea1 = new ModuleArea('Test module area 1', [
+          new Module('Test module 1', 6, 4.0, undefined, undefined, undefined),
+          new Module('Test module 2', 3, undefined, undefined, true, true),
+        ]);
+        const moduleArea2 = new ModuleArea('Test module area 2', [
+          new Module('Test module 3', 6, 4.0, undefined, undefined, undefined),
+          new Module('Test module 4', 3, 2.0, undefined, undefined, undefined),
+        ]);
+        const curriculum = new Curriculum('Test curriculum', [moduleArea1]);
+        const expectedCurriculum = new Curriculum('Test curriculum', [moduleArea1, moduleArea2]);
+
+        curriculum.addModuleArea(moduleArea2);
+        expect(curriculum).toEqual(expectedCurriculum);
+      });
+    });
+    // Clone
+    describe('bestCase', () => {
+      test('completes to 1.0/B for mixed curriculum', () => {
+        const curriculum = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area 1', [
+            new Module('Test module 1', 8, 2.0, 1.5, undefined, undefined),
+            new Module('Test module 2', 4, 2.7, undefined, undefined, undefined),
+          ]),
+          new ModuleArea('Test module area 2', [
+            new Module('Test module 3', 6, undefined, undefined, undefined, undefined),
+            new Module('Test module 4', 3, undefined, undefined, true, true),
+          ]),
+          new ModuleArea('Test module area 3', [
+            new Module('Test module 5', 6, undefined, undefined, true, true),
+            new Module('Test module 6', 3, undefined, 3, true, undefined),
+          ]),
+        ]);
+
+        expect(curriculum.clone()).toEqual(curriculum);
+      });
+    });
+    // Best case
+    describe('bestCase', () => {
+      test('completes to 1.0/B for mixed curriculum', () => {
+        const curriculum = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area 1', [
+            new Module('Test module 1', 8, 2.0, 1.5, undefined, undefined),
+            new Module('Test module 2', 4, 2.7, undefined, undefined, undefined),
+          ]),
+          new ModuleArea('Test module area 2', [
+            new Module('Test module 3', 6, undefined, undefined, undefined, undefined),
+            new Module('Test module 4', 3, undefined, undefined, true, true),
+          ]),
+          new ModuleArea('Test module area 3', [
+            new Module('Test module 5', 6, undefined, undefined, true, true),
+            new Module('Test module 6', 3, undefined, 3, true, undefined),
+          ]),
+        ]);
+
+        const bestCase = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area 1', [
+            new Module('Test module 1', 8, 2.0, 1.5, undefined, undefined),
+            new Module('Test module 2', 4, 2.7, undefined, undefined, undefined),
+          ]),
+          new ModuleArea('Test module area 2', [
+            new Module('Test module 3', 6, 1.0, undefined, undefined, undefined),
+            new Module('Test module 4', 3, undefined, undefined, true, true),
+          ]),
+          new ModuleArea('Test module area 3', [
+            new Module('Test module 5', 6, undefined, undefined, true, true),
+            new Module('Test module 6', 3, undefined, 3, true, true),
+          ]),
+        ]);
+
+        expect(curriculum.bestCase()).toEqual(bestCase);
+      });
+    });
+    // Worst case
+    describe('worstCase', () => {
+      test('completes to 4.0/B for mixed curriculum', () => {
+        const curriculum = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area 1', [
+            new Module('Test module 1', 8, 2.0, 1.5, undefined, undefined),
+            new Module('Test module 2', 4, 2.7, undefined, undefined, undefined),
+          ]),
+          new ModuleArea('Test module area 2', [
+            new Module('Test module 3', 6, undefined, undefined, undefined, undefined),
+            new Module('Test module 4', 3, undefined, undefined, true, true),
+          ]),
+          new ModuleArea('Test module area 3', [
+            new Module('Test module 5', 6, undefined, undefined, true, true),
+            new Module('Test module 6', 3, undefined, 3, true, undefined),
+          ]),
+        ]);
+
+        const worstCase = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area 1', [
+            new Module('Test module 1', 8, 2.0, 1.5, undefined, undefined),
+            new Module('Test module 2', 4, 2.7, undefined, undefined, undefined),
+          ]),
+          new ModuleArea('Test module area 2', [
+            new Module('Test module 3', 6, 4.0, undefined, undefined, undefined),
+            new Module('Test module 4', 3, undefined, undefined, true, true),
+          ]),
+          new ModuleArea('Test module area 3', [
+            new Module('Test module 5', 6, undefined, undefined, true, true),
+            new Module('Test module 6', 3, undefined, 3, true, true),
+          ]),
+        ]);
+
+        expect(curriculum.worstCase()).toEqual(worstCase);
+      });
+    });
+  });
 });
