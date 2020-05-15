@@ -19,14 +19,10 @@ export default class Module {
   }
 
   get weightedCredits() {
-    if (!this.credits) return 0;
-
     return this.credits * this.weight;
   }
 
   get weightedGrade() {
-    if (!this.credits) return 0;
-
     return this.grade * this.weightedCredits;
   }
 

@@ -16,6 +16,29 @@ describe('Module', () => {
         const module = new Module('Test module', 5, 2.3, 1, undefined, undefined);
         expect(module.credits).toBe(5);
       });
+      test('default assignment is 0', () => {
+        const module = new Module('Test module', undefined, 2.3, 1, undefined, undefined);
+        expect(module.credits).toBe(0);
+      });
+    });
+    // Has grade
+    describe('hasGrade', () => {
+      test('false for ungraded module', () => {
+        const module = new Module('Test module', 5, undefined, 1, true, true);
+        expect(module.hasGrade).toBeFalsy();
+      });
+      test('false for graded module without credits', () => {
+        const module = new Module('Test module', 0, 2.3, 1, undefined, undefined);
+        expect(module.hasGrade).toBeFalsy();
+      });
+      test('false for graded incomplete module', () => {
+        const module = new Module('Test module', 5, undefined, 1, undefined, undefined);
+        expect(module.hasGrade).toBeFalsy();
+      });
+      test('true for graded complete module', () => {
+        const module = new Module('Test module', 5, 2.3, 1, undefined, undefined);
+        expect(module.hasGrade).toBeTruthy();
+      });
     });
     // Is graded
     describe('isGraded', () => {
