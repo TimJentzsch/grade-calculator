@@ -166,7 +166,7 @@ describe('ModuleArea', () => {
       });
       test('undefined for ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
-          new Module('Test module 1', 8, 2, undefined, true, true),
+          new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
         ]);
 
@@ -189,7 +189,7 @@ describe('ModuleArea', () => {
       });
       test('undefined for ungraded module area', () => {
         const moduleArea = new ModuleArea('Test module area', [
-          new Module('Test module 1', 8, 2, undefined, true, true),
+          new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, undefined),
         ]);
 
@@ -248,7 +248,7 @@ describe('ModuleArea', () => {
       });
       test('for completed ungraded module', () => {
         const moduleArea = new ModuleArea('Test module area', [
-          new Module('Test module 1', 8, 2, undefined, true, true),
+          new Module('Test module 1', 8, undefined, 2, true, true),
           new Module('Test module 2', 3, undefined, undefined, true, true),
         ]);
 

@@ -5,7 +5,7 @@
   "main": "src/index.html",
   "scripts": {
     "test": "npx jest",
-    "coverage": "npm run test --coverage",
+    "coverage": "npx jest --coverage",
     "lint": "eslint \"./\""
   },
   "author": "Tim Jentzsch",
