@@ -1,5 +1,5 @@
 export default class Module {
-  constructor(name, credits, grade, weight, notGraded, passed) {
+  constructor(name, credits, grade, weight, notGraded, passed, canNotBeEliminated, eliminated) {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
     if (!notGraded) {
@@ -8,10 +8,14 @@ export default class Module {
     this.weight = weight === undefined ? 1 : weight;
     this.isGraded = !notGraded;
     this.passed = passed;
+    this.canBeEliminated = !canNotBeEliminated;
+    if (!canNotBeEliminated) {
+      this.eliminated = eliminated;
+    }
   }
 
   get hasGrade() {
-    return this.credits && this.isGraded && this.grade;
+    return this.credits && this.isGraded && this.grade && !this.eliminated;
   }
 
   get completed() {
@@ -31,7 +35,7 @@ export default class Module {
       return 'TBD';
     }
 
-    if (!this.isGraded) {
+    if (!this.isGraded || this.eliminated) {
       return 'B';
     }
 
@@ -74,17 +78,21 @@ export default class Module {
       this.weight,
       !this.isGraded,
       this.passed,
+      !this.canBeEliminated,
+      this.eliminated,
     );
   }
 
   toObject() {
     return {
-      name: this.name,
-      credits: this.credits,
-      grade: this.grade,
+      name: this.name || undefined,
+      credits: this.credits || undefined,
+      grade: this.grade || undefined,
       weight: this.weight === 1 ? undefined : this.weight,
-      notGraded: !this.isGraded ? true : undefined,
-      passed: this.passed,
+      notGraded: !this.isGraded || undefined,
+      passed: this.passed || undefined,
+      canNotBeEliminated: !this.canBeEliminated || undefined,
+      eliminated: this.eliminated || undefined,
     };
   }
 
