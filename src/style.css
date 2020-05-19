@@ -132,10 +132,6 @@ body {
   margin-left: 5px;
 }
 
-.module-not-graded {
-  color: gray;
-}
-
 .grade {
   font-family: 'Courier New', Courier, monospace;
   display: inline-block;
@@ -143,10 +139,15 @@ body {
 
 .grade-value {
   font-weight: bold;
+  margin: 0 5px;
 }
 
-.grade-limits {
+.grade-limits, .module-not-graded, .eliminated {
   color: gray;
+}
+
+.eliminated {
+  text-decoration: line-through;
 }
 
 .module-grade-value {

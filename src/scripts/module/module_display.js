@@ -79,10 +79,22 @@ export default class ModuleDisplayView {
     gradeContainer.classList.add('module-grade-container', 'grade-container');
     this.gradeContainer = gradeContainer;
 
+    const { gradeText } = this.module;
+    const { eliminationGradeText } = this.module;
+
+    const eliminatedGradeValue = document.createElement('span');
+    eliminatedGradeValue.classList.add('module-eliminated-grade-value', 'grade', 'eliminated');
+    eliminatedGradeValue.title = 'The grade before elimination';
+    if (gradeText !== eliminationGradeText) {
+      eliminatedGradeValue.innerText = gradeText;
+    }
+    gradeContainer.appendChild(eliminatedGradeValue);
+    this.eliminatedGradeValue = eliminatedGradeValue;
+
     const gradeValue = document.createElement('span');
     gradeValue.classList.add('module-grade-value', 'grade-value', 'grade');
     gradeValue.title = 'The current grade of this module';
-    gradeValue.innerHTML = this.module.gradeText;
+    gradeValue.innerText = eliminationGradeText;
     gradeContainer.appendChild(gradeValue);
     this.gradeValue = gradeValue;
 

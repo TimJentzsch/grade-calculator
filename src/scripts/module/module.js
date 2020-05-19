@@ -42,6 +42,18 @@ export default class Module {
     return this.grade.toFixed(1);
   }
 
+  get eliminationGradeText() {
+    if (!this.completed) {
+      return 'TBD';
+    }
+
+    if (!this.isGraded || this.eliminated) {
+      return 'B';
+    }
+
+    return this.grade.toFixed(1);
+  }
+
   get isEmpty() {
     return !this.name;
   }
