@@ -1,9 +1,11 @@
 import ModuleArea from '../module_area/module_area.js';
+import { merge } from '../util.js';
 
 export default class Curriculum {
-  constructor(name, moduleAreas) {
+  constructor(name, moduleAreas, eliminationLimit) {
     this.name = name;
     this.moduleAreas = moduleAreas;
+    this.eliminationLimit = eliminationLimit;
   }
 
   get credits() {
@@ -11,6 +13,16 @@ export default class Curriculum {
 
     this.moduleAreas.forEach((moduleArea) => {
       credits += moduleArea.credits;
+    });
+
+    return credits;
+  }
+
+  get eliminatedCredits() {
+    let credits = 0;
+
+    this.eliminatedModules.forEach((module) => {
+      credits += module.credits;
     });
 
     return credits;
@@ -60,6 +72,20 @@ export default class Curriculum {
 
   get completedUngradedModuleAreas() {
     return this.completedModuleAreas.filter((moduleArea) => !moduleArea.isGraded);
+  }
+
+  get modules() {
+    const moduleArrays = this.moduleAreas.map((moduleArea) => moduleArea.modules);
+    return merge(moduleArrays);
+  }
+
+  get gradedModules() {
+    const moduleArrays = this.moduleAreas.map((moduleArea) => moduleArea.gradedModules);
+    return merge(moduleArrays);
+  }
+
+  get eliminatedModules() {
+    return this.gradedModules.filter((module) => module.eliminated);
   }
 
   get weightedCredits() {
@@ -187,6 +213,62 @@ export default class Curriculum {
     return curriculum;
   }
 
+  resetElimination() {
+    this.gradedModules.forEach((module) => {
+      const newModule = module;
+      newModule.eliminated = undefined;
+    });
+  }
+
+  applyOptimalElimination() {
+    const optimalElimination = this.optimalElimination();
+
+    // Copy results
+    for (let i = 0; i < this.gradedModules.length; i += 1) {
+      this.gradedModules[i].eliminated = optimalElimination.gradedModules[i].eliminated;
+    }
+  }
+
+  optimalElimination() {
+    const clone = this.clone();
+    clone.resetElimination();
+
+    return clone.optimalEliminationRec(0);
+  }
+
+  optimalEliminationRec(index) {
+    if (index >= this.gradedModules.length) {
+      // All modules have been tested
+      return this;
+    }
+
+    // Test with the next module not eliminated
+    const noCurriculum = this.clone();
+    noCurriculum.gradedModules[index].eliminated = true;
+    const noResult = noCurriculum.optimalEliminationRec(index + 1);
+
+    // Test with the next module eliminated
+    const yesCurriculum = this.clone();
+    yesCurriculum.gradedModules[index].eliminated = true;
+
+    // Only consider this option if the eliminated credits are still valid and there are still graded modules
+    if (
+      yesCurriculum.eliminatedCredits > yesCurriculum.eliminationLimit ||
+      !yesCurriculum.eliminationIsGraded
+    ) {
+      return noResult;
+    }
+
+    const yesResult = yesCurriculum.optimalEliminationRec(index + 1);
+
+    // Select the better option
+    if (noResult.eliminationGrade >= yesResult.eliminationGrade) {
+      return noResult;
+    }
+
+    return yesResult;
+  }
+
   addModuleArea(moduleArea) {
     this.moduleAreas.push(moduleArea);
   }
@@ -209,6 +291,7 @@ export default class Curriculum {
     return new Curriculum(
       this.name,
       this.moduleAreas.map((moduleArea) => moduleArea.clone()),
+      this.eliminationLimit,
     );
   }
 }

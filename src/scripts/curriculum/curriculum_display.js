@@ -129,22 +129,22 @@ export default class CurriculumDisplayHeader {
 
   updateView() {
     // Update title
-    this.title.innerHTML = this.curriculum.name;
+    this.title.innerText = this.curriculum.name;
 
     // Update credits
-    this.creditValue.innerHTML = this.curriculum.credits;
+    this.creditValue.innerText = this.curriculum.credits;
 
     // Update grade
     const { gradeText, eliminationGradeText } = this.curriculum;
-    this.gradeValue.innerHTML = eliminationGradeText;
+    this.gradeValue.innerText = eliminationGradeText;
 
     const bestGrade = this.curriculum.bestCase().eliminationGradeText;
     const worstGrade = this.curriculum.worstCase().eliminationGradeText;
 
     if (gradeText !== bestGrade || gradeText !== worstGrade) {
-      this.gradeLimits.innerHTML = ` (${bestGrade}-${worstGrade})`;
+      this.gradeLimits.innerText = ` (${bestGrade}-${worstGrade})`;
     } else {
-      this.gradeLimits.innerHTML = '';
+      this.gradeLimits.innerText = '';
     }
     if (gradeText !== eliminationGradeText) {
       this.eliminatedGradeValue.innerText = gradeText;
