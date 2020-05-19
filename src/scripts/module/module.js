@@ -35,7 +35,7 @@ export default class Module {
       return 'TBD';
     }
 
-    if (!this.isGraded || this.eliminated) {
+    if (!this.isGraded) {
       return 'B';
     }
 
