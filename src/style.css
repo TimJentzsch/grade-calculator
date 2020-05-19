@@ -1,8 +1,8 @@
 :root {
-  --light-primary: #6200ee;
-  --light-primary-variant: #3700b3;
-  --light-secondary: #03dac6;
-  --light-secondary-variant: #018786;
+  --light-primary: #3f51b5;
+  --light-primary-variant: #1a237e;
+  --light-secondary: #4fc3f7;
+  --light-secondary-variant: #039be5;
 
   --light-background: #ffffff;
   --light-surface: #ffffff;
@@ -13,6 +13,22 @@
   --light-on-background: #000000;
   --light-on-surface: #000000;
   --light-on-error: #ffffff;
+
+  --dark-primary: #9fa8da;
+  --dark-primary-variant: #3f51b5;
+  --dark-secondary: #81d4fa;
+
+  --dark-background: #121212;
+  --dark-surface: #121212;
+  --dark-elevation-background: rgba(255, 255, 255, 0.08);
+  --dark-error: #cf6679;
+
+  --dark-on-primary: #000000;
+  --dark-on-secondary: #000000;
+  --dark-on-background: #ffffff;
+  --dark-on-surface: #ffffff;
+  --dark-on-disabled: #cccccc;
+  --dark-on-error: #000000;
 
   --shadow-1: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
   --shadow-hover: 0 2px 4px 2px rgba(0, 0, 0, 0.2);
@@ -25,6 +41,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--light-background);
 }
 
 #body-container,
@@ -221,4 +238,59 @@ select:disabled {
 header {
   background-color: var(--light-primary);
   color: var(--light-on-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: var(--dark-background);
+    color: var(--dark-on-background);
+  }
+
+  header {
+    background-color: var(--dark-elevation-background);
+    color: var(--dark-primary);
+  }
+
+  button,
+  .upload-button,
+  .save-button {
+    box-shadow: none;
+    background-color: var(--dark-primary);
+    color: var(--dark-on-primary);
+  }
+
+  button:hover,
+  .upload-button:hover,
+  .save-button:hover {
+    box-shadow: none;
+    background-color: var(--dark-primary-variant);
+    color: var(--dark-on-primary);
+  }
+
+  .module-container,
+  .module-area-container,
+  .curriculum-container {
+    background-color: var(--dark-elevation-background);
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--dark-primary);
+  }
+
+  input {
+    background-color: var(--dark-surface);
+    color: var(--dark-on-surface)
+  }
+
+  input[type='text'],
+  input[type='number'],
+  select {
+    border: none;
+  }
+
+  .module-not-graded, .grade-limits {
+    color: var(--dark-on-disabled)
+  }
 }
