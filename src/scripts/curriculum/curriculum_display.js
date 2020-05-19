@@ -50,6 +50,12 @@ export default class CurriculumDisplayHeader {
     gradeContainer.classList.add('curriculum-grade-container', 'grade-container');
     this.gradeContainer = gradeContainer;
 
+    const eliminatedGradeValue = document.createElement('span');
+    eliminatedGradeValue.classList.add('module-area-eliminated-grade-value', 'grade', 'eliminated');
+    eliminatedGradeValue.title = 'The grade before elimination';
+    gradeContainer.appendChild(eliminatedGradeValue);
+    this.eliminatedGradeValue = eliminatedGradeValue;
+
     const gradeValue = document.createElement('span');
     gradeValue.classList.add('curriculum-grade-value', 'grade-value', 'grade');
     gradeValue.title = 'The current grade of this curriculum';
@@ -129,16 +135,21 @@ export default class CurriculumDisplayHeader {
     this.creditValue.innerHTML = this.curriculum.credits;
 
     // Update grade
-    const { gradeText } = this.curriculum;
-    this.gradeValue.innerHTML = gradeText;
+    const { gradeText, eliminationGradeText } = this.curriculum;
+    this.gradeValue.innerHTML = eliminationGradeText;
 
-    const bestGrade = this.curriculum.bestCase().gradeText;
-    const worstGrade = this.curriculum.worstCase().gradeText;
+    const bestGrade = this.curriculum.bestCase().eliminationGradeText;
+    const worstGrade = this.curriculum.worstCase().eliminationGradeText;
 
     if (gradeText !== bestGrade || gradeText !== worstGrade) {
       this.gradeLimits.innerHTML = ` (${bestGrade}-${worstGrade})`;
     } else {
       this.gradeLimits.innerHTML = '';
+    }
+    if (gradeText !== eliminationGradeText) {
+      this.eliminatedGradeValue.innerText = gradeText;
+    } else {
+      this.eliminatedGradeValue.innerText = '';
     }
   }
 }
