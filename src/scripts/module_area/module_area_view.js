@@ -93,24 +93,7 @@ export default class ModuleAreaView {
       return;
     }
 
-    // Update title
-    this.headerView.title.innerHTML = this.moduleArea.name;
-
-    // Update credits
-    this.headerView.creditValue.innerHTML = this.moduleArea.credits;
-
-    // Update grade
-    const { gradeText } = this.moduleArea;
-    this.headerView.gradeValue.innerHTML = gradeText;
-
-    const bestGrade = this.moduleArea.bestCase().gradeText;
-    const worstGrade = this.moduleArea.worstCase().gradeText;
-
-    if (bestGrade !== gradeText || worstGrade !== gradeText) {
-      this.headerView.gradeLimits.innerHTML = ` (${bestGrade}-${worstGrade})`;
-    } else {
-      this.headerView.gradeLimits.innerHTML = '';
-    }
+    this.headerView.updateView();
   }
 
   onModuleAdd() {

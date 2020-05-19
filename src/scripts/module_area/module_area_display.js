@@ -45,18 +45,27 @@ export default class ModuleAreaDisplayView {
   }
 
   createGrade() {
-    this.gradeContainer = document.createElement('div');
-    this.gradeContainer.classList.add('module-area-grade-container', 'grade-container');
+    const gradeContainer = document.createElement('div');
+    gradeContainer.classList.add('module-area-grade-container', 'grade-container');
+    this.gradeContainer = gradeContainer;
 
-    this.gradeValue = document.createElement('span');
-    this.gradeValue.classList.add('module-area-grade-value', 'grade-value', 'grade');
-    this.gradeValue.title = 'The current grade of this module area';
-    this.gradeContainer.appendChild(this.gradeValue);
+    const eliminatedGradeValue = document.createElement('span');
+    eliminatedGradeValue.classList.add('module-area-eliminated-grade-value', 'grade', 'eliminated');
+    eliminatedGradeValue.title = 'The grade before elimination';
+    gradeContainer.appendChild(eliminatedGradeValue);
+    this.eliminatedGradeValue = eliminatedGradeValue;
 
-    this.gradeLimits = document.createElement('span');
-    this.gradeLimits.classList.add('module-area-grade-limits', 'grade-limits', 'grade');
-    this.gradeLimits.title = 'The best/worst possible grade in this module area';
-    this.gradeContainer.appendChild(this.gradeLimits);
+    const gradeValue = document.createElement('span');
+    gradeValue.classList.add('module-area-grade-value', 'grade-value', 'grade');
+    gradeValue.title = 'The current grade of this module area';
+    gradeContainer.appendChild(gradeValue);
+    this.gradeValue = gradeValue;
+
+    const gradeLimits = document.createElement('span');
+    gradeLimits.classList.add('module-area-grade-limits', 'grade-limits', 'grade');
+    gradeLimits.title = 'The best/worst possible grade in this module area';
+    gradeContainer.appendChild(gradeLimits);
+    this.gradeLimits = gradeLimits;
 
     this.info.appendChild(this.gradeContainer);
   }
@@ -125,5 +134,31 @@ export default class ModuleAreaDisplayView {
     this.removeButton = removeButton;
 
     return removeButton;
+  }
+
+  updateView() {
+    // Update title
+    this.title.innerText = this.moduleArea.name;
+
+    // Update credits
+    this.creditValue.innerText = this.moduleArea.credits;
+
+    // Update grade
+    const { gradeText, eliminationGradeText } = this.moduleArea;
+    this.gradeValue.innerText = eliminationGradeText;
+
+    const bestGrade = this.moduleArea.bestCase().eliminationGradeText;
+    const worstGrade = this.moduleArea.worstCase().eliminationGradeText;
+
+    if (bestGrade !== gradeText || worstGrade !== gradeText) {
+      this.gradeLimits.innerText = `(${bestGrade}-${worstGrade})`;
+    } else {
+      this.gradeLimits.innerText = '';
+    }
+    if (gradeText !== eliminationGradeText) {
+      this.eliminatedGradeValue.innerText = gradeText;
+    } else {
+      this.eliminatedGradeValue.innerText = '';
+    }
   }
 }
