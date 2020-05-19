@@ -20,6 +20,10 @@ export default class Curriculum {
     return this.moduleAreas.filter((moduleArea) => moduleArea.gradePartiallyCompleted);
   }
 
+  get eliminationPartiallyCompletedModuleAreas() {
+    return this.moduleAreas.filter((moduleArea) => moduleArea.eliminationGradePartiallyCompleted);
+  }
+
   get completedModuleAreas() {
     return this.moduleAreas.filter((moduleArea) => moduleArea.gradeCompleted);
   }
@@ -28,8 +32,18 @@ export default class Curriculum {
     return this.moduleAreas.filter((moduleArea) => moduleArea.isGraded);
   }
 
+  get eliminationGradedModuleAreas() {
+    return this.moduleAreas.filter((moduleArea) => moduleArea.eliminationIsGraded);
+  }
+
   get partiallyCompletedGradedModuleAreas() {
     return this.partiallyCompletedModuleAreas.filter((moduleArea) => moduleArea.isGraded);
+  }
+
+  get eliminationPartiallyCompletedGradedModuleAreas() {
+    return this.eliminationPartiallyCompletedModuleAreas.filter(
+      (moduleArea) => moduleArea.eliminationIsGraded,
+    );
   }
 
   get completedGradedModuleAreas() {
@@ -62,8 +76,26 @@ export default class Curriculum {
     return weightedCredits;
   }
 
+  get eliminationWeightedCredits() {
+    if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
+      return undefined;
+    }
+
+    let weightedCredits = 0;
+
+    this.eliminationPartiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
+      weightedCredits += moduleArea.eliminationWeightedCredits;
+    });
+
+    return weightedCredits;
+  }
+
   get isGraded() {
     return this.gradedModuleAreas.length > 0;
+  }
+
+  get eliminationIsGraded() {
+    return this.eliminationGradedModuleAreas.length > 0;
   }
 
   get gradeCompleted() {
@@ -76,6 +108,13 @@ export default class Curriculum {
   get gradePartiallyCompleted() {
     if (this.isGraded) {
       return this.partiallyCompletedGradedModuleAreas.length > 0;
+    }
+    return this.partiallyCompletedModuleAreas.length > 0;
+  }
+
+  get eliminationGradePartiallyCompleted() {
+    if (this.eliminationIsGraded) {
+      return this.eliminationPartiallyCompletedGradedModuleAreas.length > 0;
     }
     return this.partiallyCompletedModuleAreas.length > 0;
   }
@@ -94,6 +133,20 @@ export default class Curriculum {
     return weightedGrade / this.weightedCredits;
   }
 
+  get eliminationGrade() {
+    if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
+      return undefined;
+    }
+
+    let weightedGrade = 0;
+
+    this.eliminationPartiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
+      weightedGrade += moduleArea.eliminationWeightedGrade;
+    });
+
+    return weightedGrade / this.eliminationWeightedCredits;
+  }
+
   get gradeText() {
     if (!this.gradePartiallyCompleted) {
       return 'TBD';
@@ -104,6 +157,18 @@ export default class Curriculum {
     }
 
     return this.grade.toFixed(2);
+  }
+
+  get eliminationGradeText() {
+    if (!this.eliminationGradePartiallyCompleted) {
+      return 'TBD';
+    }
+
+    if (!this.eliminationIsGraded) {
+      return 'B';
+    }
+
+    return this.eliminationGrade.toFixed(2);
   }
 
   toObject() {
