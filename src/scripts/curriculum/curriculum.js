@@ -220,55 +220,6 @@ export default class Curriculum {
     });
   }
 
-  applyOptimalElimination() {
-    const optimalElimination = this.optimalElimination();
-
-    // Copy results
-    for (let i = 0; i < this.gradedModules.length; i += 1) {
-      this.gradedModules[i].eliminated = optimalElimination.gradedModules[i].eliminated;
-    }
-  }
-
-  optimalElimination() {
-    const clone = this.clone();
-    clone.resetElimination();
-
-    return clone.optimalEliminationRec(0);
-  }
-
-  optimalEliminationRec(index) {
-    if (index >= this.gradedModules.length) {
-      // All modules have been tested
-      return this;
-    }
-
-    // Test with the next module not eliminated
-    const noCurriculum = this.clone();
-    noCurriculum.gradedModules[index].eliminated = true;
-    const noResult = noCurriculum.optimalEliminationRec(index + 1);
-
-    // Test with the next module eliminated
-    const yesCurriculum = this.clone();
-    yesCurriculum.gradedModules[index].eliminated = true;
-
-    // Only consider this option if the eliminated credits are still valid and there are still graded modules
-    if (
-      yesCurriculum.eliminatedCredits > yesCurriculum.eliminationLimit ||
-      !yesCurriculum.eliminationIsGraded
-    ) {
-      return noResult;
-    }
-
-    const yesResult = yesCurriculum.optimalEliminationRec(index + 1);
-
-    // Select the better option
-    if (noResult.eliminationGrade >= yesResult.eliminationGrade) {
-      return noResult;
-    }
-
-    return yesResult;
-  }
-
   addModuleArea(moduleArea) {
     this.moduleAreas.push(moduleArea);
   }
