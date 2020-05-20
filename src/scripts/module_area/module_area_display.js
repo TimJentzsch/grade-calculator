@@ -122,8 +122,8 @@ export default class ModuleAreaDisplayView {
     this.info = document.createElement('div');
     this.info.classList.add('info-container');
 
-    this.createCredits();
     this.createGrade();
+    this.createCredits();
 
     return this.info;
   }

@@ -120,8 +120,8 @@ export default class CurriculumDisplayHeader {
     info.classList.add('info-container');
     this.info = info;
 
-    info.appendChild(this.createCredits());
     info.appendChild(this.createGrade());
+    info.appendChild(this.createCredits());
 
     return info;
   }

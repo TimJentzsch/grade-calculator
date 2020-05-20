@@ -38,8 +38,8 @@ export default class ModuleDisplayView {
     this.info.classList.add('info-container');
 
     this.info.appendChild(this.createWeight());
-    this.info.appendChild(this.createCredits());
     this.info.appendChild(this.createGrade());
+    this.info.appendChild(this.createCredits());
 
     return this.info;
   }
