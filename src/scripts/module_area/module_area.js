@@ -44,7 +44,7 @@ export default class ModuleArea {
   }
 
   get gradedModules() {
-    return this.modules.filter((module) => module.isGraded);
+    return this.modules.filter((module) => module.isGraded && module.weight !== 0);
   }
 
   get eliminationGradedModules() {
@@ -52,7 +52,7 @@ export default class ModuleArea {
   }
 
   get completedGradedModules() {
-    return this.completedModules.filter((module) => module.isGraded);
+    return this.completedModules.filter((module) => module.isGraded && module.weight !== 0);
   }
 
   get eliminationCompletedGradedModules() {
@@ -60,11 +60,11 @@ export default class ModuleArea {
   }
 
   get ungradedModules() {
-    return this.modules.filter((module) => !module.isGraded);
+    return this.modules.filter((module) => !module.isGraded || module.weight === 0);
   }
 
   get completedUngradedModules() {
-    return this.completedModules.filter((module) => !module.isGraded);
+    return this.completedModules.filter((module) => !module.isGraded || module.weight === 0);
   }
 
   /** The eliminated modules. */

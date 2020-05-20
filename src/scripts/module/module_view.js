@@ -2,8 +2,9 @@ import ModuleDisplayView from './module_display.js';
 import ModuleEditView from './module_editor.js';
 
 export default class ModuleView {
-  constructor(module, onRemove, onEdit, onSave, onDiscard) {
+  constructor(module, onChange, onRemove, onEdit, onSave, onDiscard) {
     this.module = module;
+    this.onChange = onChange;
     this.onRemove = onRemove;
     this.onEdit = onEdit;
     this.onSave = onSave;
@@ -13,6 +14,7 @@ export default class ModuleView {
   createDisplay() {
     this.view = new ModuleDisplayView(
       this.module,
+      () => this.onChange(this),
       () => this.onRemove(this),
       () => this.onEdit(this),
     );
