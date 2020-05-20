@@ -113,10 +113,14 @@ body {
   grid-column: 5;
 }
 
-.info-container {
+.info-container, .module-area-title {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+}
+
+.elimination-container {
+  margin: 0 20px;
 }
 
 .header,

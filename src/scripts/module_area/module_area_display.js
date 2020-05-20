@@ -1,4 +1,15 @@
+// eslint-disable-next-line no-unused-vars
+import ModuleArea from './module_area.js';
+
 export default class ModuleAreaDisplayView {
+  /**
+   * Creates a new module area display view.
+   * @param {ModuleArea} moduleArea - The module area to display.
+   * @param {*} onChange - The event to execute on change.
+   * @param {*} onAdd - The event to execute on module addition.
+   * @param {*} onRemove - The event to execute on module removal.
+   * @param {*} onEdit - The event to execute on edits.
+   */
   constructor(moduleArea, onChange, onAdd, onRemove, onEdit) {
     this.moduleArea = moduleArea;
     this.onChange = onChange;
@@ -18,10 +29,49 @@ export default class ModuleAreaDisplayView {
   }
 
   createTitle() {
-    this.title = document.createElement('h3');
-    this.title.classList.add('module-area-title');
+    const title = document.createElement('div');
+    title.classList.add('module-area-title');
+    this.title = title;
 
-    return this.title;
+    title.appendChild(this.createName());
+    title.appendChild(this.createElimination());
+
+    return title;
+  }
+
+  createName() {
+    this.name = document.createElement('h3');
+    this.name.classList.add('module-area-name');
+
+    return this.name;
+  }
+
+  createElimination() {
+    const elimination = document.createElement('div');
+    elimination.classList.add('module-area-elimination', 'elimination-container');
+    this.elimination = elimination;
+
+    const eliminationDescription = document.createElement('span');
+    eliminationDescription.classList.add('elimination-description');
+    elimination.appendChild(eliminationDescription);
+    this.eliminationDescription = eliminationDescription;
+
+    const eliminationCount = document.createElement('span');
+    eliminationCount.classList.add('elimination-count');
+    elimination.appendChild(eliminationCount);
+    this.eliminationCount = eliminationCount;
+
+    const eliminationSeperator = document.createElement('span');
+    eliminationSeperator.classList.add('elimination-seperator');
+    elimination.appendChild(eliminationSeperator);
+    this.eliminationSeperator = eliminationSeperator;
+
+    const eliminationCPs = document.createElement('span');
+    eliminationCPs.classList.add('elimination-cps');
+    elimination.appendChild(eliminationCPs);
+    this.eliminationCPs = eliminationCPs;
+
+    return elimination;
   }
 
   createData() {
@@ -137,8 +187,8 @@ export default class ModuleAreaDisplayView {
   }
 
   updateView() {
-    // Update title
-    this.title.innerText = this.moduleArea.name;
+    // Update name
+    this.name.innerText = this.moduleArea.name;
 
     // Update credits
     this.creditValue.innerText = this.moduleArea.credits;
@@ -159,6 +209,24 @@ export default class ModuleAreaDisplayView {
       this.eliminatedGradeValue.innerText = gradeText;
     } else {
       this.eliminatedGradeValue.innerText = '';
+    }
+
+    // Update elimination
+    const { eliminationLimit, eliminationCPLimit } = this.moduleArea;
+
+    if (eliminationLimit === 0 || eliminationCPLimit === 0) {
+      // No elimination allowed
+      this.eliminationDescription.innerText = 'No elimination allowed';
+    } else {
+      // Elimination allowed
+      this.eliminationDescription.innerText =
+        eliminationLimit || eliminationCPLimit ? 'Max. eliminations: ' : '';
+      // Elimination count limit
+      this.eliminationCount.innerText = eliminationLimit || '';
+      // Seperator
+      this.eliminationSeperator.innerText = eliminationLimit && eliminationCPLimit ? ' / ' : '';
+      // Elimination CP limit
+      this.eliminationCPs.innerText = eliminationCPLimit ? `${eliminationCPLimit} CPs` : '';
     }
   }
 }
