@@ -113,7 +113,7 @@ body {
   grid-column: 5;
 }
 
-.info-container, .module-area-title {
+.info-container, .title-container {
   display: flex;
   flex-flow: row wrap;
   align-items: center;

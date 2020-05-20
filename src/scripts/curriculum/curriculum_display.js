@@ -27,11 +27,49 @@ export default class CurriculumDisplayHeader {
   }
 
   createTitle() {
-    const title = document.createElement('h2');
-    title.classList.add('curriculum-title');
+    const title = document.createElement('div');
+    title.classList.add('curriculum-title', 'title-container');
     this.title = title;
 
+    title.appendChild(this.createName());
+    title.appendChild(this.createElimination());
+
     return title;
+  }
+
+  createName() {
+    this.name = document.createElement('h3');
+    this.name.classList.add('curriculum-name');
+
+    return this.name;
+  }
+
+  createElimination() {
+    const elimination = document.createElement('div');
+    elimination.classList.add('curriculum-elimination', 'elimination-container');
+    this.elimination = elimination;
+
+    const eliminationDescription = document.createElement('span');
+    eliminationDescription.classList.add('elimination-description');
+    elimination.appendChild(eliminationDescription);
+    this.eliminationDescription = eliminationDescription;
+
+    const eliminationCount = document.createElement('span');
+    eliminationCount.classList.add('elimination-count');
+    elimination.appendChild(eliminationCount);
+    this.eliminationCount = eliminationCount;
+
+    const eliminationSeperator = document.createElement('span');
+    eliminationSeperator.classList.add('elimination-seperator');
+    elimination.appendChild(eliminationSeperator);
+    this.eliminationSeperator = eliminationSeperator;
+
+    const eliminationCPs = document.createElement('span');
+    eliminationCPs.classList.add('elimination-cps');
+    elimination.appendChild(eliminationCPs);
+    this.eliminationCPs = eliminationCPs;
+
+    return elimination;
   }
 
   createInfo() {
@@ -129,7 +167,7 @@ export default class CurriculumDisplayHeader {
 
   updateView() {
     // Update title
-    this.title.innerText = this.curriculum.name;
+    this.name.innerText = this.curriculum.name;
 
     // Update credits
     this.creditValue.innerText = this.curriculum.credits;
@@ -150,6 +188,24 @@ export default class CurriculumDisplayHeader {
       this.eliminatedGradeValue.innerText = gradeText;
     } else {
       this.eliminatedGradeValue.innerText = '';
+    }
+
+    // Update elimination
+    const { eliminationLimit, eliminationCPLimit } = this.curriculum;
+
+    if (eliminationLimit === 0 || eliminationCPLimit === 0) {
+      // No elimination allowed
+      this.eliminationDescription.innerText = 'No elimination allowed';
+    } else {
+      // Elimination allowed
+      this.eliminationDescription.innerText =
+        eliminationLimit || eliminationCPLimit ? 'Max. eliminations: ' : '';
+      // Elimination count limit
+      this.eliminationCount.innerText = eliminationLimit || '';
+      // Seperator
+      this.eliminationSeperator.innerText = eliminationLimit && eliminationCPLimit ? ' / ' : '';
+      // Elimination CP limit
+      this.eliminationCPs.innerText = eliminationCPLimit ? `${eliminationCPLimit} CPs` : '';
     }
   }
 }

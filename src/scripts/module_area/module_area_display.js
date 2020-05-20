@@ -30,7 +30,7 @@ export default class ModuleAreaDisplayView {
 
   createTitle() {
     const title = document.createElement('div');
-    title.classList.add('module-area-title');
+    title.classList.add('module-area-title', 'title-container');
     this.title = title;
 
     title.appendChild(this.createName());
