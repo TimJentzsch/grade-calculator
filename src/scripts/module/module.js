@@ -1,4 +1,14 @@
 export default class Module {
+  /**
+   * Creates a new module.
+   * @param {string} name - The name of the module.
+   * @param {number} credits - The number of credit points of this module.
+   * @param {number} grade - The grade of this module.
+   * @param {number} weight - The weighting of this module.
+   * @param {boolean} notGraded - The indicator if this module is not graded.
+   * @param {boolean} passed - The indicator if this module has been passed.
+   * @param {boolean} eliminated - The indicator if this module's grade has been eliminated.
+   */
   constructor(name, credits, grade, weight, notGraded, passed, canNotBeEliminated, eliminated) {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
@@ -8,10 +18,7 @@ export default class Module {
     this.weight = weight === undefined ? 1 : weight;
     this.isGraded = !notGraded;
     this.passed = passed;
-    this.canBeEliminated = !canNotBeEliminated;
-    if (!canNotBeEliminated) {
-      this.eliminated = eliminated;
-    }
+    this.eliminated = eliminated;
   }
 
   get hasGrade() {
