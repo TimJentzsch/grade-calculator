@@ -146,7 +146,6 @@ export default class ModuleEditView {
   }
 
   createIsEliminatedInput() {
-    console.debug('Creating Eliminated Input');
     // <label>Eliminated: <input type="checkbox" checked="true" /></label>
     const isEliminatedLabel = document.createElement('label');
     isEliminatedLabel.classList.add('label', 'is-eliminated-label', 'module-is-eliminated-label');

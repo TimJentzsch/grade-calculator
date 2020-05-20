@@ -141,6 +141,14 @@ body {
   margin: 0 20px;
 }
 
+.grade-selection {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.module-grade-selection {
+  margin: 0 7px;
+}
+
 .controls-container {
   margin-left: 5px;
 }
@@ -293,7 +301,7 @@ header {
     color: var(--dark-primary);
   }
 
-  input {
+  input, select {
     background-color: var(--dark-surface);
     color: var(--dark-on-surface)
   }

@@ -71,6 +71,7 @@ export default class ModuleAreaView {
       (module) =>
         new ModuleView(
           module,
+          (moduleView) => this.onModuleChange(moduleView),
           (moduleView) => this.onModuleRemove(moduleView),
           (moduleView) => this.onModuleEdit(moduleView),
           (moduleView) => this.onModuleSave(moduleView),
