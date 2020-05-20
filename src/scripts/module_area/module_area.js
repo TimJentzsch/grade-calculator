@@ -1,9 +1,18 @@
 import Module from '../module/module.js';
 
 export default class ModuleArea {
-  constructor(name, modules) {
+  /**
+   * Creates a new module area.
+   * @param {string} name - The name of the module area.
+   * @param {Module[]} modules - The modules available in this module area.
+   * @param {number} eliminationLimit - The maximum number of modules that can be eliminated.
+   * @param {number} eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
+   */
+  constructor(name, modules, eliminationLimit, eliminationCPLimit) {
     this.name = name;
     this.modules = modules;
+    this.eliminationLimit = eliminationLimit;
+    this.eliminationCPLimit = eliminationCPLimit;
   }
 
   get credits() {
@@ -12,6 +21,22 @@ export default class ModuleArea {
       credits += module.credits;
     });
     return credits;
+  }
+
+  /** The total amount of eliminated credit points. */
+  get eliminatedCredits() {
+    let credits = 0;
+
+    this.eliminatedModules.forEach((module) => {
+      credits += module.credits;
+    });
+
+    return credits;
+  }
+
+  /** The total number of eliminated modules. */
+  get eliminatedModuleCount() {
+    return this.eliminatedModules.length;
   }
 
   get completedModules() {
@@ -40,6 +65,11 @@ export default class ModuleArea {
 
   get completedUngradedModules() {
     return this.completedModules.filter((module) => !module.isGraded);
+  }
+
+  /** The eliminated modules. */
+  get eliminatedModules() {
+    return this.gradedModules.filter((module) => module.eliminated);
   }
 
   get weightedCredits() {
@@ -173,6 +203,8 @@ export default class ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.bestCase()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -180,6 +212,8 @@ export default class ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.worstCase()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -187,6 +221,8 @@ export default class ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.clone()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -194,6 +230,8 @@ export default class ModuleArea {
     return {
       name: this.name,
       modules: this.modules.map((module) => module.toObject()),
+      eliminationLimit: this.eliminationLimit,
+      eliminationCPLimit: this.eliminationCPLimit,
     };
   }
 
@@ -201,6 +239,8 @@ export default class ModuleArea {
     return new ModuleArea(
       obj.name,
       obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),
+      obj.eliminationLimit,
+      obj.eliminationCPLimit,
     );
   }
 }

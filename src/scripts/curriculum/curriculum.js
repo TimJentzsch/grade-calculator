@@ -2,10 +2,18 @@ import ModuleArea from '../module_area/module_area.js';
 import { merge } from '../util.js';
 
 export default class Curriculum {
-  constructor(name, moduleAreas, eliminationLimit) {
+  /**
+   * Creates a new curriculum.
+   * @param {string} name - The name of the curriculum.
+   * @param {ModuleArea[]} moduleAreas - The module areas available in the curriculum.
+   * @param {number} eliminationLimit - The maximum number of modules that can be eliminated.
+   * @param {number} eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
+   */
+  constructor(name, moduleAreas, eliminationLimit, eliminationCPLimit) {
     this.name = name;
     this.moduleAreas = moduleAreas;
     this.eliminationLimit = eliminationLimit;
+    this.eliminationCPLimit = eliminationCPLimit;
   }
 
   get credits() {
@@ -18,6 +26,7 @@ export default class Curriculum {
     return credits;
   }
 
+  /** Determines how many credits have been eliminated in total. */
   get eliminatedCredits() {
     let credits = 0;
 
@@ -26,6 +35,11 @@ export default class Curriculum {
     });
 
     return credits;
+  }
+
+  /** Determines how many modules have been eliminated in total. */
+  get eliminatedModuleCount() {
+    return this.eliminatedModules.length;
   }
 
   get partiallyCompletedModuleAreas() {
@@ -84,6 +98,7 @@ export default class Curriculum {
     return merge(moduleArrays);
   }
 
+  /** The eliminated modules. */
   get eliminatedModules() {
     return this.gradedModules.filter((module) => module.eliminated);
   }
@@ -201,6 +216,8 @@ export default class Curriculum {
     return {
       name: this.name,
       moduleAreas: this.moduleAreas.map((moduleArea) => moduleArea.toObject()),
+      eliminationLimit: this.eliminationLimit,
+      eliminationCPLimit: this.eliminationCPLimit,
     };
   }
 
@@ -208,6 +225,8 @@ export default class Curriculum {
     const curriculum = new Curriculum(
       obj.name,
       obj.moduleAreas.map((moduleAreaObj) => ModuleArea.fromObject(moduleAreaObj)),
+      obj.eliminationLimit,
+      obj.eliminationCPLimit,
     );
 
     return curriculum;
@@ -228,6 +247,8 @@ export default class Curriculum {
     return new Curriculum(
       this.name,
       this.moduleAreas.map((moduleArea) => moduleArea.bestCase()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -235,6 +256,8 @@ export default class Curriculum {
     return new Curriculum(
       this.name,
       this.moduleAreas.map((moduleArea) => moduleArea.worstCase()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -243,6 +266,7 @@ export default class Curriculum {
       this.name,
       this.moduleAreas.map((moduleArea) => moduleArea.clone()),
       this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 }
