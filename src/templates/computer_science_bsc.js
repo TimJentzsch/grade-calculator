@@ -29,13 +29,13 @@ const computerScienceBsc = {
       eliminationLimit: 1,
       modules: [
         {
-          name: 'Introduction to Computer Engineering (TI)',
-          credits: 6,
-        },
-        {
           name: 'System Programming (PSP)',
           credits: 8,
           notGraded: true,
+        },
+        {
+          name: 'Introduction to Computer Engineering (TI)',
+          credits: 6,
         },
         {
           name: 'Operating Systems and System Software (BuS)',
@@ -66,35 +66,6 @@ const computerScienceBsc = {
       ],
     },
     {
-      name: 'Other Achievements',
-      eliminationLimit: 1,
-      modules: [
-        {
-          name: 'Mentoring in Informatics',
-          credits: 1,
-          notGraded: true,
-        },
-        {
-          name: 'Software Project Lab (SPP)',
-          credits: 6,
-          weight: 0,
-        },
-        {
-          name: 'Proseminar Computer Science',
-          credits: 7,
-        },
-        {
-          name: 'Seminar Computer Science',
-          credits: 5,
-        },
-        {
-          name: 'Non-Technical Elective Module (NTW)',
-          credits: 4,
-          notGraded: true,
-        },
-      ],
-    },
-    {
       name: 'Mathematics',
       eliminationLimit: 1,
       modules: [
@@ -113,6 +84,35 @@ const computerScienceBsc = {
         {
           name: 'Introduction to Applied Stochastics (Stocha)',
           credits: 6,
+        },
+      ],
+    },
+    {
+      name: 'Other Achievements',
+      eliminationLimit: 1,
+      modules: [
+        {
+          name: 'Mentoring in Informatics',
+          credits: 1,
+          notGraded: true,
+        },
+        {
+          name: 'Non-Technical Elective Module (NTW)',
+          credits: 4,
+          notGraded: true,
+        },
+        {
+          name: 'Software Project Lab (SPP)',
+          credits: 6,
+          weight: 0,
+        },
+        {
+          name: 'Proseminar Computer Science',
+          credits: 7,
+        },
+        {
+          name: 'Seminar Computer Science',
+          credits: 5,
         },
       ],
     },
