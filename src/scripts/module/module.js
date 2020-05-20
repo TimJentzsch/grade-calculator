@@ -9,7 +9,7 @@ export default class Module {
    * @param {boolean} passed - The indicator if this module has been passed.
    * @param {boolean} eliminated - The indicator if this module's grade has been eliminated.
    */
-  constructor(name, credits, grade, weight, notGraded, passed, canNotBeEliminated, eliminated) {
+  constructor(name, credits, grade, weight, notGraded, passed, eliminated) {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
     if (!notGraded) {
@@ -97,7 +97,6 @@ export default class Module {
       this.weight,
       !this.isGraded,
       this.passed,
-      !this.canBeEliminated,
       this.eliminated,
     );
   }
@@ -110,7 +109,6 @@ export default class Module {
       weight: this.weight === 1 ? undefined : this.weight,
       notGraded: !this.isGraded || undefined,
       passed: this.passed || undefined,
-      canNotBeEliminated: !this.canBeEliminated || undefined,
       eliminated: this.eliminated || undefined,
     };
   }
