@@ -73,6 +73,10 @@ body {
   display: block;
 }
 
+.invalid-elimination {
+  color: var(--light-error);
+}
+
 .module-input-container {
   display: grid;
   grid-gap: 5px;
@@ -302,5 +306,9 @@ header {
 
   .module-not-graded, .grade-limits, .eliminated, .disabled {
     color: var(--dark-on-disabled)
+  }
+
+  .invalid-elimination {
+    color: var(--dark-error);
   }
 }

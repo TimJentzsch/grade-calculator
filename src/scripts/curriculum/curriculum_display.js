@@ -1,4 +1,13 @@
+// eslint-disable-next-line no-unused-vars
+import Curriculum from './curriculum.js';
+
 export default class CurriculumDisplayHeader {
+  /**
+   * Creates a new curriculum display header.
+   * @param {Curriculum} curriculum - The curriculum to display.
+   * @param {*} onAdd - The event to execute on module area addition.
+   * @param {*} onEdit - The event to execute on edits
+   */
   constructor(curriculum, onAdd, onEdit) {
     this.curriculum = curriculum;
     this.onAdd = onAdd;
@@ -38,7 +47,7 @@ export default class CurriculumDisplayHeader {
   }
 
   createName() {
-    this.name = document.createElement('h3');
+    this.name = document.createElement('h2');
     this.name.classList.add('curriculum-name');
 
     return this.name;
@@ -49,25 +58,59 @@ export default class CurriculumDisplayHeader {
     elimination.classList.add('curriculum-elimination', 'elimination-container');
     this.elimination = elimination;
 
+    // Description
     const eliminationDescription = document.createElement('span');
     eliminationDescription.classList.add('elimination-description');
     elimination.appendChild(eliminationDescription);
     this.eliminationDescription = eliminationDescription;
 
-    const eliminationCount = document.createElement('span');
-    eliminationCount.classList.add('elimination-count');
-    elimination.appendChild(eliminationCount);
-    this.eliminationCount = eliminationCount;
+    // Elimination CP
+    const eliminationCPContainer = document.createElement('span');
+    eliminationCPContainer.classList.add('elimination-cp-container');
+    elimination.appendChild(eliminationCPContainer);
+    this.eliminationCPContainer = eliminationCPContainer;
 
+    const eliminationCP = document.createElement('span');
+    eliminationCP.classList.add('elimination-cp');
+    eliminationCPContainer.appendChild(eliminationCP);
+    this.eliminationCP = eliminationCP;
+
+    const eliminationCPLimit = document.createElement('span');
+    eliminationCPLimit.classList.add('elimination-cp-limit');
+    eliminationCPContainer.appendChild(eliminationCPLimit);
+    this.eliminationCPLimit = eliminationCPLimit;
+
+    const eliminationCPDesc = document.createElement('span');
+    eliminationCPDesc.classList.add('elimination-cp-description');
+    eliminationCPContainer.appendChild(eliminationCPDesc);
+    this.eliminationCPDesc = eliminationCPDesc;
+
+    // Seperator
     const eliminationSeperator = document.createElement('span');
     eliminationSeperator.classList.add('elimination-seperator');
     elimination.appendChild(eliminationSeperator);
     this.eliminationSeperator = eliminationSeperator;
 
-    const eliminationCPs = document.createElement('span');
-    eliminationCPs.classList.add('elimination-cps');
-    elimination.appendChild(eliminationCPs);
-    this.eliminationCPs = eliminationCPs;
+    // Elimination count
+    const eliminationCountContainer = document.createElement('span');
+    eliminationCountContainer.classList.add('elimination-count-container');
+    elimination.appendChild(eliminationCountContainer);
+    this.eliminationCountContainer = eliminationCountContainer;
+
+    const eliminationCount = document.createElement('span');
+    eliminationCount.classList.add('elimination-count');
+    eliminationCountContainer.appendChild(eliminationCount);
+    this.eliminationCount = eliminationCount;
+
+    const eliminationCountLimit = document.createElement('span');
+    eliminationCountLimit.classList.add('elimination-count-limit');
+    eliminationCountContainer.appendChild(eliminationCountLimit);
+    this.eliminationCountLimit = eliminationCountLimit;
+
+    const eliminationCountDesc = document.createElement('span');
+    eliminationCountDesc.classList.add('elimination-count-description');
+    eliminationCountContainer.appendChild(eliminationCountDesc);
+    this.eliminationCountDesc = eliminationCountDesc;
 
     return elimination;
   }
@@ -191,21 +234,67 @@ export default class CurriculumDisplayHeader {
     }
 
     // Update elimination
-    const { eliminationLimit, eliminationCPLimit } = this.curriculum;
+    const {
+      eliminationLimit,
+      eliminationCPLimit,
+      eliminatedModuleCount,
+      eliminatedCredits,
+    } = this.curriculum;
 
     if (eliminationLimit === 0 || eliminationCPLimit === 0) {
       // No elimination allowed
       this.eliminationDescription.innerText = 'No elimination allowed';
+
+      if (eliminatedModuleCount > 0) {
+        this.eliminationDescription.classList.add('invalid-elimination');
+      } else {
+        this.eliminationDescription.classList.remove('invalid-elimination');
+      }
+
+      // Clear all items
+      this.eliminationCP.innerText = '';
+      this.eliminationCPLimit.innerText = '';
+      this.eliminationSeperator.innerText = '';
+      this.eliminationCount.innerText = '';
+      this.eliminationCountLimit.innerText = '';
     } else {
       // Elimination allowed
-      this.eliminationDescription.innerText =
-        eliminationLimit || eliminationCPLimit ? 'Max. eliminations: ' : '';
-      // Elimination count limit
-      this.eliminationCount.innerText = eliminationLimit || '';
+      this.eliminationDescription.innerText = 'Elimination: ';
+
+      // Elimination CP
+      this.eliminationCP.innerText = eliminatedCredits;
+      this.eliminationCPLimit.innerText = eliminationCPLimit ? `/${eliminationCPLimit}` : '';
+      this.eliminationCPDesc.innerText = ' CP';
+
+      // Check elimination CP constraints
+      if (
+        eliminationCPLimit !== undefined &&
+        eliminatedCredits &&
+        eliminatedCredits > eliminationCPLimit
+      ) {
+        this.eliminationCPContainer.classList.add('invalid-elimination');
+      } else {
+        this.eliminationCPContainer.classList.remove('invalid-elimination');
+      }
+
       // Seperator
-      this.eliminationSeperator.innerText = eliminationLimit && eliminationCPLimit ? ' / ' : '';
-      // Elimination CP limit
-      this.eliminationCPs.innerText = eliminationCPLimit ? `${eliminationCPLimit} CPs` : '';
+      this.eliminationSeperator.innerText = ', ';
+
+      // Elimination count
+      this.eliminationCount.innerText = eliminatedModuleCount;
+      this.eliminationCountLimit.innerText = eliminationLimit ? `/${eliminationLimit}` : '';
+      this.eliminationCountDesc.innerText = ' modules';
+
+      // Check elimination count constraints
+      if (
+        eliminationLimit !== undefined &&
+        eliminatedModuleCount &&
+        eliminatedModuleCount > eliminationLimit
+      ) {
+        this.eliminationCountContainer.classList.add('invalid-elimination');
+      } else {
+        this.eliminationCountContainer.classList.remove('invalid-elimination');
+      }
     }
   }
 }
