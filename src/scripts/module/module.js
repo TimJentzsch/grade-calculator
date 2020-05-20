@@ -1,5 +1,15 @@
 export default class Module {
-  constructor(name, credits, grade, weight, notGraded, passed) {
+  /**
+   * Creates a new module.
+   * @param {string} name - The name of the module.
+   * @param {number} credits - The number of credit points of this module.
+   * @param {number} grade - The grade of this module.
+   * @param {number} weight - The weighting of this module.
+   * @param {boolean} notGraded - The indicator if this module is not graded.
+   * @param {boolean} passed - The indicator if this module has been passed.
+   * @param {boolean} eliminated - The indicator if this module's grade has been eliminated.
+   */
+  constructor(name, credits, grade, weight, notGraded, passed, eliminated) {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
     if (!notGraded) {
@@ -8,10 +18,11 @@ export default class Module {
     this.weight = weight === undefined ? 1 : weight;
     this.isGraded = !notGraded;
     this.passed = passed;
+    this.eliminated = eliminated;
   }
 
   get hasGrade() {
-    return this.credits && this.isGraded && this.grade;
+    return this.credits && this.isGraded && this.grade && !this.eliminated;
   }
 
   get completed() {
@@ -32,6 +43,18 @@ export default class Module {
     }
 
     if (!this.isGraded) {
+      return 'B';
+    }
+
+    return this.grade.toFixed(1);
+  }
+
+  get eliminationGradeText() {
+    if (!this.completed) {
+      return 'TBD';
+    }
+
+    if (!this.isGraded || this.eliminated) {
       return 'B';
     }
 
@@ -74,17 +97,19 @@ export default class Module {
       this.weight,
       !this.isGraded,
       this.passed,
+      this.eliminated,
     );
   }
 
   toObject() {
     return {
-      name: this.name,
-      credits: this.credits,
-      grade: this.grade,
+      name: this.name || undefined,
+      credits: this.credits || undefined,
+      grade: this.grade || undefined,
       weight: this.weight === 1 ? undefined : this.weight,
-      notGraded: !this.isGraded ? true : undefined,
-      passed: this.passed,
+      notGraded: !this.isGraded || undefined,
+      passed: this.passed || undefined,
+      eliminated: this.eliminated || undefined,
     };
   }
 

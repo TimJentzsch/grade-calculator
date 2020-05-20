@@ -1,9 +1,18 @@
 import Module from '../module/module.js';
 
 export default class ModuleArea {
-  constructor(name, modules) {
+  /**
+   * Creates a new module area.
+   * @param {string} name - The name of the module area.
+   * @param {Module[]} modules - The modules available in this module area.
+   * @param {number} eliminationLimit - The maximum number of modules that can be eliminated.
+   * @param {number} eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
+   */
+  constructor(name, modules, eliminationLimit, eliminationCPLimit) {
     this.name = name;
     this.modules = modules;
+    this.eliminationLimit = eliminationLimit;
+    this.eliminationCPLimit = eliminationCPLimit;
   }
 
   get credits() {
@@ -14,6 +23,22 @@ export default class ModuleArea {
     return credits;
   }
 
+  /** The total amount of eliminated credit points. */
+  get eliminatedCredits() {
+    let credits = 0;
+
+    this.eliminatedModules.forEach((module) => {
+      credits += module.credits;
+    });
+
+    return credits;
+  }
+
+  /** The total number of eliminated modules. */
+  get eliminatedModuleCount() {
+    return this.eliminatedModules.length;
+  }
+
   get completedModules() {
     return this.modules.filter((module) => module.completed);
   }
@@ -22,8 +47,16 @@ export default class ModuleArea {
     return this.modules.filter((module) => module.isGraded);
   }
 
+  get eliminationGradedModules() {
+    return this.gradedModules.filter((module) => !module.eliminated);
+  }
+
   get completedGradedModules() {
     return this.completedModules.filter((module) => module.isGraded);
+  }
+
+  get eliminationCompletedGradedModules() {
+    return this.completedGradedModules.filter((module) => !module.eliminated);
   }
 
   get ungradedModules() {
@@ -32,6 +65,11 @@ export default class ModuleArea {
 
   get completedUngradedModules() {
     return this.completedModules.filter((module) => !module.isGraded);
+  }
+
+  /** The eliminated modules. */
+  get eliminatedModules() {
+    return this.gradedModules.filter((module) => module.eliminated);
   }
 
   get weightedCredits() {
@@ -48,8 +86,26 @@ export default class ModuleArea {
     return weightedCredits;
   }
 
+  get eliminationWeightedCredits() {
+    if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
+      return undefined;
+    }
+
+    let weightedCredits = 0;
+
+    this.eliminationCompletedGradedModules.forEach((module) => {
+      weightedCredits += module.weightedCredits;
+    });
+
+    return weightedCredits;
+  }
+
   get isGraded() {
     return this.gradedModules.length > 0;
+  }
+
+  get eliminationIsGraded() {
+    return this.eliminationGradedModules.length > 0;
   }
 
   get gradeCompleted() {
@@ -66,6 +122,13 @@ export default class ModuleArea {
     return this.completedModules.length > 0;
   }
 
+  get eliminationGradePartiallyCompleted() {
+    if (this.eliminationIsGraded) {
+      return this.eliminationCompletedGradedModules.length > 0;
+    }
+    return this.completedModules.length > 0;
+  }
+
   get grade() {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
@@ -75,6 +138,17 @@ export default class ModuleArea {
       weightedGrade += module.weightedGrade;
     });
     return weightedGrade / this.weightedCredits;
+  }
+
+  get eliminationGrade() {
+    if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
+      return undefined;
+    }
+    let weightedGrade = 0;
+    this.eliminationCompletedGradedModules.forEach((module) => {
+      weightedGrade += module.weightedGrade;
+    });
+    return weightedGrade / this.eliminationWeightedCredits;
   }
 
   get gradeText() {
@@ -89,12 +163,32 @@ export default class ModuleArea {
     return this.grade.toFixed(2);
   }
 
+  get eliminationGradeText() {
+    if (!this.eliminationGradePartiallyCompleted) {
+      return 'TBD';
+    }
+
+    if (!this.eliminationIsGraded) {
+      return 'B';
+    }
+
+    return this.eliminationGrade.toFixed(2);
+  }
+
   get weightedGrade() {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
 
     return this.grade * this.weightedCredits;
+  }
+
+  get eliminationWeightedGrade() {
+    if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
+      return undefined;
+    }
+
+    return this.eliminationGrade * this.eliminationWeightedCredits;
   }
 
   get isEmpty() {
@@ -109,6 +203,8 @@ export default class ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.bestCase()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -116,6 +212,8 @@ export default class ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.worstCase()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -123,6 +221,8 @@ export default class ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.clone()),
+      this.eliminationLimit,
+      this.eliminationCPLimit,
     );
   }
 
@@ -130,6 +230,8 @@ export default class ModuleArea {
     return {
       name: this.name,
       modules: this.modules.map((module) => module.toObject()),
+      eliminationLimit: this.eliminationLimit,
+      eliminationCPLimit: this.eliminationCPLimit,
     };
   }
 
@@ -137,6 +239,8 @@ export default class ModuleArea {
     return new ModuleArea(
       obj.name,
       obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),
+      obj.eliminationLimit,
+      obj.eliminationCPLimit,
     );
   }
 }

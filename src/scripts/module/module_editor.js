@@ -26,7 +26,10 @@ export default class ModuleEditView {
     inputContainer.appendChild(this.createIsGradedInput());
     inputContainer.appendChild(this.createHasCompletedInput());
     inputContainer.appendChild(this.createGradeSelection());
+    inputContainer.appendChild(this.createIsEliminatedInput());
     inputContainer.appendChild(this.createWeightInput());
+
+    this.updateGradeStatus();
 
     this.inputContainer = inputContainer;
 
@@ -114,7 +117,7 @@ export default class ModuleEditView {
     isGradedInput.name = 'is-graded-input';
     isGradedInput.type = 'checkbox';
     isGradedInput.checked = this.module.isGraded;
-    isGradedInput.addEventListener('click', () => this.updateGradeSelectorStatus());
+    isGradedInput.addEventListener('click', () => this.updateGradeStatus());
 
     this.isGradedInput = isGradedInput;
     isGradedLabel.appendChild(isGradedInput);
@@ -134,7 +137,7 @@ export default class ModuleEditView {
     hasCompletedInput.name = 'has-completed-input';
     hasCompletedInput.type = 'checkbox';
     hasCompletedInput.checked = this.module.completed;
-    hasCompletedInput.addEventListener('click', () => this.updateGradeSelectorStatus());
+    hasCompletedInput.addEventListener('click', () => this.updateGradeStatus());
 
     this.hasCompletedInput = hasCompletedInput;
     hasCompletedLabel.appendChild(hasCompletedInput);
@@ -142,13 +145,39 @@ export default class ModuleEditView {
     return hasCompletedLabel;
   }
 
-  updateGradeSelectorStatus() {
-    const { gradeSelection } = this;
+  createIsEliminatedInput() {
+    console.debug('Creating Eliminated Input');
+    // <label>Eliminated: <input type="checkbox" checked="true" /></label>
+    const isEliminatedLabel = document.createElement('label');
+    isEliminatedLabel.classList.add('label', 'is-eliminated-label', 'module-is-eliminated-label');
+    isEliminatedLabel.appendChild(document.createTextNode('Eliminated: '));
+    this.isEliminated = isEliminatedLabel;
+
+    const isEliminatedInput = document.createElement('input');
+    isEliminatedInput.classList.add('checkbox', 'is-eliminated-input');
+    isEliminatedInput.name = 'is-eliminated-input';
+    isEliminatedInput.type = 'checkbox';
+    isEliminatedInput.checked = this.module.eliminated;
+
+    this.isEliminatedInput = isEliminatedInput;
+    isEliminatedLabel.appendChild(isEliminatedInput);
+
+    return isEliminatedLabel;
+  }
+
+  updateGradeStatus() {
+    const { gradeSelectionLabel, gradeSelection, isEliminated, isEliminatedInput } = this;
 
     if (this.isGradedInput.checked && this.hasCompletedInput.checked) {
       gradeSelection.disabled = false;
+      isEliminatedInput.disabled = false;
+      gradeSelectionLabel.classList.remove('disabled');
+      isEliminated.classList.remove('disabled');
     } else {
       gradeSelection.disabled = true;
+      isEliminatedInput.disabled = true;
+      gradeSelectionLabel.classList.add('disabled');
+      isEliminated.classList.add('disabled');
     }
   }
 
@@ -167,7 +196,6 @@ export default class ModuleEditView {
     gradeSelection.name = 'grade-selection';
 
     this.gradeSelection = gradeSelection;
-    this.updateGradeSelectorStatus();
     gradeSelectionLabel.appendChild(gradeSelection);
 
     const option10 = document.createElement('option');
@@ -282,13 +310,16 @@ export default class ModuleEditView {
     if (completed) {
       if (module.isGraded) {
         module.grade = Number(this.gradeSelection.value);
+        module.eliminated = this.isEliminatedInput.checked;
         module.passed = undefined;
       } else {
         module.grade = undefined;
+        module.eliminated = undefined;
         module.passed = true;
       }
     } else {
       module.passed = undefined;
+      module.eliminated = undefined;
       module.grade = undefined;
     }
 

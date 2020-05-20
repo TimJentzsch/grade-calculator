@@ -1,8 +1,10 @@
 const computerScienceBsc = {
   name: 'RWTH Computer Science B.Sc.',
+  eliminationCPLimit: 30,
   moduleAreas: [
     {
       name: 'Applied Computer Science',
+      eliminationLimit: 1,
       modules: [
         {
           name: 'Programming (Progra)',
@@ -24,6 +26,7 @@ const computerScienceBsc = {
     },
     {
       name: 'Computer Engineering',
+      eliminationLimit: 1,
       modules: [
         {
           name: 'Introduction to Computer Engineering (TI)',
@@ -46,6 +49,7 @@ const computerScienceBsc = {
     },
     {
       name: 'Theoretical Computer Science',
+      eliminationLimit: 1,
       modules: [
         {
           name: 'Formal Systems, Automata, Processes (FoSAP)',
@@ -63,6 +67,7 @@ const computerScienceBsc = {
     },
     {
       name: 'Other Achievements',
+      eliminationLimit: 1,
       modules: [
         {
           name: 'Mentoring in Informatics',
@@ -91,6 +96,7 @@ const computerScienceBsc = {
     },
     {
       name: 'Mathematics',
+      eliminationLimit: 1,
       modules: [
         {
           name: 'Discrete Structures (DS)',
@@ -112,6 +118,7 @@ const computerScienceBsc = {
     },
     {
       name: 'Elective Modules',
+      eliminationLimit: 1,
       modules: [
         {
           name: 'Elective Module',
@@ -133,6 +140,7 @@ const computerScienceBsc = {
     },
     {
       name: 'Application Subject',
+      eliminationLimit: 1,
       modules: [
         {
           name: 'Application Module',
@@ -142,6 +150,7 @@ const computerScienceBsc = {
     },
     {
       name: 'Bachelor Thesis',
+      eliminationLimit: 0,
       modules: [
         {
           name: 'Bachelor Thesis (BT)',

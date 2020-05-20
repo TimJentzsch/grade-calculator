@@ -73,6 +73,10 @@ body {
   display: block;
 }
 
+.invalid-elimination {
+  color: var(--light-error);
+}
+
 .module-input-container {
   display: grid;
   grid-gap: 5px;
@@ -80,12 +84,12 @@ body {
 
 .module-name-label {
   grid-row: 1;
-  grid-column: 1 / span 3;
+  grid-column: 1 / span 4;
 }
 
 .module-credits-label {
   grid-row: 1;
-  grid-column: 4;
+  grid-column: 5;
 }
 
 .module-is-graded-label {
@@ -103,15 +107,24 @@ body {
   grid-column: 3;
 }
 
-.module-weight-label {
+.module-is-eliminated-label {
   grid-row: 2;
   grid-column: 4;
 }
 
-.info-container {
+.module-weight-label {
+  grid-row: 2;
+  grid-column: 5;
+}
+
+.info-container, .title-container {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+}
+
+.elimination-container {
+  margin: 0 20px;
 }
 
 .header,
@@ -132,10 +145,6 @@ body {
   margin-left: 5px;
 }
 
-.module-not-graded {
-  color: gray;
-}
-
 .grade {
   font-family: 'Courier New', Courier, monospace;
   display: inline-block;
@@ -143,10 +152,15 @@ body {
 
 .grade-value {
   font-weight: bold;
+  margin: 0 5px;
 }
 
-.grade-limits {
+.grade-limits, .module-not-graded, .eliminated, .disabled {
   color: gray;
+}
+
+.eliminated {
+  text-decoration: line-through;
 }
 
 .module-grade-value {
@@ -290,7 +304,11 @@ header {
     border: none;
   }
 
-  .module-not-graded, .grade-limits {
+  .module-not-graded, .grade-limits, .eliminated, .disabled {
     color: var(--dark-on-disabled)
+  }
+
+  .invalid-elimination {
+    color: var(--dark-error);
   }
 }
