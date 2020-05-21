@@ -117,10 +117,14 @@ body {
   grid-column: 5;
 }
 
-.info-container, .title-container {
+.info-container, .title-container, .branding-container {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+}
+
+#icon {
+  margin-right: 10px;;
 }
 
 .elimination-container {
