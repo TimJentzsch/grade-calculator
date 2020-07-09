@@ -103,6 +103,7 @@ export default class ModuleAreaView {
 
     const newModuleView = new ModuleView(
       newModule,
+      () => this.onModuleChange(),
       (moduleView) => this.onModuleRemove(moduleView),
       (moduleView) => this.onModuleEdit(moduleView),
       (moduleView) => this.onModuleSave(moduleView),
