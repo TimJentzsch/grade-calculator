@@ -1,7 +1,18 @@
 import ModuleDisplayView from './module_display.js';
 import ModuleEditView from './module_editor.js';
+// eslint-disable-next-line no-unused-vars
+import Module from './module.js';
 
 export default class ModuleView {
+  /**
+   * Creates a new module view.
+   * @param {Module} module
+   * @param {*} onChange
+   * @param {*} onRemove
+   * @param {*} onEdit
+   * @param {*} onSave
+   * @param {*} onDiscard
+   */
   constructor(module, onChange, onRemove, onEdit, onSave, onDiscard) {
     this.module = module;
     this.onChange = onChange;
