@@ -5,9 +5,9 @@ import Curriculum from './curriculum/curriculum.js';
  * Calculates the best possible elimination for the given curriculum.
  * @param {Curriculum} curriculum The curriculum to calculate the elimination for.
  * @param {number} index The index of the current module.
- * @returns {Curriculum} The best elimination of the curriculum.
+ * @returns {Promise<Curriculum>} The best elimination of the curriculum.
  */
-function calculateBestElimination(curriculum, index) {
+async function calculateBestElimination(curriculum, index) {
   const module = curriculum.modules[index];
 
   if (!module) {
@@ -33,9 +33,9 @@ function calculateBestElimination(curriculum, index) {
   }
 
   // Calculate the best outcome WITH the elimination
-  const curriculumElimBest = calculateBestElimination(curriculumElim, index + 1);
+  const curriculumElimBest = await calculateBestElimination(curriculumElim, index + 1);
 
-  if (curriculumElimBest.eliminationGrade < curriculumNoElimBest.eliminationGrade) {
+  if (curriculumElimBest.eliminationGrade < (await curriculumNoElimBest).eliminationGrade) {
     // If the elimination gives a better result, use it
     return curriculumElimBest;
   }
@@ -47,11 +47,11 @@ function calculateBestElimination(curriculum, index) {
 /**
  * Calculates the best possible elimination for the given curriculum.
  * @param {Curriculum} curriculum The curriculum to calculate the elimination for.
- * @returns {Curriculum} The best elimination of the curriculum.
+ * @returns {Promise<Curriculum>} The best elimination of the curriculum.
  */
-export default function getBestElimination(curriculum) {
+export default async function getBestElimination(curriculum) {
   const clearCurriculum = curriculum.clone();
   clearCurriculum.resetElimination();
 
-  return calculateBestElimination(curriculum, 0);
+  return calculateBestElimination(clearCurriculum, 0);
 }
