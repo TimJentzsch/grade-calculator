@@ -195,6 +195,18 @@ export default class ModuleArea {
     return !this.name && this.modules.length === 0;
   }
 
+  get isValidElimination() {
+    const validCount = this.eliminationLimit
+      ? this.eliminatedModuleCount <= this.eliminationLimit
+      : true;
+
+    const validCP = this.eliminationCPLimit
+      ? this.eliminatedCredits <= this.eliminationCPLimit
+      : true;
+
+    return validCount && validCP;
+  }
+
   addModule(module) {
     this.modules.push(module);
   }
