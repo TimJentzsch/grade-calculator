@@ -213,6 +213,13 @@ export default class Curriculum {
   }
 
   get isValidElimination() {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const moduleArea of this.moduleAreas) {
+      if (!moduleArea.isValidElimination) {
+        return false;
+      }
+    }
+
     const validCount = this.eliminationLimit
       ? this.eliminatedModuleCount <= this.eliminationLimit
       : true;
@@ -224,13 +231,6 @@ export default class Curriculum {
       : true;
 
     if (!validCP) return false;
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const moduleArea of this.moduleAreas) {
-      if (!moduleArea.isValidElimination) {
-        return false;
-      }
-    }
 
     return true;
   }
