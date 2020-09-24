@@ -21,8 +21,9 @@ function displayCurriculum(curriculum) {
   return curriculumView;
 }
 
-function autoElimination() {
-  const bestElim = getBestElimination(curriculumView.curriculum);
+async function autoElimination() {
+  // Calculate the best elimination
+  const bestElim = await getBestElimination(curriculumView.curriculum);
 
   displayCurriculum(bestElim);
 }
