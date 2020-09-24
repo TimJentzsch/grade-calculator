@@ -212,6 +212,29 @@ export default class Curriculum {
     return this.eliminationGrade.toFixed(2);
   }
 
+  get isValidElimination() {
+    const validCount = this.eliminationLimit
+      ? this.eliminatedModuleCount <= this.eliminationLimit
+      : true;
+
+    if (!validCount) return false;
+
+    const validCP = this.eliminationCPLimit
+      ? this.eliminatedCredits <= this.eliminationCPLimit
+      : true;
+
+    if (!validCP) return false;
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const moduleArea of this.moduleAreas) {
+      if (!moduleArea.isValidElimination) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   toObject() {
     return {
       name: this.name,
