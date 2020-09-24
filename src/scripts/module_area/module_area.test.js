@@ -393,6 +393,55 @@ describe('ModuleArea', () => {
         expect(moduleArea.isEmpty).toBeTruthy();
       });
     });
+    // eliminatedModuleCount
+    describe('eliminatedModuleCount', () => {
+      test('for one eliminated module', () => {
+        const moduleArea = new ModuleArea(
+          '',
+          [new Module('Test module 1', 8, 2, 1, false, true, true)],
+          0,
+          30,
+        );
+
+        expect(moduleArea.eliminatedModuleCount).toBe(1);
+      });
+    });
+    // hasValidEliminationCount
+    describe('hasValidEliminationCount', () => {
+      test('for too many eliminated modules', () => {
+        const moduleArea = new ModuleArea(
+          '',
+          [new Module('Test module 1', 8, 2, 1, false, true, true)],
+          0,
+          30,
+        );
+
+        expect(moduleArea.hasValidEliminationCount).toBeFalsy();
+      });
+    });
+    // isValidElimination
+    describe('isValidElimination', () => {
+      test('for too many eliminated modules', () => {
+        const moduleArea = new ModuleArea(
+          '',
+          [new Module('Test module 1', 8, 2, 1, false, true, true)],
+          0,
+          30,
+        );
+
+        expect(moduleArea.isValidElimination).toBeFalsy();
+      });
+      test('for too many eliminated credits', () => {
+        const moduleArea = new ModuleArea(
+          '',
+          [new Module('Test module 1', 8, 2, 1, false, true, true)],
+          5,
+          6,
+        );
+
+        expect(moduleArea.isValidElimination).toBeFalsy();
+      });
+    });
   });
   // --- Functions ---
   describe('functions', () => {
@@ -422,6 +471,19 @@ describe('ModuleArea', () => {
         new Module('Test module 3', 3, undefined, undefined, true, true),
       ]);
       expect(moduleArea.clone()).toEqual(moduleArea);
+    });
+    test('change resistence', () => {
+      const testModule = new Module('Test module 1', 6, undefined, 1.5, undefined, true, true);
+      const moduleArea = new ModuleArea('Test module area', [
+        testModule,
+        new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
+        new Module('Test module 3', 3, undefined, undefined, true, true),
+      ]);
+
+      const clone = moduleArea.clone();
+      testModule.eliminated = false;
+
+      expect(clone.modules[0].eliminated).toBeTruthy();
     });
   });
   // Best case
