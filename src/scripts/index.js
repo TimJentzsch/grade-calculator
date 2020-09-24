@@ -1,7 +1,9 @@
 import Curriculum from './curriculum/curriculum.js';
 import CurriculumView from './curriculum/curriculum_view.js';
 import TemplateView from '../templates/template_view.js';
+import getBestElimination from './elimination.js';
 
+/** @type {CurriculumView} */
 let curriculumView;
 
 function displayNewCurriculum() {
@@ -17,6 +19,12 @@ function displayCurriculum(curriculum) {
   curriculumView.createDisplay();
 
   return curriculumView;
+}
+
+function autoElimination() {
+  const bestElim = getBestElimination(curriculumView.curriculum);
+
+  displayCurriculum(bestElim);
 }
 
 function loadConfig(config) {
@@ -73,4 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const newCurriculumButton = document.getElementById('new-curriculum-button');
   newCurriculumButton.addEventListener('click', () => displayNewCurriculum());
+
+  const autoElimButton = document.getElementById('auto-elimination-button');
+  autoElimButton.addEventListener('click', () => autoElimination());
 });
