@@ -8,27 +8,34 @@ import Curriculum from './curriculum/curriculum.js';
  * @returns {Curriculum} The best elimination of the curriculum.
  */
 function calculateBestElimination(curriculum, index) {
-  const curriculumElim = curriculum.clone();
-  const moduleElim = curriculum.modules[index];
+  const module = curriculum.modules[index];
 
-  if (!moduleElim) {
+  if (!module) {
     // We reached the end
     return curriculum;
   }
 
-  moduleElim.eliminated = true;
-
-  // Calculate the best outcome without the elimination
+  // Calculate the best outcome WITHOUT the elimination
   const curriculumNoElimBest = calculateBestElimination(curriculum, index + 1);
 
+  if (!module.completed || !module.hasGrade) {
+    // If the module has no grade yet we don't need to eliminate it
+    return curriculumNoElimBest;
+  }
+
+  const curriculumElim = curriculum.clone();
+  // Eliminate the module
+  curriculumElim.modules[index].eliminated = true;
+
+  // Check if the module can still be eliminated
   if (!curriculumElim.isValidElimination) {
     return curriculumNoElimBest;
   }
 
-  // Calculate the best outcome with the elimination
+  // Calculate the best outcome WITH the elimination
   const curriculumElimBest = calculateBestElimination(curriculumElim, index + 1);
 
-  if (curriculumElimBest.grade < curriculumNoElimBest.grade) {
+  if (curriculumElimBest.eliminationGrade < curriculumNoElimBest.eliminationGrade) {
     // If the elimination gives a better result, use it
     return curriculumElimBest;
   }

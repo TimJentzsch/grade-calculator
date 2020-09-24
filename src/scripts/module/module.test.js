@@ -137,6 +137,14 @@ describe('Module', () => {
         const module = new Module('Test module', 5, undefined, 3, true, true);
         expect(module.clone()).toEqual(module);
       });
+      test('equality for graded module', () => {
+        const module = new Module('Test module', 5, 2.3, 3, undefined, undefined, true);
+        const clone = module.clone();
+
+        clone.eliminated = undefined;
+        expect(module.eliminated).toBeTruthy();
+        expect(clone.eliminated).toBeFalsy();
+      });
     });
     // Best case
     describe('bestCase', () => {
