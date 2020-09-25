@@ -108,7 +108,7 @@ const computerScienceBsc = {
         },
         {
           name: 'Proseminar Computer Science',
-          credits: 7,
+          credits: 3,
         },
         {
           name: 'Seminar Computer Science',
@@ -144,7 +144,7 @@ const computerScienceBsc = {
       modules: [
         {
           name: 'Application Module',
-          credits: 18,
+          credits: 22,
         },
       ],
     },
