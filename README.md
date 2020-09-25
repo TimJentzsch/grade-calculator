@@ -1,4 +1,4 @@
-# Grade Calculator [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FTimJentzsch%2Fgrade-calculator%2Fbadge&style=flat)](https://actions-badge.atrox.dev/TimJentzsch/grade-calculator/goto)
+# Grade Calculator [![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2FTimJentzsch%2Fgrade-calculator%2Fbadge&style=flat)](https://actions-badge.atrox.dev/TimJentzsch/grade-calculator/goto) [![Coverage](https://img.shields.io/codecov/c/github/TimJentzsch/grade-calculator)](https://codecov.io/gh/TimJentzsch/grade-calculator)
 
 A tool to determine the grade of your curriculum.
 
