@@ -2,6 +2,7 @@ import Curriculum from './curriculum/curriculum.js';
 import CurriculumView from './curriculum/curriculum_view.js';
 import TemplateView from '../templates/template_view.js';
 import getBestElimination from './elimination.js';
+import computerScienceBsc from '../templates/computer_science_bsc.js';
 
 /** @type {CurriculumView} */
 let curriculumView;
@@ -72,7 +73,7 @@ function loadTemplates() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadTemplates();
-  displayNewCurriculum();
+  loadConfig(computerScienceBsc);
 
   const loadConfigButton = document.getElementById('load-config');
   loadConfigButton.addEventListener('change', (event) => loadConfiguration(event));
