@@ -13,6 +13,7 @@ const config = {
 			$stores: 'src/stores',
 			$types: 'src/types',
 			$templates: 'src/templates',
+			$utils: 'src/utils',
 		},
 	},
 };
