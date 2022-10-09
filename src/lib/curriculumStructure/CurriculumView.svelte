@@ -5,7 +5,7 @@
 	import EliminationInfo from './EliminationInfo.svelte';
 	import ModuleAreaView from './ModuleAreaView.svelte';
 
-	/** The module area to display. */
+	/** The curriculum to display. */
 	export let curriculum: Curriculum;
 
 	$: eliminationCounts = curriculumEliminationCounts(curriculum);
