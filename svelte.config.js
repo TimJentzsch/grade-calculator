@@ -11,9 +11,9 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			$stores: 'src/stores',
-			$types: 'src/types'
-		}
-	}
+			$types: 'src/types',
+		},
+	},
 };
 
 export default config;

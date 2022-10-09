@@ -1,28 +1,27 @@
-
 :root {
-  --primary-color: #9fa8da;
-  --background-color: #121212;
-  --surface-color: rgba(255, 255, 255, 7%);
-  --text-color: rgb(228, 228, 228);
-  --muted-color: rgb(126, 126, 126);
+	--primary-color: #9fa8da;
+	--background-color: #121212;
+	--surface-color: rgba(255, 255, 255, 7%);
+	--text-color: rgb(228, 228, 228);
+	--muted-color: rgb(126, 126, 126);
 
-  --failure-color: rgb(255, 122, 122);
-  --success-color: rgb(118, 224, 118);
+	--failure-color: rgb(255, 122, 122);
+	--success-color: rgb(118, 224, 118);
 
-  --focus-outline: solid rgb(109, 255, 255) 3px;
+	--focus-outline: solid rgb(109, 255, 255) 3px;
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
-    --primary-color: #3f51b5;
-    --background-color: white;
-    --surface-color: rgba(0, 0, 0, 7%);
-    --text-color: rgb(24, 24, 24);
-    --muted-color: rgb(126, 126, 126);
+	:root {
+		--primary-color: #3f51b5;
+		--background-color: white;
+		--surface-color: rgba(0, 0, 0, 7%);
+		--text-color: rgb(24, 24, 24);
+		--muted-color: rgb(126, 126, 126);
 
-    --error-color: rgb(219, 42, 42);
-    --success-color: rgb(33, 182, 33);
+		--error-color: rgb(219, 42, 42);
+		--success-color: rgb(33, 182, 33);
 
-    --lightness: 50%;
-  }
+		--lightness: 50%;
+	}
 }

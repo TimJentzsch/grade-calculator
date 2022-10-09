@@ -1,40 +1,43 @@
 * {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h1, h2, h3 {
-  margin: 0;
+h1,
+h2,
+h3 {
+	margin: 0;
 }
 
 a {
-  color: var(--primary-color);
-  text-decoration: none;
+	color: var(--primary-color);
+	text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 
 /* Default styles */
 body {
-  background-color: var(--background-color);
-  color: var(--text-color);
+	background-color: var(--background-color);
+	color: var(--text-color);
 }
 
 /* Main page layout, push footer to bottom */
-html, body {
-  height: 100%;
-  padding: 0;
-  margin: 0;
+html,
+body {
+	height: 100%;
+	padding: 0;
+	margin: 0;
 }
 
 body > div {
-  height: 100%;
-  display: flex;
-  flex-flow: column;
+	height: 100%;
+	display: flex;
+	flex-flow: column;
 }
 
 /* Accessibility: Style the outline of focused elements */
 *:focus {
-  outline: var(--focus-outline);
+	outline: var(--focus-outline);
 }
