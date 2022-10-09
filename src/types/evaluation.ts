@@ -7,23 +7,29 @@ export interface GradeEvaluation {
 	/**
 	 * The weight of the grade when calculating the average.
 	 *
-	 * Should default to 1.0.
+	 * Defaults to `1.0`.
 	 */
-	weight: number;
+	weight?: number;
 
 	/**
 	 * Has the student eliminated the grade?
 	 *
 	 * In this case, it won't be counted towards the average.
+	 *
+	 * Defaults to `false`.
 	 */
-	isEliminated: boolean;
+	isEliminated?: boolean;
 }
 
 export interface PassingEvaluation {
 	type: 'passing';
 
-	/** Has the student passed the module? */
-	hasPassed: boolean;
+	/**
+	 * Has the student passed the module?
+	 *
+	 * Defaults to `false`.
+	 */
+	hasPassed?: boolean;
 }
 
 export type Evaluation = GradeEvaluation | PassingEvaluation;

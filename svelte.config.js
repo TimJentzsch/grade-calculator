@@ -12,6 +12,7 @@ const config = {
 		alias: {
 			$stores: 'src/stores',
 			$types: 'src/types',
+			$templates: 'src/templates',
 		},
 	},
 };

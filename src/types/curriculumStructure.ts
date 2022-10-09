@@ -2,10 +2,10 @@ import type { Evaluation } from './evaluation';
 
 export interface EliminationSettings {
 	/** The maximum number of entities that can be eliminated. */
-	maxCount: number;
+	maxCount?: number;
 
 	/** The maximum number of credit points that can be eliminated. */
-	maxCp: number;
+	maxCp?: number;
 }
 
 export interface Module {

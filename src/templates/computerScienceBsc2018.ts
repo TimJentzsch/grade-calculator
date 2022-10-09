@@ -1,6 +1,6 @@
 import type { Curriculum } from '$types/curriculumStructure';
 
-export const computerScienceBsc: Curriculum = {
+export const computerScienceBsc2018: Curriculum = {
 	name: 'Computer Science B.Sc. (2018)',
 	eliminationSettings: {
 		maxCp: 30,

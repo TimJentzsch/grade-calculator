@@ -1,2 +1,6 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import CurriculumView from '$lib/curriculumStructure/CurriculumView.svelte';
+	import { computerScienceBsc2018 } from '$templates/computerScienceBsc2018';
+</script>
+
+<CurriculumView curriculum={computerScienceBsc2018} />
