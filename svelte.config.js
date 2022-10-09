@@ -10,7 +10,8 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		alias: {
-			$storage: 'src/storage'
+			$stores: 'src/stores',
+			$types: 'src/types'
 		}
 	}
 };
