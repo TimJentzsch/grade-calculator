@@ -213,7 +213,6 @@ export default class Curriculum {
   }
 
   get isValidElimination() {
-    // eslint-disable-next-line no-restricted-syntax
     for (const moduleArea of this.moduleAreas) {
       if (!moduleArea.isValidElimination) {
         return false;

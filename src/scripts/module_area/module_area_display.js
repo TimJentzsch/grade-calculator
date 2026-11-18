@@ -246,12 +246,8 @@ export default class ModuleAreaDisplayView {
     }
 
     // Update elimination
-    const {
-      eliminationLimit,
-      eliminationCPLimit,
-      eliminatedModuleCount,
-      eliminatedCredits,
-    } = this.moduleArea;
+    const { eliminationLimit, eliminationCPLimit, eliminatedModuleCount, eliminatedCredits } =
+      this.moduleArea;
 
     if (eliminationLimit === 0 || eliminationCPLimit === 0) {
       // No elimination allowed
