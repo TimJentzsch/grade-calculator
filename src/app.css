@@ -150,6 +150,16 @@ body {
   margin: 0 7px;
 }
 
+.grade-input {
+  width: 4em;
+  text-align: center;
+}
+
+input.grade-input.invalid {
+  border-color: var(--light-error);
+  outline-color: var(--light-error);
+}
+
 .controls-container {
   margin-left: 5px;
 }
@@ -326,5 +336,10 @@ header {
 
   .invalid-elimination {
     color: var(--dark-error);
+  }
+
+  input.grade-input.invalid {
+    border: solid var(--dark-error) 1px;
+    outline-color: var(--dark-error);
   }
 }
