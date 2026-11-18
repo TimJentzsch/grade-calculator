@@ -1,6 +1,7 @@
-import Curriculum from './curriculum';
-import ModuleArea from '../module_area/module_area';
-import Module from '../module/module';
+import { describe, expect, test } from 'vitest';
+import Curriculum from './curriculum.svelte';
+import ModuleArea from './module-area.svelte';
+import Module from './module.svelte';
 
 describe('Curriculum', () => {
   // --- Attributes ---

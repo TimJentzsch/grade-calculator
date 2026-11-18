@@ -1,5 +1,6 @@
-import ModuleArea from './module_area';
-import Module from '../module/module';
+import { describe, expect, test } from 'vitest';
+import ModuleArea from './module-area.svelte';
+import Module from './module.svelte';
 
 describe('ModuleArea', () => {
   // --- Attributes ---

@@ -1,194 +1,198 @@
-import ModuleArea from '../module_area/module_area.js';
-import { merge } from '../util.js';
+import type Module from './module.svelte';
+import ModuleArea, { type ModuleAreaObject } from './module-area.svelte';
+
+/** The serialized form of a curriculum, as used in templates and saved files. */
+export interface CurriculumObject {
+  name?: string;
+  moduleAreas: ModuleAreaObject[];
+  eliminationLimit?: number;
+  eliminationCPLimit?: number;
+}
+
+function sum<T>(items: T[], value: (item: T) => number): number {
+  let total = 0;
+  items.forEach((item) => {
+    total += value(item);
+  });
+  return total;
+}
 
 export default class Curriculum {
+  name: string | undefined = $state();
+  moduleAreas: ModuleArea[] = $state([]);
+  eliminationLimit: number | undefined = $state();
+  eliminationCPLimit: number | undefined = $state();
+
   /**
    * Creates a new curriculum.
-   * @param {string} name - The name of the curriculum.
-   * @param {ModuleArea[]} moduleAreas - The module areas available in the curriculum.
-   * @param {number} eliminationLimit - The maximum number of modules that can be eliminated.
-   * @param {number} eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
+   * @param name - The name of the curriculum.
+   * @param moduleAreas - The module areas available in the curriculum.
+   * @param eliminationLimit - The maximum number of modules that can be eliminated.
+   * @param eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
    */
-  constructor(name, moduleAreas, eliminationLimit, eliminationCPLimit) {
+  constructor(
+    name: string | undefined,
+    moduleAreas: ModuleArea[],
+    eliminationLimit?: number,
+    eliminationCPLimit?: number,
+  ) {
     this.name = name;
     this.moduleAreas = moduleAreas;
     this.eliminationLimit = eliminationLimit;
     this.eliminationCPLimit = eliminationCPLimit;
   }
 
-  get credits() {
-    let credits = 0;
-
-    this.moduleAreas.forEach((moduleArea) => {
-      credits += moduleArea.credits;
-    });
-
-    return credits;
+  get credits(): number {
+    return sum(this.moduleAreas, (moduleArea) => moduleArea.credits);
   }
 
   /** Determines how many credits have been eliminated in total. */
-  get eliminatedCredits() {
-    let credits = 0;
-
-    this.eliminatedModules.forEach((module) => {
-      credits += module.credits;
-    });
-
-    return credits;
+  get eliminatedCredits(): number {
+    return sum(this.eliminatedModules, (module) => module.credits);
   }
 
   /** Determines how many modules have been eliminated in total. */
-  get eliminatedModuleCount() {
+  get eliminatedModuleCount(): number {
     return this.eliminatedModules.length;
   }
 
-  get partiallyCompletedModuleAreas() {
+  get partiallyCompletedModuleAreas(): ModuleArea[] {
     return this.moduleAreas.filter((moduleArea) => moduleArea.gradePartiallyCompleted);
   }
 
-  get eliminationPartiallyCompletedModuleAreas() {
+  get eliminationPartiallyCompletedModuleAreas(): ModuleArea[] {
     return this.moduleAreas.filter((moduleArea) => moduleArea.eliminationGradePartiallyCompleted);
   }
 
-  get completedModuleAreas() {
+  get completedModuleAreas(): ModuleArea[] {
     return this.moduleAreas.filter((moduleArea) => moduleArea.gradeCompleted);
   }
 
-  get gradedModuleAreas() {
+  get gradedModuleAreas(): ModuleArea[] {
     return this.moduleAreas.filter((moduleArea) => moduleArea.isGraded);
   }
 
-  get eliminationGradedModuleAreas() {
+  get eliminationGradedModuleAreas(): ModuleArea[] {
     return this.moduleAreas.filter((moduleArea) => moduleArea.eliminationIsGraded);
   }
 
-  get partiallyCompletedGradedModuleAreas() {
+  get partiallyCompletedGradedModuleAreas(): ModuleArea[] {
     return this.partiallyCompletedModuleAreas.filter((moduleArea) => moduleArea.isGraded);
   }
 
-  get eliminationPartiallyCompletedGradedModuleAreas() {
+  get eliminationPartiallyCompletedGradedModuleAreas(): ModuleArea[] {
     return this.eliminationPartiallyCompletedModuleAreas.filter(
       (moduleArea) => moduleArea.eliminationIsGraded,
     );
   }
 
-  get completedGradedModuleAreas() {
+  get completedGradedModuleAreas(): ModuleArea[] {
     return this.completedModuleAreas.filter((moduleArea) => moduleArea.isGraded);
   }
 
-  get ungradedModuleAreas() {
+  get ungradedModuleAreas(): ModuleArea[] {
     return this.moduleAreas.filter((moduleArea) => !moduleArea.isGraded);
   }
 
-  get partiallyCompletetUngradedModuleAreas() {
+  get partiallyCompletetUngradedModuleAreas(): ModuleArea[] {
     return this.partiallyCompletedModuleAreas.filter((moduleArea) => !moduleArea.isGraded);
   }
 
-  get completedUngradedModuleAreas() {
+  get completedUngradedModuleAreas(): ModuleArea[] {
     return this.completedModuleAreas.filter((moduleArea) => !moduleArea.isGraded);
   }
 
-  get modules() {
-    const moduleArrays = this.moduleAreas.map((moduleArea) => moduleArea.modules);
-    return merge(moduleArrays);
+  get modules(): Module[] {
+    return this.moduleAreas.flatMap((moduleArea) => moduleArea.modules);
   }
 
-  get gradedModules() {
-    const moduleArrays = this.moduleAreas.map((moduleArea) => moduleArea.gradedModules);
-    return merge(moduleArrays);
+  get gradedModules(): Module[] {
+    return this.moduleAreas.flatMap((moduleArea) => moduleArea.gradedModules);
   }
 
   /** The eliminated modules. */
-  get eliminatedModules() {
+  get eliminatedModules(): Module[] {
     return this.gradedModules.filter((module) => module.eliminated);
   }
 
-  get weightedCredits() {
+  get weightedCredits(): number | undefined {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
 
-    let weightedCredits = 0;
-
-    this.partiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
-      weightedCredits += moduleArea.weightedCredits;
-    });
-
-    return weightedCredits;
+    return sum(
+      this.partiallyCompletedGradedModuleAreas,
+      (moduleArea) => moduleArea.weightedCredits as number,
+    );
   }
 
-  get eliminationWeightedCredits() {
+  get eliminationWeightedCredits(): number | undefined {
     if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
       return undefined;
     }
 
-    let weightedCredits = 0;
-
-    this.eliminationPartiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
-      weightedCredits += moduleArea.eliminationWeightedCredits;
-    });
-
-    return weightedCredits;
+    return sum(
+      this.eliminationPartiallyCompletedGradedModuleAreas,
+      (moduleArea) => moduleArea.eliminationWeightedCredits as number,
+    );
   }
 
-  get isGraded() {
+  get isGraded(): boolean {
     return this.gradedModuleAreas.length > 0;
   }
 
-  get eliminationIsGraded() {
+  get eliminationIsGraded(): boolean {
     return this.eliminationGradedModuleAreas.length > 0;
   }
 
-  get gradeCompleted() {
+  get gradeCompleted(): boolean {
     if (this.isGraded) {
       return this.completedGradedModuleAreas.length === this.gradedModuleAreas.length;
     }
     return this.completedModuleAreas.length === this.moduleAreas.length;
   }
 
-  get gradePartiallyCompleted() {
+  get gradePartiallyCompleted(): boolean {
     if (this.isGraded) {
       return this.partiallyCompletedGradedModuleAreas.length > 0;
     }
     return this.partiallyCompletedModuleAreas.length > 0;
   }
 
-  get eliminationGradePartiallyCompleted() {
+  get eliminationGradePartiallyCompleted(): boolean {
     if (this.eliminationIsGraded) {
       return this.eliminationPartiallyCompletedGradedModuleAreas.length > 0;
     }
     return this.partiallyCompletedModuleAreas.length > 0;
   }
 
-  get grade() {
+  get grade(): number | undefined {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
 
-    let weightedGrade = 0;
+    const weightedGrade = sum(
+      this.partiallyCompletedGradedModuleAreas,
+      (moduleArea) => moduleArea.weightedGrade as number,
+    );
 
-    this.partiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
-      weightedGrade += moduleArea.weightedGrade;
-    });
-
-    return weightedGrade / this.weightedCredits;
+    return weightedGrade / (this.weightedCredits as number);
   }
 
-  get eliminationGrade() {
+  get eliminationGrade(): number | undefined {
     if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
       return undefined;
     }
 
-    let weightedGrade = 0;
+    const weightedGrade = sum(
+      this.eliminationPartiallyCompletedGradedModuleAreas,
+      (moduleArea) => moduleArea.eliminationWeightedGrade as number,
+    );
 
-    this.eliminationPartiallyCompletedGradedModuleAreas.forEach((moduleArea) => {
-      weightedGrade += moduleArea.eliminationWeightedGrade;
-    });
-
-    return weightedGrade / this.eliminationWeightedCredits;
+    return weightedGrade / (this.eliminationWeightedCredits as number);
   }
 
-  get gradeText() {
+  get gradeText(): string {
     if (!this.gradePartiallyCompleted) {
       return 'TBD';
     }
@@ -197,10 +201,10 @@ export default class Curriculum {
       return 'B';
     }
 
-    return this.grade.toFixed(2);
+    return (this.grade as number).toFixed(2);
   }
 
-  get eliminationGradeText() {
+  get eliminationGradeText(): string {
     if (!this.eliminationGradePartiallyCompleted) {
       return 'TBD';
     }
@@ -209,10 +213,10 @@ export default class Curriculum {
       return 'B';
     }
 
-    return this.eliminationGrade.toFixed(2);
+    return (this.eliminationGrade as number).toFixed(2);
   }
 
-  get isValidElimination() {
+  get isValidElimination(): boolean {
     for (const moduleArea of this.moduleAreas) {
       if (!moduleArea.isValidElimination) {
         return false;
@@ -234,7 +238,7 @@ export default class Curriculum {
     return true;
   }
 
-  toObject() {
+  toObject(): CurriculumObject {
     return {
       name: this.name,
       moduleAreas: this.moduleAreas.map((moduleArea) => moduleArea.toObject()),
@@ -243,29 +247,27 @@ export default class Curriculum {
     };
   }
 
-  static fromObject(obj) {
-    const curriculum = new Curriculum(
+  static fromObject(obj: CurriculumObject): Curriculum {
+    return new Curriculum(
       obj.name,
       obj.moduleAreas.map((moduleAreaObj) => ModuleArea.fromObject(moduleAreaObj)),
       obj.eliminationLimit,
       obj.eliminationCPLimit,
     );
-
-    return curriculum;
   }
 
-  resetElimination() {
+  resetElimination(): void {
     this.gradedModules.forEach((module) => {
       const newModule = module;
       newModule.eliminated = undefined;
     });
   }
 
-  addModuleArea(moduleArea) {
+  addModuleArea(moduleArea: ModuleArea): void {
     this.moduleAreas.push(moduleArea);
   }
 
-  bestCase() {
+  bestCase(): Curriculum {
     return new Curriculum(
       this.name,
       this.moduleAreas.map((moduleArea) => moduleArea.bestCase()),
@@ -274,7 +276,7 @@ export default class Curriculum {
     );
   }
 
-  worstCase() {
+  worstCase(): Curriculum {
     return new Curriculum(
       this.name,
       this.moduleAreas.map((moduleArea) => moduleArea.worstCase()),
@@ -283,7 +285,7 @@ export default class Curriculum {
     );
   }
 
-  clone() {
+  clone(): Curriculum {
     return new Curriculum(
       this.name,
       this.moduleAreas.map((moduleArea) => moduleArea.clone()),
