@@ -1,3 +1,4 @@
+import { applyElimination, toEliminationCurriculum } from './elimination.ts';
 import type Curriculum from './model/curriculum.svelte.ts';
 
 /**
@@ -17,12 +18,7 @@ export default function runAutoElimination(curriculum: Curriculum): Promise<Curr
     worker.onmessage = (event: MessageEvent<number[]>) => {
       worker.terminate();
 
-      snapshot.resetElimination();
-      const modules = snapshot.modules;
-      for (const index of event.data) {
-        modules[index].eliminated = true;
-      }
-
+      applyElimination(snapshot, event.data);
       resolve(snapshot);
     };
 
@@ -36,6 +32,6 @@ export default function runAutoElimination(curriculum: Curriculum): Promise<Curr
       reject(new Error('Elimination worker sent an unreadable message'));
     };
 
-    worker.postMessage(snapshot.toObject());
+    worker.postMessage(toEliminationCurriculum(snapshot));
   });
 }
