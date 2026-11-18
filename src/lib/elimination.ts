@@ -1,3 +1,4 @@
+import { flushSync } from 'svelte';
 import type Curriculum from './model/curriculum.svelte';
 
 /**
@@ -6,10 +7,7 @@ import type Curriculum from './model/curriculum.svelte';
  * @param index The index of the current module.
  * @returns The best elimination of the curriculum.
  */
-async function calculateBestElimination(
-  curriculum: Curriculum,
-  index: number,
-): Promise<Curriculum> {
+function calculateBestElimination(curriculum: Curriculum, index: number): Curriculum {
   const module = curriculum.modules[index];
 
   if (!module) {
@@ -28,6 +26,10 @@ async function calculateBestElimination(
   const curriculumElim = curriculum.clone();
   // Eliminate the module
   curriculumElim.modules[index].eliminated = true;
+  // Svelte collects every state change in a batch that is only cleared once it is flushed.
+  // This calculation runs synchronously (in a worker) and never yields, so flush explicitly;
+  // otherwise the batch grows with every clone, slowing everything down until it overflows.
+  flushSync();
 
   // Check if the module can still be eliminated
   if (!curriculumElim.isValidElimination) {
@@ -35,11 +37,11 @@ async function calculateBestElimination(
   }
 
   // Calculate the best outcome WITH the elimination
-  const curriculumElimBest = await calculateBestElimination(curriculumElim, index + 1);
+  const curriculumElimBest = calculateBestElimination(curriculumElim, index + 1);
 
   if (
     (curriculumElimBest.eliminationGrade as number) <
-    ((await curriculumNoElimBest).eliminationGrade as number)
+    (curriculumNoElimBest.eliminationGrade as number)
   ) {
     // If the elimination gives a better result, use it
     return curriculumElimBest;
@@ -51,12 +53,25 @@ async function calculateBestElimination(
 
 /**
  * Calculates the best possible elimination for the given curriculum.
- * @param curriculum The curriculum to calculate the elimination for.
- * @returns The best elimination of the curriculum.
+ *
+ * This can take a long time for larger curricula, so it should not be run on the main thread.
+ * @param curriculum The curriculum to calculate the elimination for. It is not modified.
+ * @returns A copy of the curriculum with the best elimination applied.
  */
-export default async function getBestElimination(curriculum: Curriculum): Promise<Curriculum> {
+export function getBestElimination(curriculum: Curriculum): Curriculum {
   const clearCurriculum = curriculum.clone();
   clearCurriculum.resetElimination();
 
   return calculateBestElimination(clearCurriculum, 0);
+}
+
+/**
+ * Calculates the best possible elimination for the given curriculum.
+ * @param curriculum The curriculum to calculate the elimination for. It is not modified.
+ * @returns The indices into `curriculum.modules` of the modules that should be eliminated.
+ */
+export function getBestEliminationIndices(curriculum: Curriculum): number[] {
+  return getBestElimination(curriculum)
+    .modules.map((module, index) => (module.eliminated ? index : -1))
+    .filter((index) => index >= 0);
 }

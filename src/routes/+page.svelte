@@ -1,6 +1,6 @@
 <script lang="ts">
   import CurriculumView from '#lib/components/CurriculumView.svelte';
-  import getBestElimination from '#lib/elimination.ts';
+  import runAutoElimination from '#lib/auto-elimination.ts';
   import Curriculum, { type CurriculumObject } from '#lib/model/curriculum.svelte.ts';
   import templates, { computerScienceBsc } from '#lib/templates/index.ts';
 
@@ -34,8 +34,18 @@
     }
   }
 
+  /** Whether the best elimination is currently being calculated. */
+  let eliminating = $state(false);
+
   async function autoElimination() {
-    curriculum = await getBestElimination(curriculum);
+    eliminating = true;
+    try {
+      curriculum = await runAutoElimination(curriculum);
+    } catch (error) {
+      console.error('Failed to calculate the best elimination:', error);
+    } finally {
+      eliminating = false;
+    }
   }
 
   const saveHref = $derived(
@@ -114,12 +124,13 @@
           class="template-button"
           title="Automatically eliminate modules for the best grade"
           onclick={autoElimination}
+          disabled={eliminating}
         >
           Eliminate...
         </button>
       </label>
 
-      <span id="auto-elimination-loading-indicator"></span>
+      <span id="auto-elimination-loading-indicator">{eliminating ? 'Calculating…' : ''}</span>
     </div>
   </div>
   <div id="content">

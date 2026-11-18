@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig } from 'vitest/config';
 
 const base = process.env.BASE_PATH ?? '';
@@ -25,6 +26,11 @@ export default defineConfig({
       },
     }),
   ],
+  worker: {
+    format: 'es',
+    // Workers are bundled separately, so they need the Svelte plugin to compile runes in `.svelte.ts` modules
+    plugins: () => [svelte()],
+  },
   test: {
     include: ['src/**/*.test.ts'],
     clearMocks: true,
