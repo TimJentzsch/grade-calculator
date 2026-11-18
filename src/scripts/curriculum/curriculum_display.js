@@ -234,12 +234,8 @@ export default class CurriculumDisplayHeader {
     }
 
     // Update elimination
-    const {
-      eliminationLimit,
-      eliminationCPLimit,
-      eliminatedModuleCount,
-      eliminatedCredits,
-    } = this.curriculum;
+    const { eliminationLimit, eliminationCPLimit, eliminatedModuleCount, eliminatedCredits } =
+      this.curriculum;
 
     if (eliminationLimit === 0 || eliminationCPLimit === 0) {
       // No elimination allowed
