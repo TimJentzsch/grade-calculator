@@ -18,17 +18,19 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Determine test coverage
-        run: npm run coverage
+        run: pnpm coverage
 
       - name: Upload coverage to codecov
         uses: codecov/codecov-action@v4

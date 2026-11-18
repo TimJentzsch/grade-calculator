@@ -1,0 +1,24 @@
+# Supply-chain hardening
+# Only install versions published at least 1 day ago (in minutes).
+# Explicitly setting this makes it strict: too-new versions fail instead of
+# being added to minimumReleaseAgeExclude.
+minimumReleaseAge: 1440
+# Fail if a package version was published with weaker provenance/trust
+# evidence than earlier versions (e.g. a trusted-publisher package suddenly
+# published with a plain token).
+trustPolicy: no-downgrade
+# Transitive dependencies may only come from the registry, not from git
+# repositories or tarball URLs.
+blockExoticSubdeps: true
+# Fail the install when a dependency has an unreviewed build script.
+strictDepBuilds: true
+# Enforce "engines" ranges, including the project's own Node version.
+engineStrict: true
+
+allowBuilds:
+  # Prebuilt binaries are used; the script only builds from source as a fallback.
+  '@parcel/watcher': false
+
+overrides:
+  glob: 14.0.3
+  minimatch: 11.0.4
