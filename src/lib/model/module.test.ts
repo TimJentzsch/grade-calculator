@@ -1,4 +1,5 @@
-import Module from './module.js';
+import { describe, expect, test } from 'vitest';
+import Module from './module.svelte';
 
 describe('Module', () => {
   // --- Attributes ---

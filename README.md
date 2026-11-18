@@ -11,3 +11,16 @@ Available at https://timjentzsch.github.io/grade-calculator/.
 - Support for ungraded and differently weighted modules
 - Loading and saving of curriculums
 - Template curriculums for faster configuration
+
+## Development
+
+The app is built with [SvelteKit](https://svelte.dev/docs/kit) and deployed as a static site to GitHub Pages.
+
+```sh
+pnpm install
+pnpm dev      # start the development server
+pnpm test     # run the unit tests
+pnpm check    # type-check the project
+pnpm lint     # lint the code
+pnpm build    # build the static site into build/
+```

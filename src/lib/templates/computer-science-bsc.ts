@@ -1,4 +1,6 @@
-const computerScienceBsc = {
+import type { CurriculumObject } from '../model/curriculum.svelte';
+
+const computerScienceBsc: CurriculumObject = {
   name: 'RWTH Computer Science B.Sc.',
   eliminationCPLimit: 30,
   moduleAreas: [

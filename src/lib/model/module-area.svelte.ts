@@ -1,157 +1,158 @@
-import Module from '../module/module.js';
+import Module, { type ModuleObject } from './module.svelte';
+
+/** The serialized form of a module area, as used in templates and saved files. */
+export interface ModuleAreaObject {
+  name?: string;
+  modules: ModuleObject[];
+  eliminationLimit?: number;
+  eliminationCPLimit?: number;
+}
+
+function sum<T>(items: T[], value: (item: T) => number): number {
+  let total = 0;
+  items.forEach((item) => {
+    total += value(item);
+  });
+  return total;
+}
 
 export default class ModuleArea {
+  name: string | undefined = $state();
+  modules: Module[] = $state([]);
+  eliminationLimit: number | undefined = $state();
+  eliminationCPLimit: number | undefined = $state();
+
   /**
    * Creates a new module area.
-   * @param {string} name - The name of the module area.
-   * @param {Module[]} modules - The modules available in this module area.
-   * @param {number} eliminationLimit - The maximum number of modules that can be eliminated.
-   * @param {number} eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
+   * @param name - The name of the module area.
+   * @param modules - The modules available in this module area.
+   * @param eliminationLimit - The maximum number of modules that can be eliminated.
+   * @param eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
    */
-  constructor(name, modules, eliminationLimit, eliminationCPLimit) {
+  constructor(
+    name: string | undefined,
+    modules: Module[],
+    eliminationLimit?: number,
+    eliminationCPLimit?: number,
+  ) {
     this.name = name;
     this.modules = modules;
     this.eliminationLimit = eliminationLimit;
     this.eliminationCPLimit = eliminationCPLimit;
   }
 
-  get credits() {
-    let credits = 0;
-    this.modules.forEach((module) => {
-      credits += module.credits;
-    });
-    return credits;
+  get credits(): number {
+    return sum(this.modules, (module) => module.credits);
   }
 
   /** The total amount of eliminated credit points. */
-  get eliminatedCredits() {
-    let credits = 0;
-
-    this.eliminatedModules.forEach((module) => {
-      credits += module.credits;
-    });
-
-    return credits;
+  get eliminatedCredits(): number {
+    return sum(this.eliminatedModules, (module) => module.credits);
   }
 
   /** The total number of eliminated modules. */
-  get eliminatedModuleCount() {
+  get eliminatedModuleCount(): number {
     return this.eliminatedModules.length;
   }
 
-  get completedModules() {
+  get completedModules(): Module[] {
     return this.modules.filter((module) => module.completed);
   }
 
-  get gradedModules() {
+  get gradedModules(): Module[] {
     return this.modules.filter((module) => module.isGraded && module.weight !== 0);
   }
 
-  get eliminationGradedModules() {
+  get eliminationGradedModules(): Module[] {
     return this.gradedModules.filter((module) => !module.eliminated);
   }
 
-  get completedGradedModules() {
+  get completedGradedModules(): Module[] {
     return this.completedModules.filter((module) => module.isGraded && module.weight !== 0);
   }
 
-  get eliminationCompletedGradedModules() {
+  get eliminationCompletedGradedModules(): Module[] {
     return this.completedGradedModules.filter((module) => !module.eliminated);
   }
 
-  get ungradedModules() {
+  get ungradedModules(): Module[] {
     return this.modules.filter((module) => !module.isGraded || module.weight === 0);
   }
 
-  get completedUngradedModules() {
+  get completedUngradedModules(): Module[] {
     return this.completedModules.filter((module) => !module.isGraded || module.weight === 0);
   }
 
   /** The eliminated modules. */
-  get eliminatedModules() {
+  get eliminatedModules(): Module[] {
     return this.gradedModules.filter((module) => module.eliminated);
   }
 
-  get weightedCredits() {
+  get weightedCredits(): number | undefined {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
 
-    let weightedCredits = 0;
-
-    this.completedGradedModules.forEach((module) => {
-      weightedCredits += module.weightedCredits;
-    });
-
-    return weightedCredits;
+    return sum(this.completedGradedModules, (module) => module.weightedCredits);
   }
 
-  get eliminationWeightedCredits() {
+  get eliminationWeightedCredits(): number | undefined {
     if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
       return undefined;
     }
 
-    let weightedCredits = 0;
-
-    this.eliminationCompletedGradedModules.forEach((module) => {
-      weightedCredits += module.weightedCredits;
-    });
-
-    return weightedCredits;
+    return sum(this.eliminationCompletedGradedModules, (module) => module.weightedCredits);
   }
 
-  get isGraded() {
+  get isGraded(): boolean {
     return this.gradedModules.length > 0;
   }
 
-  get eliminationIsGraded() {
+  get eliminationIsGraded(): boolean {
     return this.eliminationGradedModules.length > 0;
   }
 
-  get gradeCompleted() {
+  get gradeCompleted(): boolean {
     if (this.isGraded) {
       return this.completedGradedModules.length === this.gradedModules.length;
     }
     return this.completedModules.length === this.modules.length;
   }
 
-  get gradePartiallyCompleted() {
+  get gradePartiallyCompleted(): boolean {
     if (this.isGraded) {
       return this.completedGradedModules.length > 0;
     }
     return this.completedModules.length > 0;
   }
 
-  get eliminationGradePartiallyCompleted() {
+  get eliminationGradePartiallyCompleted(): boolean {
     if (this.eliminationIsGraded) {
       return this.eliminationCompletedGradedModules.length > 0;
     }
     return this.completedModules.length > 0;
   }
 
-  get grade() {
+  get grade(): number | undefined {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
-    let weightedGrade = 0;
-    this.completedGradedModules.forEach((module) => {
-      weightedGrade += module.weightedGrade;
-    });
-    return weightedGrade / this.weightedCredits;
+    const weightedGrade = sum(this.completedGradedModules, (module) => module.weightedGrade);
+    return weightedGrade / (this.weightedCredits as number);
   }
 
-  get eliminationGrade() {
+  get eliminationGrade(): number | undefined {
     if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
       return undefined;
     }
-    let weightedGrade = 0;
-    this.eliminationCompletedGradedModules.forEach((module) => {
-      weightedGrade += module.weightedGrade;
-    });
-    return weightedGrade / this.eliminationWeightedCredits;
+    const weightedGrade = sum(
+      this.eliminationCompletedGradedModules,
+      (module) => module.weightedGrade,
+    );
+    return weightedGrade / (this.eliminationWeightedCredits as number);
   }
 
-  get gradeText() {
+  get gradeText(): string {
     if (!this.gradePartiallyCompleted) {
       return 'TBD';
     }
@@ -160,10 +161,10 @@ export default class ModuleArea {
       return 'B';
     }
 
-    return this.grade.toFixed(2);
+    return (this.grade as number).toFixed(2);
   }
 
-  get eliminationGradeText() {
+  get eliminationGradeText(): string {
     if (!this.eliminationGradePartiallyCompleted) {
       return 'TBD';
     }
@@ -172,50 +173,50 @@ export default class ModuleArea {
       return 'B';
     }
 
-    return this.eliminationGrade.toFixed(2);
+    return (this.eliminationGrade as number).toFixed(2);
   }
 
-  get weightedGrade() {
+  get weightedGrade(): number | undefined {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
 
-    return this.grade * this.weightedCredits;
+    return (this.grade as number) * (this.weightedCredits as number);
   }
 
-  get eliminationWeightedGrade() {
+  get eliminationWeightedGrade(): number | undefined {
     if (!this.eliminationIsGraded || !this.eliminationGradePartiallyCompleted) {
       return undefined;
     }
 
-    return this.eliminationGrade * this.eliminationWeightedCredits;
+    return (this.eliminationGrade as number) * (this.eliminationWeightedCredits as number);
   }
 
-  get isEmpty() {
+  get isEmpty(): boolean {
     return !this.name && this.modules.length === 0;
   }
 
-  get hasValidEliminationCount() {
+  get hasValidEliminationCount(): boolean {
     return this.eliminationLimit !== undefined
       ? this.eliminatedModuleCount <= this.eliminationLimit
       : true;
   }
 
-  get hasValidEliminationCP() {
+  get hasValidEliminationCP(): boolean {
     return this.eliminationCPLimit !== undefined
       ? this.eliminatedCredits <= this.eliminationCPLimit
       : true;
   }
 
-  get isValidElimination() {
+  get isValidElimination(): boolean {
     return this.hasValidEliminationCount && this.hasValidEliminationCP;
   }
 
-  addModule(module) {
+  addModule(module: Module): void {
     this.modules.push(module);
   }
 
-  bestCase() {
+  bestCase(): ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.bestCase()),
@@ -224,7 +225,7 @@ export default class ModuleArea {
     );
   }
 
-  worstCase() {
+  worstCase(): ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.worstCase()),
@@ -233,7 +234,7 @@ export default class ModuleArea {
     );
   }
 
-  clone() {
+  clone(): ModuleArea {
     return new ModuleArea(
       this.name,
       this.modules.map((module) => module.clone()),
@@ -242,7 +243,7 @@ export default class ModuleArea {
     );
   }
 
-  toObject() {
+  toObject(): ModuleAreaObject {
     return {
       name: this.name,
       modules: this.modules.map((module) => module.toObject()),
@@ -251,7 +252,7 @@ export default class ModuleArea {
     };
   }
 
-  static fromObject(obj) {
+  static fromObject(obj: ModuleAreaObject): ModuleArea {
     return new ModuleArea(
       obj.name,
       obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),

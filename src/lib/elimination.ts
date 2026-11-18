@@ -1,13 +1,15 @@
-// eslint-disable-next-line no-unused-vars
-import Curriculum from './curriculum/curriculum.js';
+import type Curriculum from './model/curriculum.svelte';
 
 /**
  * Calculates the best possible elimination for the given curriculum.
- * @param {Curriculum} curriculum The curriculum to calculate the elimination for.
- * @param {number} index The index of the current module.
- * @returns {Promise<Curriculum>} The best elimination of the curriculum.
+ * @param curriculum The curriculum to calculate the elimination for.
+ * @param index The index of the current module.
+ * @returns The best elimination of the curriculum.
  */
-async function calculateBestElimination(curriculum, index) {
+async function calculateBestElimination(
+  curriculum: Curriculum,
+  index: number,
+): Promise<Curriculum> {
   const module = curriculum.modules[index];
 
   if (!module) {
@@ -35,7 +37,10 @@ async function calculateBestElimination(curriculum, index) {
   // Calculate the best outcome WITH the elimination
   const curriculumElimBest = await calculateBestElimination(curriculumElim, index + 1);
 
-  if (curriculumElimBest.eliminationGrade < (await curriculumNoElimBest).eliminationGrade) {
+  if (
+    (curriculumElimBest.eliminationGrade as number) <
+    ((await curriculumNoElimBest).eliminationGrade as number)
+  ) {
     // If the elimination gives a better result, use it
     return curriculumElimBest;
   }
@@ -46,10 +51,10 @@ async function calculateBestElimination(curriculum, index) {
 
 /**
  * Calculates the best possible elimination for the given curriculum.
- * @param {Curriculum} curriculum The curriculum to calculate the elimination for.
- * @returns {Promise<Curriculum>} The best elimination of the curriculum.
+ * @param curriculum The curriculum to calculate the elimination for.
+ * @returns The best elimination of the curriculum.
  */
-export default async function getBestElimination(curriculum) {
+export default async function getBestElimination(curriculum: Curriculum): Promise<Curriculum> {
   const clearCurriculum = curriculum.clone();
   clearCurriculum.resetElimination();
 
