@@ -19,7 +19,7 @@ export default class ModuleDisplayView {
   createTitle() {
     this.title = document.createElement('span');
     this.title.classList.add('module-title');
-    this.title.innerHTML = this.module.name;
+    this.title.textContent = this.module.name;
 
     return this.title;
   }
@@ -64,7 +64,7 @@ export default class ModuleDisplayView {
 
     this.creditValue = document.createElement('span');
     this.creditValue.classList.add('module-credits-value');
-    this.creditValue.innerHTML = this.module.credits;
+    this.creditValue.textContent = this.module.credits;
     this.creditsContainer.appendChild(this.creditValue);
 
     this.creditDescription = document.createElement('span');

@@ -6,27 +6,28 @@ on:
       - master
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   codecov:
-    runs-on: ubuntu-18.04
-
-    strategy:
-      matrix:
-        node-version: [12.18.1]
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          persist-credentials: false
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Determine test coverage
-        run: yarn coverage
+        run: npm run coverage
 
       - name: Upload coverage to codecov
-        run: bash <(curl -s https://codecov.io/bash)
+        uses: codecov/codecov-action@v4

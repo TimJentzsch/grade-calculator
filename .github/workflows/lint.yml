@@ -2,11 +2,16 @@ name: Linting
 
 on: [push]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Run Linter
-        run: npm install && npm run lint
+        run: npm ci && npm run lint
