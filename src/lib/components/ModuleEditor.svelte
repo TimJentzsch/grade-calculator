@@ -2,7 +2,7 @@
   import { untrack } from 'svelte';
   import type Module from '#lib/model/module.svelte.ts';
   import ControlButton from './ControlButton.svelte';
-  import GradeSelect from './GradeSelect.svelte';
+  import GradeInput from './GradeInput.svelte';
 
   interface Props {
     module: Module;
@@ -102,7 +102,7 @@
     <label
       class="label grade-selection-label module-grade-selection-label"
       class:disabled={!gradeEnabled}
-      >Grade: <GradeSelect
+      >Grade: <GradeInput
         class="selection grade-selection"
         disabled={!gradeEnabled}
         bind:value={grade}

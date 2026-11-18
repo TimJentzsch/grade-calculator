@@ -1,7 +1,7 @@
 <script lang="ts">
   import type Module from '#lib/model/module.svelte.ts';
   import ControlButton from './ControlButton.svelte';
-  import GradeSelect from './GradeSelect.svelte';
+  import GradeInput from './GradeInput.svelte';
 
   interface Props {
     module: Module;
@@ -29,7 +29,7 @@
               checked={!!module.eliminated}
               onchange={(event) => (module.eliminated = event.currentTarget.checked)}
             /></label
-          ><GradeSelect
+          ><GradeInput
             class="selection grade-selection module-grade-selection"
             allowTBD
             bind:value={module.grade}
