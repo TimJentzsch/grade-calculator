@@ -6,7 +6,9 @@
   "scripts": {
     "test": "npx jest",
     "coverage": "npx jest --coverage",
-    "lint": "eslint \"./\""
+    "lint": "eslint \"./\"",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "author": "Tim Jentzsch",
   "license": "MIT",

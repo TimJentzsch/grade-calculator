@@ -1,0 +1,3 @@
+.svelte-kit/
+coverage/
+package-lock.json

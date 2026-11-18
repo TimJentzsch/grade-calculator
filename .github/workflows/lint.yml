@@ -20,3 +20,5 @@ jobs:
           cache: npm
       - name: Run Linter
         run: npm ci && npm run lint
+      - name: Check formatting
+        run: npm run format:check
