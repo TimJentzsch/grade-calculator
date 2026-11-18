@@ -8,16 +8,22 @@
 
   interface Props {
     moduleArea: ModuleArea;
+    /** Whether to open the editor right away, e.g. for a newly added module area. */
+    startEditing?: boolean;
     onRemove: () => void;
   }
 
-  const { moduleArea, onRemove }: Props = $props();
+  const { moduleArea, startEditing = false, onRemove }: Props = $props();
 
-  // Newly added (empty) module areas start in the editor.
-  let editing = $state(untrack(() => moduleArea.isEmpty));
+  let editing = $state(untrack(() => startEditing));
+
+  /** Modules added by the user, which start in the editor. */
+  const addedModules = new WeakSet<Module>();
 
   function addModule() {
-    moduleArea.addModule(new Module('', undefined, undefined, 1, false, false));
+    const module = new Module('', undefined, undefined, 1, false, false);
+    addedModules.add(module);
+    moduleArea.addModule(module);
   }
 
   function discard() {
@@ -48,7 +54,11 @@
   {/if}
   <div class="module-area-module-container">
     {#each moduleArea.modules as module, index (module)}
-      <ModuleView {module} onRemove={() => moduleArea.modules.splice(index, 1)} />
+      <ModuleView
+        {module}
+        startEditing={addedModules.has(module)}
+        onRemove={() => moduleArea.modules.splice(index, 1)}
+      />
     {/each}
   </div>
 </div>

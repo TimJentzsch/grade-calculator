@@ -6,13 +6,14 @@
 
   interface Props {
     module: Module;
+    /** Whether to open the editor right away, e.g. for a newly added module. */
+    startEditing?: boolean;
     onRemove: () => void;
   }
 
-  const { module, onRemove }: Props = $props();
+  const { module, startEditing = false, onRemove }: Props = $props();
 
-  // Newly added (empty) modules start in the editor.
-  let editing = $state(untrack(() => module.isEmpty));
+  let editing = $state(untrack(() => startEditing));
 
   function discard() {
     if (module.isEmpty) {

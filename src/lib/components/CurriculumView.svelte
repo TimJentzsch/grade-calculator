@@ -8,15 +8,21 @@
 
   interface Props {
     curriculum: Curriculum;
+    /** Whether to open the editor right away, e.g. for a new empty curriculum. */
+    startEditing?: boolean;
   }
 
-  const { curriculum }: Props = $props();
+  const { curriculum, startEditing = false }: Props = $props();
 
-  // A new, empty curriculum starts in the editor.
-  let editing = $state(untrack(() => !curriculum.name && curriculum.moduleAreas.length === 0));
+  let editing = $state(untrack(() => startEditing));
+
+  /** Module areas added by the user, which start in the editor. */
+  const addedModuleAreas = new WeakSet<ModuleArea>();
 
   function addModuleArea() {
-    curriculum.addModuleArea(new ModuleArea('', []));
+    const moduleArea = new ModuleArea('', []);
+    addedModuleAreas.add(moduleArea);
+    curriculum.addModuleArea(moduleArea);
   }
 </script>
 
@@ -38,7 +44,11 @@
   {/if}
   <div class="curriculum-module-area-container">
     {#each curriculum.moduleAreas as moduleArea, index (moduleArea)}
-      <ModuleAreaView {moduleArea} onRemove={() => curriculum.moduleAreas.splice(index, 1)} />
+      <ModuleAreaView
+        {moduleArea}
+        startEditing={addedModuleAreas.has(moduleArea)}
+        onRemove={() => curriculum.moduleAreas.splice(index, 1)}
+      />
     {/each}
   </div>
 </div>

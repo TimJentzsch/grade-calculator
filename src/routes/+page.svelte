@@ -6,6 +6,15 @@
 
   let curriculum = $state(Curriculum.fromObject(computerScienceBsc));
 
+  /** Curricula created with "Empty Curriculum", which start in the editor. */
+  const emptyCurricula = new WeakSet<Curriculum>();
+
+  function newCurriculum() {
+    const empty = new Curriculum(undefined, []);
+    emptyCurricula.add(empty);
+    curriculum = empty;
+  }
+
   function loadConfig(config: CurriculumObject) {
     curriculum = Curriculum.fromObject(config);
   }
@@ -53,7 +62,7 @@
           id="new-curriculum-button"
           class="template-button"
           title="Create a new empty curriculum"
-          onclick={() => (curriculum = new Curriculum(undefined, []))}
+          onclick={newCurriculum}
         >
           Empty Curriculum
         </button>
@@ -115,7 +124,7 @@
   </div>
   <div id="content">
     {#key curriculum}
-      <CurriculumView {curriculum} />
+      <CurriculumView {curriculum} startEditing={emptyCurricula.has(curriculum)} />
     {/key}
   </div>
 </div>
