@@ -2,11 +2,16 @@ name: Tests
 
 on: [push]
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Run Tests
-        run: npm install && npm test
+        run: npm ci && npm test
