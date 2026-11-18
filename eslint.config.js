@@ -28,7 +28,7 @@ module.exports = [
   prettierRecommended,
   {
     rules: {
-      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      'prettier/prettier': 'error',
       eqeqeq: 'error',
       'no-var': 'error',
       'prefer-const': 'error',
