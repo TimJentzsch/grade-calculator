@@ -37,7 +37,15 @@
   /* Text on a danger background */
   --color-on-danger: var(--ctp-base);
   --color-success: var(--ctp-green);
-  --color-warning: var(--ctp-peach);
+  /*
+   * Something that needs attention, also used for text. Peach is too light on the light
+   * background (2.6:1), so it is darkened there to about 4.4:1. `light-dark()` follows the
+   * `color-scheme` set by the palette.
+   */
+  --color-warning: light-dark(
+    color-mix(in oklab, var(--ctp-peach) 45%, var(--ctp-text)),
+    var(--ctp-peach)
+  );
 
   /* Shadows */
   --shadow-raised: 0 1px 3px 0 color-mix(in srgb, var(--ctp-crust) 50%, transparent);
