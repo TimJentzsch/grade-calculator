@@ -142,10 +142,6 @@ body {
   margin: 0 20px;
 }
 
-.grade-selection {
-  font-family: 'Courier New', Courier, monospace;
-}
-
 .module-grade-selection {
   margin: 0 7px;
 }
@@ -165,7 +161,6 @@ input.grade-input.invalid {
 }
 
 .grade {
-  font-family: 'Courier New', Courier, monospace;
   display: inline-block;
 }
 
@@ -174,7 +169,6 @@ input.grade-input.invalid {
   margin: 0 5px;
 }
 
-.grade-limits,
 .module-not-graded,
 .eliminated,
 .disabled {
@@ -328,7 +322,6 @@ header {
   }
 
   .module-not-graded,
-  .grade-limits,
   .eliminated,
   .disabled {
     color: var(--dark-on-disabled);
@@ -342,4 +335,9 @@ header {
     border: solid var(--dark-error) 1px;
     outline-color: var(--dark-error);
   }
+}
+
+/* Decimal places of a grade that are cut off, shown to indicate how close the next grade is */
+.truncated-digits {
+  color: gray;
 }

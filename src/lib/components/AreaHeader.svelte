@@ -3,6 +3,7 @@
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
   import ControlButton from './ControlButton.svelte';
   import EliminationInfo from './EliminationInfo.svelte';
+  import GradeText from './GradeText.svelte';
 
   interface Props {
     kind: 'curriculum' | 'module-area';
@@ -28,6 +29,12 @@
     const limits = `(${bestGrade}-${worstGrade})`;
     return kind === 'curriculum' ? ` ${limits}` : limits;
   });
+
+  const gradeTitle = $derived(
+    kind === 'curriculum'
+      ? 'The final grade. Only the first decimal place counts, the gray digit is cut off.'
+      : 'The average grade of this module area',
+  );
 
   const gradeBeforeElimination = $derived(
     area.gradeText !== area.eliminationGradeText ? area.gradeText : '',
@@ -58,10 +65,9 @@
       <div class="{kind}-grade-container grade-container">
         <span
           class="{kind}-eliminated-grade-value grade eliminated"
-          title="The grade before elimination">{gradeBeforeElimination}</span
-        ><span
-          class="{kind}-grade-value grade-value grade"
-          title="The current grade of this {label}">{area.eliminationGradeText}</span
+          title="The grade before elimination"><GradeText text={gradeBeforeElimination} /></span
+        ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
+          ><GradeText text={area.eliminationGradeText} /></span
         ><span
           class="{kind}-grade-limits grade-limits grade"
           title="The best/worst possible grade in this {label}">{gradeLimits}</span

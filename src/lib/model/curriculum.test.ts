@@ -577,6 +577,30 @@ describe('Curriculum', () => {
 
         expect(curriculum.gradeText).toEqual('4.00');
       });
+      test('grade text is truncated to two decimal places, not rounded', () => {
+        // (1.0 * 6 + 2.3 * 5) / 11 = 1.5909..., which would be rounded to 1.6
+        const curriculum = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area', [
+            new Module('Test module 1', 6, 1.0),
+            new Module('Test module 2', 5, 2.3),
+          ]),
+        ]);
+
+        expect(curriculum.grade).toBeCloseTo(1.591, 3);
+        expect(curriculum.gradeText).toEqual('1.59');
+        expect(curriculum.eliminationGradeText).toEqual('1.59');
+      });
+      test('grade text is not affected by floating point errors', () => {
+        // (1.0 * 7 + 2.3 * 6) / 13 = 1.6 exactly
+        const curriculum = new Curriculum('Test curriculum', [
+          new ModuleArea('Test module area', [
+            new Module('Test module 1', 7, 1.0),
+            new Module('Test module 2', 6, 2.3),
+          ]),
+        ]);
+
+        expect(curriculum.gradeText).toEqual('1.60');
+      });
       test('TBD for incomplete ungraded curriculum', () => {
         const curriculum = new Curriculum('Test curriculum', [
           new ModuleArea('Test module area 1', [

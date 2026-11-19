@@ -1,3 +1,4 @@
+import { formatAverageGrade } from '../grade';
 import type Module from './module.svelte';
 import ModuleArea, { type ModuleAreaObject } from './module-area.svelte';
 
@@ -201,7 +202,7 @@ export default class Curriculum {
       return 'B';
     }
 
-    return (this.grade as number).toFixed(2);
+    return formatAverageGrade(this.grade as number);
   }
 
   get eliminationGradeText(): string {
@@ -213,7 +214,7 @@ export default class Curriculum {
       return 'B';
     }
 
-    return (this.eliminationGrade as number).toFixed(2);
+    return formatAverageGrade(this.eliminationGrade as number);
   }
 
   get isValidElimination(): boolean {
