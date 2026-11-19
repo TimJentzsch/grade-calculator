@@ -105,6 +105,7 @@ select {
 
 .row-title {
   grid-area: title;
+  min-width: 0;
   display: flex;
   flex-flow: row wrap;
   align-items: baseline;
@@ -189,8 +190,56 @@ input[type='number'] {
   width: 5em;
 }
 
-.module-grade-selection {
-  margin-left: var(--space-sm);
+.module-grade-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  /* Room for the toggle and the grade, so the toggles line up for ungraded modules too */
+  min-width: 6em;
+}
+
+/* An input that looks like normal text until it is hovered or focused */
+input[type='text'].inline-input {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+input[type='text'].inline-input:hover:enabled {
+  background-color: var(--color-surface-hover);
+  border-color: transparent;
+}
+
+input[type='text'].inline-input:focus {
+  background-color: var(--color-input-background);
+  border-color: var(--color-border-strong);
+}
+
+/* On devices with a mouse, the controls of a module are only shown on hover or focus */
+@media (hover: hover) {
+  .module-display-container .row-controls {
+    opacity: 0;
+  }
+
+  .module-display-container:hover .row-controls,
+  .module-display-container:focus-within .row-controls {
+    opacity: 1;
+  }
+}
+
+/* Hides content visually, but keeps it available to screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Credit points inside a row, followed by the "CP" unit */
+input.credit-points-input {
+  width: 3.5em;
+  text-align: right;
 }
 
 .credits-container {
@@ -204,7 +253,10 @@ input[type='number'] {
   text-align: center;
 }
 
-input.grade-input.invalid {
+input.grade-input.invalid,
+input.grade-input.invalid:hover:enabled,
+input.credit-points-input.invalid,
+input.credit-points-input.invalid:hover:enabled {
   border-color: var(--color-danger);
   outline-color: var(--color-danger);
 }

@@ -1,5 +1,7 @@
 <script lang="ts">
   import type Module from '#lib/model/module.svelte.ts';
+  import CreditsInput from './CreditsInput.svelte';
+  import EditableText from './EditableText.svelte';
   import IconButton from './IconButton.svelte';
   import GradeInput from './GradeInput.svelte';
 
@@ -10,12 +12,15 @@
   }
 
   const { module, onEdit, onRemove }: Props = $props();
+
+  /** The module name for the labels of the controls. */
+  const name = $derived(module.name || 'this module');
 </script>
 
 <div class="module-display-container module-container row">
-  <span class="module-title row-title" class:eliminated={module.isGraded && module.eliminated}
-    >{module.name}</span
-  >
+  <div class="module-title row-title" class:eliminated={module.isGraded && module.eliminated}>
+    <EditableText bind:value={module.name} label="module name" placeholder="Unnamed module" />
+  </div>
   <div class="row-details">
     {#if module.weight !== 1}
       <span class="module-weight-value weight-value" title="The weighting of this module"
@@ -24,46 +29,37 @@
     {/if}
     <div class="module-grade-container grade-container">
       {#if module.isGraded}
-        <label class="label is-eliminated-label module-is-eliminated-label"
-          >Eliminated: <input
-            class="checkbox is-eliminated-input"
-            name="is-eliminated-input"
-            type="checkbox"
-            checked={!!module.eliminated}
-            onchange={(event) => (module.eliminated = event.currentTarget.checked)}
-          /></label
-        ><GradeInput
-          class="selection grade-selection module-grade-selection"
+        <IconButton
+          icon="ban"
+          label="Eliminate {name}"
+          pressed={!!module.eliminated}
+          onclick={() => (module.eliminated = !module.eliminated)}
+        />
+        <GradeInput
+          class="inline-input module-grade-selection"
+          label="Grade of {name}"
           allowTBD
           bind:value={module.grade}
         />
       {:else}
-        <label class="label has-passed-label module-has-passed-label"
-          >Passed: <input
-            class="checkbox has-passed-input"
-            name="has-passed-input"
-            type="checkbox"
-            checked={!!module.passed}
-            onchange={(event) => (module.passed = event.currentTarget.checked)}
-          /></label
-        >
+        <IconButton
+          icon="circle-check"
+          label="Mark {name} as passed"
+          pressed={!!module.passed}
+          onclick={() => (module.passed = !module.passed)}
+        />
       {/if}
     </div>
-    <div
-      class="module-credits-container credits-container"
-      title="The credit points of this module"
-    >
-      <span class="module-credits-value">{module.credits}</span><span
-        class="module-credits-description">{' CP'}</span
-      >
+    <div class="module-credits-container credits-container">
+      <CreditsInput
+        class="inline-input module-credits-value"
+        label="Credit points of {name}"
+        bind:value={module.credits}
+      /><span class="module-credits-description" aria-hidden="true">{' CP'}</span>
     </div>
   </div>
   <div class="row-controls">
-    <IconButton icon="pencil" label="Edit this module" onclick={onEdit} /><IconButton
-      icon="trash"
-      variant="danger"
-      label="Remove this module"
-      onclick={onRemove}
-    />
+    <IconButton icon="pencil" label="Edit all properties of {name}" onclick={onEdit} />
+    <IconButton icon="trash" variant="danger" label="Remove {name}" onclick={onRemove} />
   </div>
 </div>

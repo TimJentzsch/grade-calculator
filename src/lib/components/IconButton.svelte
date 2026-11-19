@@ -11,14 +11,24 @@
      * - `danger`: a subtle button for destructive actions, e.g. removing
      */
     variant?: 'ghost' | 'primary' | 'danger';
+    /**
+     * Makes the button a toggle, which is highlighted while pressed.
+     * The label should describe the action and stay the same in both states.
+     */
+    pressed?: boolean;
     onclick: () => void;
   }
 
-  const { icon, label, variant = 'ghost', onclick }: Props = $props();
+  const { icon, label, variant = 'ghost', pressed, onclick }: Props = $props();
 </script>
 
-<button type="button" class="icon-button {variant}" title={label} aria-label={label} {onclick}
-  ><Icon name={icon} /></button
+<button
+  type="button"
+  class="icon-button {variant}"
+  title={label}
+  aria-label={label}
+  aria-pressed={pressed}
+  {onclick}><Icon name={icon} /></button
 >
 
 <style>
@@ -59,7 +69,14 @@
     color: var(--color-on-primary);
   }
 
-  .primary:hover {
+  .primary:hover,
+  [aria-pressed='true']:hover {
     background-color: var(--color-primary-hover);
+    color: var(--color-on-primary);
+  }
+
+  [aria-pressed='true'] {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
   }
 </style>

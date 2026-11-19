@@ -6,6 +6,8 @@
     trash: ['M4 7h16', 'M9 7V4.5h6V7', 'M6 7l1 13h10l1-13', 'M10 11v5', 'M14 11v5'],
     check: ['M5 12.5l4.5 4.5L19 7'],
     x: ['M6 6l12 12', 'M18 6L6 18'],
+    ban: ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M5.6 5.6l12.8 12.8'],
+    'circle-check': ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M8 12.5l2.5 2.5L16 9.5'],
   } satisfies Record<string, string[]>;
 
   export type IconName = keyof typeof icons;

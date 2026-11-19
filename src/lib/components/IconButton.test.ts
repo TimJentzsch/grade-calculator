@@ -29,6 +29,16 @@ describe('IconButton', () => {
     );
   });
 
+  test('can be a toggle', () => {
+    expect(html({ icon: 'ban', label: 'Eliminate', pressed: true, onclick })).toContain(
+      'aria-pressed="true"',
+    );
+    expect(html({ icon: 'ban', label: 'Eliminate', pressed: false, onclick })).toContain(
+      'aria-pressed="false"',
+    );
+    expect(html({ icon: 'plus', label: 'Add', onclick })).not.toContain('aria-pressed');
+  });
+
   test('draws the icon with SVG paths', () => {
     const body = html({ icon: 'x', label: 'Discard', onclick });
     expect(body.match(/<path /g)).toHaveLength(2);
