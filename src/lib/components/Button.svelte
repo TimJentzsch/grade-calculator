@@ -11,28 +11,40 @@
     href?: string;
     /** The file name to download the link target as. */
     download?: string;
+    /**
+     * - `primary`: a filled button for the main action
+     * - `secondary`: a subtle button for other actions
+     */
+    variant?: 'primary' | 'secondary';
   }
 
-  const { children, title, onclick, disabled = false, href, download }: Props = $props();
+  const {
+    children,
+    title,
+    onclick,
+    disabled = false,
+    href,
+    download,
+    variant = 'primary',
+  }: Props = $props();
 </script>
 
 {#if href !== undefined}
   <!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- Used for downloads, not routes -->
-  <a class="button" {href} {download} {title}>{@render children()}</a>
+  <a class="button {variant}" {href} {download} {title}>{@render children()}</a>
 {:else}
-  <button type="button" class="button" {title} {onclick} {disabled}>{@render children()}</button>
+  <button type="button" class="button {variant}" {title} {onclick} {disabled}
+    >{@render children()}</button
+  >
 {/if}
 
 <style>
   .button {
     display: inline-block;
     vertical-align: middle;
-    margin: var(--space-2xs);
     padding: var(--space-xs) var(--space-sm);
-    border: none;
+    border: 1px solid transparent;
     border-radius: var(--radius-sm);
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
     box-shadow: var(--shadow-raised);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
@@ -42,11 +54,30 @@
   }
 
   .button:hover {
-    background-color: var(--color-primary-hover);
     box-shadow: var(--shadow-hover);
   }
 
-  .button:disabled {
+  .primary {
+    background-color: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .primary:hover {
+    background-color: var(--color-primary-hover);
+  }
+
+  .secondary {
+    background-color: var(--color-surface-raised);
+    border-color: var(--color-border);
+    color: var(--color-text);
+  }
+
+  .secondary:hover {
+    background-color: var(--color-surface-hover);
+  }
+
+  .button:disabled,
+  .button:disabled:hover {
     cursor: default;
     background-color: var(--color-surface-hover);
     color: var(--color-text-disabled);

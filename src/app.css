@@ -214,15 +214,6 @@ input.grade-input.invalid {
   box-shadow: var(--shadow-raised);
 }
 
-#settings {
-  display: grid;
-  gap: var(--space-md);
-}
-
-.settings-container {
-  min-height: 30px;
-}
-
 input[type='text'],
 input[type='number'],
 select {
@@ -257,6 +248,10 @@ select:disabled {
 
 header {
   background-color: var(--color-header);
+}
+
+header h1 {
+  font-size: var(--font-size-xl);
 }
 
 .github-link {

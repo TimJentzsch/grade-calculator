@@ -67,42 +67,55 @@
 </script>
 
 <div id="body-container">
-  <div id="settings">
-    <div class="settings-container">
-      Curriculum templates:
-      <Button title="Create a new empty curriculum" onclick={newCurriculum}>Empty Curriculum</Button
-      >{#each templates as template (template.name)}<Button
-          title="Load the {template.name} curriculum"
-          onclick={() => loadConfig(template)}>{template.name}</Button
-        >{/each}
+  <div class="toolbar">
+    <div class="toolbar-group" role="group" aria-labelledby="templates-label">
+      <span id="templates-label" class="toolbar-label">Start from</span>
+      <div class="toolbar-buttons">
+        <Button variant="secondary" title="Create a new empty curriculum" onclick={newCurriculum}
+          >Empty curriculum</Button
+        >
+        {#each templates as template (template.name)}
+          <Button
+            variant="secondary"
+            title="Load the {template.name} curriculum"
+            onclick={() => loadConfig(template)}>{template.name}</Button
+          >
+        {/each}
+      </div>
     </div>
-    <div class="settings-container">
-      Load curriculum:
-      <Button title="Upload a saved curriculum" onclick={() => fileInput?.click()}>Load...</Button>
-      <input
-        bind:this={fileInput}
-        type="file"
-        accept=".json"
-        name="configurationInput"
-        hidden
-        onchange={loadConfiguration}
-      />
+    <div class="toolbar-group" role="group" aria-labelledby="file-label">
+      <span id="file-label" class="toolbar-label">File</span>
+      <div class="toolbar-buttons">
+        <Button
+          variant="secondary"
+          title="Load a saved curriculum from a file"
+          onclick={() => fileInput?.click()}>Load…</Button
+        >
+        <Button
+          variant="secondary"
+          href={saveHref}
+          download={saveFileName}
+          title="Save the curriculum to a file">Save…</Button
+        >
+        <input
+          bind:this={fileInput}
+          type="file"
+          accept=".json"
+          name="configurationInput"
+          hidden
+          onchange={loadConfiguration}
+        />
+      </div>
     </div>
-    <div class="settings-container">
-      Save curriculum:
-      <Button href={saveHref} download={saveFileName} title="Download the curriculum configuration"
-        >Save...</Button
-      >
-    </div>
-    <div class="settings-container">
-      Auto elimination:
-      <Button
-        title="Automatically eliminate modules for the best grade"
-        onclick={autoElimination}
-        disabled={eliminating}>Eliminate...</Button
-      >
-
-      <span id="auto-elimination-loading-indicator">{eliminating ? 'Calculating…' : ''}</span>
+    <div class="toolbar-group elimination-group" role="group" aria-labelledby="elimination-label">
+      <span id="elimination-label" class="toolbar-label">Elimination</span>
+      <div class="toolbar-buttons" aria-live="polite">
+        <Button
+          title="Automatically eliminate modules for the best grade"
+          onclick={autoElimination}
+          disabled={eliminating}>{eliminating ? 'Calculating…' : 'Auto-eliminate'}</Button
+        >
+      </div>
     </div>
   </div>
   <div id="content">
@@ -111,3 +124,40 @@
     {/key}
   </div>
 </div>
+
+<style>
+  .toolbar {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+    gap: var(--space-md) var(--space-xl);
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .toolbar-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .toolbar-label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .toolbar-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    gap: var(--space-sm);
+  }
+
+  /* The main action, aligned to the right if there is enough space */
+  .elimination-group {
+    margin-left: auto;
+  }
+</style>

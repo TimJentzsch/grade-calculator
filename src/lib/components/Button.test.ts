@@ -16,6 +16,11 @@ describe('Button', () => {
     expect(body).toContain('<span>Save...</span>');
   });
 
+  test('uses the primary variant by default', () => {
+    expect(html({})).toMatch(/class="button primary/);
+    expect(html({ variant: 'secondary' })).toMatch(/class="button secondary/);
+  });
+
   test('can be disabled', () => {
     expect(html({ disabled: true })).toMatch(/<button[^>]* disabled/);
     expect(html({})).not.toMatch(/disabled/);
