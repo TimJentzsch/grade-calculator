@@ -3,17 +3,22 @@ import Curriculum from '../model/curriculum.svelte';
 import { computerScienceBsc, computerScienceMsc } from './index';
 
 describe('templates', () => {
-  test('the B.Sc. has 180 CP', () => {
-    expect(Curriculum.fromObject(computerScienceBsc).credits).toBe(180);
+  test('the B.Sc. requires 180 CP', () => {
+    const curriculum = Curriculum.fromObject(computerScienceBsc);
+    expect(curriculum.requiredCredits).toBe(180);
+    // The electives and the application subject are added by the user
+    expect(curriculum.bestCase().credits).toBe(180);
   });
 
-  test('the M.Sc. has 120 CP', () => {
-    expect(Curriculum.fromObject(computerScienceMsc).credits).toBe(120);
-  });
-
-  test('the M.Sc. placeholders are separate modules', () => {
+  test('the M.Sc. requires 120 CP', () => {
     const curriculum = Curriculum.fromObject(computerScienceMsc);
-    curriculum.moduleAreas[0].modules[0].grade = 1.0;
-    expect(curriculum.moduleAreas[0].modules[1].grade).toBeUndefined();
+    expect(curriculum.requiredCredits).toBe(120);
+    expect(curriculum.bestCase().credits).toBe(120);
+  });
+
+  test('the grade range of an empty template covers all grades', () => {
+    const curriculum = Curriculum.fromObject(computerScienceMsc);
+    expect(curriculum.bestCase().grade).toBeCloseTo(1.0);
+    expect(curriculum.worstCase().grade).toBeCloseTo(4.0);
   });
 });

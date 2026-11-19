@@ -96,63 +96,19 @@ export function thesisGrade(thesis: NotenspiegelEntry | undefined): number | und
   return truncateGrade(weighted / credits);
 }
 
-/** Modules of the Notenspiegel to put into an area of the curriculum, see `fillAreas`. */
-export interface AreaFilling {
-  area: ModuleAreaObject;
-  entries: NotenspiegelEntry[];
-}
-
-/** How many credits the open placeholders of a group of areas should add up to. */
-export interface PlaceholderLimits {
-  /** The planned credits, e.g. 60 CP of electives. Open placeholders fill up to this. */
-  target: number;
-  /** The required credits. Once the modules reach these, no placeholders are kept. */
-  minimum: number;
-}
-
 /**
- * Fills areas whose modules are chosen freely, e.g. electives.
- *
- * The modules of the template are placeholders, which the modules of the Notenspiegel replace
- * in order. If there are more modules than placeholders, they are added.
- * With `limits`, the remaining placeholders of all areas are only kept until the planned credits
- * are reached, the last one with fewer credits if needed, and none once the minimum is reached.
- * Without `limits`, all remaining placeholders are kept.
+ * Adds modules of the Notenspiegel to an area whose modules are chosen freely, e.g. electives.
+ * @param area The area of the curriculum.
+ * @param entries The modules of the Notenspiegel.
+ * @param use Marks an entry as assigned.
  */
-export function fillAreas(
-  fillings: AreaFilling[],
+export function addModules(
+  area: ModuleAreaObject,
+  entries: NotenspiegelEntry[],
   use: (entry: NotenspiegelEntry) => void,
-  limits?: PlaceholderLimits,
 ): void {
-  let credits = 0;
-  const placeholders = fillings.map(({ area, entries }) => {
-    const filled = entries.map((entry, index) => {
-      use(entry);
-      credits += entry.credits;
-      return applyEntry(
-        { ...area.modules[index], name: entry.name, credits: entry.credits },
-        entry,
-      );
-    });
-    const open = area.modules.slice(entries.length);
-    area.modules = filled;
-    return open;
-  });
-
-  // The minimum only counts the modules of the Notenspiegel, not the placeholders
-  const minimumReached = limits !== undefined && credits >= limits.minimum;
-  fillings.forEach(({ area }, index) => {
-    for (const placeholder of placeholders[index]) {
-      if (!limits) {
-        area.modules.push(placeholder);
-        continue;
-      }
-      if (minimumReached || credits >= limits.target) {
-        return;
-      }
-      const placeholderCredits = Math.min(placeholder.credits ?? 0, limits.target - credits);
-      area.modules.push({ ...placeholder, credits: placeholderCredits });
-      credits += placeholderCredits;
-    }
-  });
+  for (const entry of entries) {
+    use(entry);
+    area.modules.push(applyEntry({ name: entry.name, credits: entry.credits }, entry));
+  }
 }

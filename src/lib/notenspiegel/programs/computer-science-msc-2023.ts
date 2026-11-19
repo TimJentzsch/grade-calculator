@@ -2,8 +2,8 @@ import type { CurriculumObject } from '../../model/curriculum.svelte.ts';
 import type { ModuleAreaObject } from '../../model/module-area.svelte.ts';
 import computerScienceMsc from '../../templates/computer-science-msc.ts';
 import {
+  addModules,
   applyEntry,
-  fillAreas,
   findEntry,
   modulesOf,
   type ProgramImporter,
@@ -40,10 +40,6 @@ const MODULE_NAMES: Record<string, string[]> = {
 };
 const THESIS_AREA = 'Master Thesis';
 
-/** The planned and required credits of the electives and the application area (§ 4 (2)). */
-const ELECTIVE_LIMITS = { target: 60, minimum: 58 };
-const APPLICATION_LIMITS = { target: 16, minimum: 10 };
-
 /** The modules with credits in an area of the Notenspiegel, without e.g. "Modulbausteine". */
 function modulesWithCredits(area: NotenspiegelEntry | undefined): NotenspiegelEntry[] {
   return area ? modulesOf(area).filter((entry) => entry.credits > 0) : [];
@@ -66,25 +62,13 @@ const computerScienceMsc2023: ProgramImporter = {
     const areaNamed = (name: string) =>
       curriculum.moduleAreas.find((area) => area.name === name) as ModuleAreaObject;
 
-    // The electives are filled together, as the credits only count across all areas
-    fillAreas(
-      Object.entries(ELECTIVE_AREAS).map(([name, names]) => ({
-        area: areaNamed(name),
-        entries: modulesWithCredits(findEntry(notenspiegel.root, names)),
-      })),
+    for (const [name, names] of Object.entries(ELECTIVE_AREAS)) {
+      addModules(areaNamed(name), modulesWithCredits(findEntry(notenspiegel.root, names)), use);
+    }
+    addModules(
+      areaNamed(APPLICATION_AREA),
+      modulesWithCredits(findEntry(notenspiegel.root, APPLICATION_NAMES)),
       use,
-      ELECTIVE_LIMITS,
-    );
-
-    fillAreas(
-      [
-        {
-          area: areaNamed(APPLICATION_AREA),
-          entries: modulesWithCredits(findEntry(notenspiegel.root, APPLICATION_NAMES)),
-        },
-      ],
-      use,
-      APPLICATION_LIMITS,
     );
 
     for (const area of curriculum.moduleAreas) {

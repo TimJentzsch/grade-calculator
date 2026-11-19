@@ -3,6 +3,7 @@ import type { CurriculumObject } from '../model/curriculum.svelte';
 const computerScienceBsc: CurriculumObject = {
   name: 'RWTH Computer Science B.Sc. (PO 2018)',
   eliminationCPLimit: 30,
+  requiredCredits: 180,
   moduleAreas: [
     {
       name: 'Applied Computer Science',
@@ -120,34 +121,14 @@ const computerScienceBsc: CurriculumObject = {
     {
       name: 'Elective Modules',
       eliminationLimit: 1,
-      modules: [
-        {
-          name: 'Elective Module',
-          credits: 6,
-        },
-        {
-          name: 'Elective Module',
-          credits: 6,
-        },
-        {
-          name: 'Elective Module',
-          credits: 6,
-        },
-        {
-          name: 'Elective Module',
-          credits: 6,
-        },
-      ],
+      requiredCredits: 24,
+      modules: [],
     },
     {
       name: 'Application Subject',
       eliminationLimit: 1,
-      modules: [
-        {
-          name: 'Application Module',
-          credits: 22,
-        },
-      ],
+      requiredCredits: 22,
+      modules: [],
     },
     {
       name: 'Bachelor Thesis',

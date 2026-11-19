@@ -118,7 +118,7 @@ describe('importNotenspiegel for the M.Sc. PO 2023', () => {
   describe('a current student', () => {
     // (2.0·6 + 2.7·6 + 1.3·6 + 1.7·6 + 2.3·8 + 1.0·6 + 1.7·6 + 2.0·6 + 1.3·8 + 2.7·6 + 1.7·4
     //   + 1.3·7) / 75 = 135.3 / 75 = 1.804
-    const { curriculum, modules, warnings } = load(mscRows(), { totalGrade: '1,8' });
+    const { curriculum, area, modules, warnings } = load(mscRows(), { totalGrade: '1,8' });
 
     test('assigns the modules to their areas', () => {
       expect(curriculum.name).toBe('RWTH Computer Science M.Sc. (PO 2023)');
@@ -136,15 +136,15 @@ describe('importNotenspiegel for the M.Sc. PO 2023', () => {
       ]);
     });
 
-    test('drops the elective placeholders once 58 CP are reached', () => {
-      expect(modules('Graphics and Interaction')).toEqual([['Computer Vision', '1.3', 6]]);
+    test('adds the modules of the application area', () => {
+      expect(modules('Application Area')).toEqual([['Mikroökonomie', '2.7', 6]]);
+      expect(area('Application Area')?.missingCredits).toBe(4);
     });
 
-    test('keeps application placeholders up to the planned 16 CP', () => {
-      expect(modules('Application Area')).toEqual([
-        ['Mikroökonomie', '2.7', 6],
-        ['Application Module', 'TBD', 8],
-      ]);
+    test('counts the missing credits', () => {
+      // 120 - 58 electives - 10 application area (required) - 44 seminar, lab, colloquium, thesis
+      expect(curriculum.missingCredits).toBe(8);
+      expect(curriculum.bestCase().credits).toBe(120);
     });
 
     test('leaves the colloquium and thesis open', () => {
@@ -199,7 +199,7 @@ describe('importNotenspiegel for the M.Sc. PO 2023', () => {
       expect(curriculum.isValidElimination).toBe(true);
     });
 
-    test('drops the application placeholders once 10 CP are reached', () => {
+    test('adds all modules of the application area', () => {
       expect(modules('Application Area')).toEqual([
         ['Mikroökonomie', '2.7', 6],
         ['Makroökonomie', '1.7', 6],
