@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatGrade } from '#lib/grade.ts';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
   import IconButton from './IconButton.svelte';
@@ -18,12 +19,21 @@
 
   const label = $derived(kind === 'curriculum' ? 'curriculum' : 'module area');
 
-  const gradeLimits = $derived.by(() => {
-    const { gradeText } = area;
-    const bestGrade = area.bestCase().eliminationGradeText;
-    const worstGrade = area.worstCase().eliminationGradeText;
+  /**
+   * A limit of the possible grade range, e.g. `1.4`.
+   * Only shows the first decimal place like the final grade, as the user can't change the range.
+   */
+  function formatLimit(limit: Curriculum | ModuleArea): string {
+    const grade = limit.eliminationGrade;
+    return grade === undefined ? limit.eliminationGradeText : formatGrade(grade);
+  }
 
-    if (gradeText === bestGrade && gradeText === worstGrade) {
+  const gradeLimits = $derived.by(() => {
+    const bestGrade = formatLimit(area.bestCase());
+    const worstGrade = formatLimit(area.worstCase());
+
+    // Once the grade can't change anymore, the range isn't needed
+    if (bestGrade === worstGrade) {
       return '';
     }
     return `(${bestGrade}-${worstGrade})`;
