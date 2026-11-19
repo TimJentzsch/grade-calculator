@@ -35,9 +35,12 @@ function referenceBestElimination(curriculum: Curriculum, index: number): Curric
 /** The indices into `curriculum.modules` of the modules eliminated by the reference search. */
 function referenceBestIndices(curriculum: Curriculum): number[] {
   const clear = curriculum.clone();
-  // `resetElimination` only resets graded modules, but other modules may still be flagged
+  // `resetElimination` only resets graded modules, but other modules may still be flagged.
+  // Modules with an unknown grade always stay eliminated.
   clear.modules.forEach((module) => {
-    module.eliminated = undefined;
+    if (!module.gradeUnknown) {
+      module.eliminated = undefined;
+    }
   });
   return referenceBestElimination(clear, 0).modules.flatMap((module, index) =>
     module.eliminated ? [index] : [],
@@ -127,7 +130,7 @@ describe('elimination', () => {
         1,
       );
 
-      expect(bestIndices(curriculum)).toEqual([1]);
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual([1]);
     });
 
     test('respects the elimination limit', () => {
@@ -206,7 +209,7 @@ describe('elimination', () => {
         1,
       );
 
-      expect(bestIndices(curriculum)).toEqual([1]);
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual([1]);
     });
   });
 
@@ -243,6 +246,45 @@ describe('elimination', () => {
       expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual([2]);
     });
 
+    test('keeps modules with an unknown grade eliminated', () => {
+      const curriculum = new Curriculum('Test curriculum', [
+        new ModuleArea(
+          'Test module area 1',
+          [
+            new Module('Test module 1', 6, 1.0),
+            new Module('Test module 2', 6, undefined, undefined, false, true, true),
+            new Module('Test module 3', 6, 4.0),
+          ],
+          1,
+        ),
+        new ModuleArea(
+          'Test module area 2',
+          [new Module('Test module 4', 6, 1.0), new Module('Test module 5', 6, 3.0)],
+          1,
+        ),
+      ]);
+
+      // The unknown grade uses up the elimination of the first area
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual([1, 4]);
+    });
+
+    test('counts modules with an unknown grade towards the curriculum limits', () => {
+      const curriculum = new Curriculum(
+        'Test curriculum',
+        [
+          new ModuleArea('Test module area', [
+            new Module('Test module 1', 6, 1.0),
+            new Module('Test module 2', 8, undefined, undefined, false, true, true),
+            new Module('Test module 3', 6, 4.0),
+          ]),
+        ],
+        undefined,
+        10,
+      );
+
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual([1]);
+    });
+
     test('ignores an elimination that exceeds the limits', () => {
       const curriculum = new Curriculum(
         'Test curriculum',
@@ -261,14 +303,20 @@ describe('elimination', () => {
   });
 
   describe('dynamic programming matches the exhaustive search', () => {
-    /** The grade after applying the elimination, which must also be valid. */
+    /**
+     * The grade after applying the elimination, which must also be valid,
+     * unless the modules with an unknown grade alone already break a limit.
+     */
     function gradeOf(curriculum: Curriculum, indices: number[]): number | undefined {
       const plain = toEliminationCurriculum(curriculum);
       const elimination = curriculum.modules.map(() => false);
+      const fixedValid = isValidElimination(plain, elimination);
       for (const index of indices) {
         elimination[index] = true;
       }
-      expect(isValidElimination(plain, elimination)).toBe(true);
+      if (fixedValid) {
+        expect(isValidElimination(plain, elimination)).toBe(true);
+      }
       return getEliminationGrade(plain, elimination);
     }
 

@@ -55,7 +55,18 @@ export default class Module {
   }
 
   get completed(): boolean {
-    return Boolean(this.credits && ((!this.isGraded && this.passed) || this.grade));
+    return Boolean(
+      this.credits && ((!this.isGraded && this.passed) || this.grade || this.gradeUnknown),
+    );
+  }
+
+  /**
+   * Whether the module was passed and eliminated, but its grade is unknown.
+   * The Notenspiegel only shows "B" for eliminated modules, so their grade is lost on import.
+   * Such modules always stay eliminated.
+   */
+  get gradeUnknown(): boolean {
+    return Boolean(this.isGraded && this.eliminated && this.passed && this.grade === undefined);
   }
 
   get weightedCredits(): number {
@@ -71,7 +82,7 @@ export default class Module {
       return 'TBD';
     }
 
-    if (!this.isGraded) {
+    if (!this.isGraded || this.gradeUnknown) {
       return 'B';
     }
 
@@ -161,6 +172,14 @@ export default class Module {
   }
 
   static fromObject(obj: ModuleObject): Module {
-    return new Module(obj.name, obj.credits, obj.grade, obj.weight, obj.notGraded, obj.passed);
+    return new Module(
+      obj.name,
+      obj.credits,
+      obj.grade,
+      obj.weight,
+      obj.notGraded,
+      obj.passed,
+      obj.eliminated,
+    );
   }
 }

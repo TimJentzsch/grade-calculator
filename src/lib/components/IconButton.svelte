@@ -16,10 +16,11 @@
      * The label should describe the action and stay the same in both states.
      */
     pressed?: boolean;
+    disabled?: boolean;
     onclick: () => void;
   }
 
-  const { icon, label, variant = 'ghost', pressed, onclick }: Props = $props();
+  const { icon, label, variant = 'ghost', pressed, disabled = false, onclick }: Props = $props();
 </script>
 
 <button
@@ -28,6 +29,7 @@
   title={label}
   aria-label={label}
   aria-pressed={pressed}
+  {disabled}
   {onclick}><Icon name={icon} /></button
 >
 
@@ -58,20 +60,25 @@
     color: var(--color-on-primary);
   }
 
+  .icon-button:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
   /* Only on devices with a mouse, touch devices would keep the hover effect after tapping */
   @media (hover: hover) {
-    .ghost:hover {
+    .ghost:enabled:hover {
       background-color: var(--color-surface-hover);
       color: var(--color-primary);
     }
 
-    .danger:hover {
+    .danger:enabled:hover {
       background-color: var(--color-surface-hover);
       color: var(--color-danger);
     }
 
-    .primary:hover,
-    [aria-pressed='true']:hover {
+    .primary:enabled:hover,
+    [aria-pressed='true']:enabled:hover {
       background-color: var(--color-primary-hover);
       color: var(--color-on-primary);
     }

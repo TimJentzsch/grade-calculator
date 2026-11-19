@@ -51,16 +51,21 @@
     >
     <div class={['module-grade-container grade-container', { ungraded: !module.isGraded }]}>
       {#if module.isGraded}
+        <!-- Without a grade, the module can't be part of the grade, so it stays eliminated -->
         <IconButton
           icon="ban"
-          label="Eliminate {name}"
+          label={module.gradeUnknown
+            ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
+            : `Eliminate ${name}`}
           pressed={!!module.eliminated}
+          disabled={module.gradeUnknown}
           onclick={() => (module.eliminated = !module.eliminated)}
         />
         <GradeInput
           class="inline-input"
           label="Grade of {name}"
           allowTBD
+          placeholder={module.gradeUnknown ? 'B' : undefined}
           bind:value={module.grade}
         />
       {:else}

@@ -305,4 +305,43 @@ describe('Module', () => {
       expect(module.eliminated).toBe(true);
     });
   });
+
+  describe('unknown grade', () => {
+    /** An eliminated module imported from a Notenspiegel, which only shows "B". */
+    const unknownGrade = () => new Module('Test module', 6, undefined, 1, false, true, true);
+
+    test('is completed, but has no grade', () => {
+      const module = unknownGrade();
+      expect(module.gradeUnknown).toBe(true);
+      expect(module.completed).toBe(true);
+      expect(module.hasGrade).toBe(false);
+    });
+
+    test('is shown as passed', () => {
+      const module = unknownGrade();
+      expect(module.gradeText).toBe('B');
+      expect(module.eliminationGradeText).toBe('B');
+    });
+
+    test('requires the module to be eliminated and passed', () => {
+      expect(new Module('Test module', 6, undefined, 1, false, true).gradeUnknown).toBe(false);
+      expect(new Module('Test module', 6, undefined, 1, false, false, true).gradeUnknown).toBe(
+        false,
+      );
+      expect(new Module('Test module', 6, undefined, 1, true, true, true).gradeUnknown).toBe(false);
+    });
+
+    test('becomes a normal eliminated module once a grade is entered', () => {
+      const module = unknownGrade();
+      module.grade = 3.7;
+      expect(module.gradeUnknown).toBe(false);
+      expect(module.eliminated).toBe(true);
+      expect(module.gradeText).toBe('3.7');
+    });
+
+    test('survives saving and loading', () => {
+      const module = Module.fromObject(unknownGrade().toObject());
+      expect(module.gradeUnknown).toBe(true);
+    });
+  });
 });

@@ -72,6 +72,11 @@ export default class ModuleArea {
     return this.completedModules.filter((module) => module.isGraded && module.weight !== 0);
   }
 
+  /** The completed graded modules whose grade is known, see `Module.gradeUnknown`. */
+  get knownGradeModules(): Module[] {
+    return this.completedGradedModules.filter((module) => !module.gradeUnknown);
+  }
+
   get eliminationCompletedGradedModules(): Module[] {
     return this.completedGradedModules.filter((module) => !module.eliminated);
   }
@@ -94,7 +99,7 @@ export default class ModuleArea {
       return undefined;
     }
 
-    return sum(this.completedGradedModules, (module) => module.weightedCredits);
+    return sum(this.knownGradeModules, (module) => module.weightedCredits);
   }
 
   get eliminationWeightedCredits(): number | undefined {
@@ -122,7 +127,7 @@ export default class ModuleArea {
 
   get gradePartiallyCompleted(): boolean {
     if (this.isGraded) {
-      return this.completedGradedModules.length > 0;
+      return this.knownGradeModules.length > 0;
     }
     return this.completedModules.length > 0;
   }
@@ -138,7 +143,7 @@ export default class ModuleArea {
     if (!this.isGraded || !this.gradePartiallyCompleted) {
       return undefined;
     }
-    const weightedGrade = sum(this.completedGradedModules, (module) => module.weightedGrade);
+    const weightedGrade = sum(this.knownGradeModules, (module) => module.weightedGrade);
     return weightedGrade / (this.weightedCredits as number);
   }
 

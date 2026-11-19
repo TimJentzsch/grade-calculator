@@ -635,4 +635,27 @@ describe('ModuleArea', () => {
       expect(ModuleArea.fromObject(obj)).toEqual(expectedModuleArea);
     });
   });
+
+  describe('unknown grade', () => {
+    test('the grade before elimination only uses known grades', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module 1', 6, 2.0),
+        new Module('Test module 2', 6, undefined, undefined, false, true, true),
+      ]);
+
+      expect(moduleArea.gradeCompleted).toBe(true);
+      expect(moduleArea.grade).toBe(2.0);
+      expect(moduleArea.eliminationGrade).toBe(2.0);
+      expect(moduleArea.eliminatedModuleCount).toBe(1);
+    });
+
+    test('the grade is open if no grade is known', () => {
+      const moduleArea = new ModuleArea('Test module area', [
+        new Module('Test module', 6, undefined, undefined, false, true, true),
+      ]);
+
+      expect(moduleArea.grade).toBeUndefined();
+      expect(moduleArea.gradeText).toBe('TBD');
+    });
+  });
 });
