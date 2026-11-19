@@ -75,17 +75,17 @@ export function applyElimination(curriculum: Curriculum, indices: number[]): voi
 // They must stay in sync with them, which is checked by the tests.
 
 /** Mirrors `Module.completed`. */
-function isCompleted(module: EliminationModule): boolean {
+export function isCompleted(module: EliminationModule): boolean {
   return Boolean(module.credits && ((!module.isGraded && module.passed) || module.grade));
 }
 
 /** Mirrors `Module.hasGrade`. */
-function hasGrade(module: EliminationModule, eliminated: boolean): boolean {
+export function hasGrade(module: EliminationModule, eliminated: boolean): boolean {
   return Boolean(module.credits && module.isGraded && module.grade && !eliminated);
 }
 
 /** Mirrors the filter of `ModuleArea.gradedModules`. */
-function countsForGrade(module: EliminationModule): boolean {
+export function countsForGrade(module: EliminationModule): boolean {
   return module.isGraded && module.weight !== 0;
 }
 
