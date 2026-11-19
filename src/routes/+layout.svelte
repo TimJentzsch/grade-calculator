@@ -7,7 +7,7 @@
 
 <header>
   <div id="header-content">
-    <h1>Grade Calculator</h1>
+    <h1>Grade calculator <span class="title-university">for RWTH Aachen University</span></h1>
     <a
       class="github-link"
       href="https://github.com/TimJentzsch/grade-calculator"
@@ -24,3 +24,11 @@
 </header>
 
 {@render children()}
+
+<style>
+  /* Only the app's purpose is highlighted, the university is secondary */
+  .title-university {
+    color: var(--color-text);
+    font-weight: var(--font-weight-normal);
+  }
+</style>
