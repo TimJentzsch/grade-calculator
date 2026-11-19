@@ -6,9 +6,30 @@
   import Curriculum, { type CurriculumObject } from '#lib/model/curriculum.svelte.ts';
   import { importNotenspiegel } from '#lib/notenspiegel/import.ts';
   import readNotenspiegel from '#lib/notenspiegel/read-notenspiegel.ts';
+  import { loadSavedCurriculum, saveCurriculum } from '#lib/storage.ts';
   import templates, { computerScienceBsc } from '#lib/templates/index.ts';
+  import { onMount } from 'svelte';
 
   let curriculum = $state(Curriculum.fromObject(computerScienceBsc));
+
+  /** Whether the saved curriculum has been restored, so that changes can be saved. */
+  let restored = $state(false);
+
+  // The page is prerendered, so the saved curriculum is only available in the browser
+  onMount(() => {
+    const saved = loadSavedCurriculum(localStorage);
+    if (saved) {
+      curriculum = Curriculum.fromObject(saved);
+    }
+    restored = true;
+  });
+
+  // Save every change, so that nothing is lost when the page is closed
+  $effect(() => {
+    if (restored) {
+      saveCurriculum(localStorage, curriculum.toObject());
+    }
+  });
 
   /** Curricula created with "Empty Curriculum", which start in the editor. */
   const emptyCurricula = new WeakSet<Curriculum>();
