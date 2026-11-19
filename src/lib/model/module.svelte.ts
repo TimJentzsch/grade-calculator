@@ -1,3 +1,5 @@
+import { formatGrade, truncateGrade } from '../grade';
+
 /** The serialized form of a module, as used in templates and saved files. */
 export interface ModuleObject {
   name?: string;
@@ -40,7 +42,7 @@ export default class Module {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
     if (!notGraded) {
-      this.grade = grade;
+      this.grade = grade === undefined ? undefined : truncateGrade(grade);
     }
     this.weight = weight === undefined ? 1 : weight;
     this.isGraded = !notGraded;
@@ -73,7 +75,7 @@ export default class Module {
       return 'B';
     }
 
-    return (this.grade as number).toFixed(1);
+    return formatGrade(this.grade as number);
   }
 
   get eliminationGradeText(): string {
@@ -85,7 +87,7 @@ export default class Module {
       return 'B';
     }
 
-    return (this.grade as number).toFixed(1);
+    return formatGrade(this.grade as number);
   }
 
   get isEmpty(): boolean {

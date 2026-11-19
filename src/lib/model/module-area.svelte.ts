@@ -1,3 +1,4 @@
+import { formatAverageGrade } from '../grade';
 import Module, { type ModuleObject } from './module.svelte';
 
 /** The serialized form of a module area, as used in templates and saved files. */
@@ -161,7 +162,7 @@ export default class ModuleArea {
       return 'B';
     }
 
-    return (this.grade as number).toFixed(2);
+    return formatAverageGrade(this.grade as number);
   }
 
   get eliminationGradeText(): string {
@@ -173,7 +174,7 @@ export default class ModuleArea {
       return 'B';
     }
 
-    return (this.eliminationGrade as number).toFixed(2);
+    return formatAverageGrade(this.eliminationGrade as number);
   }
 
   get weightedGrade(): number | undefined {

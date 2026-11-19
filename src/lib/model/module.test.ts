@@ -114,6 +114,15 @@ describe('Module', () => {
         const module = new Module('Test module', 5, undefined, 3, true, true);
         expect(module.gradeText).toEqual('B');
       });
+      test('grade is truncated to one decimal place', () => {
+        const module = new Module('Test module', 5, 2.37);
+        expect(module.grade).toBe(2.3);
+        expect(module.gradeText).toEqual('2.3');
+      });
+      test('grade of a loaded module is truncated', () => {
+        const module = Module.fromObject({ name: 'Test module', credits: 5, grade: 1.99 });
+        expect(module.grade).toBe(1.9);
+      });
       describe('isEmpty', () => {
         test('empty module', () => {
           const module = new Module('', 5, undefined, 3);
