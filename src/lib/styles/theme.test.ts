@@ -4,8 +4,13 @@ import { describe, expect, test } from 'vitest';
 
 const SRC_DIR = join(import.meta.dirname, '..', '..');
 
-/** The only files that may define raw colors and fonts. */
-const THEME_FILES = ['lib/styles/palette.css', 'lib/styles/theme.css', 'lib/styles/typography.css'];
+/** The only files that may define raw colors, fonts and spacing. */
+const THEME_FILES = [
+  'lib/styles/palette.css',
+  'lib/styles/theme.css',
+  'lib/styles/typography.css',
+  'lib/styles/spacing.css',
+];
 
 const NAMED_COLORS = [
   'black',
@@ -33,6 +38,8 @@ const FORBIDDEN: [string, RegExp][] = [
   ['named color', new RegExp(`:[^;{}]*\\b(${NAMED_COLORS.join('|')})\\b`, 'i')],
   ['font without token', /\bfont-(family|size|weight)\s*:(?!\s*var\(--font-)/],
   ['font shorthand', /\bfont\s*:(?!\s*inherit\s*;)/],
+  ['spacing without token', /\b(margin|padding|gap)(-[a-z]+)?\s*:[^;]*\d(px|r?em)\b/],
+  ['radius without token', /\bborder-([a-z]+-)*radius\s*:(?!\s*var\(--radius-)/],
 ];
 
 function listFiles(dir: string): string[] {
@@ -59,7 +66,7 @@ const styledFiles = listFiles(SRC_DIR)
   .filter((path) => !THEME_FILES.includes(path));
 
 describe('theming', () => {
-  test.each(styledFiles)('%s only uses theme tokens for colors and fonts', (path) => {
+  test.each(styledFiles)('%s only uses theme tokens for colors, fonts and spacing', (path) => {
     const lines = extractCss(join(SRC_DIR, path)).split('\n');
     const violations = lines.flatMap((line) =>
       FORBIDDEN.filter(([, pattern]) => pattern.test(line)).map(

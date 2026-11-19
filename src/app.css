@@ -1,6 +1,7 @@
 @import './lib/styles/palette.css';
 @import './lib/styles/theme.css';
 @import './lib/styles/typography.css';
+@import './lib/styles/spacing.css';
 
 * {
   margin: 0;
@@ -50,7 +51,7 @@ select {
 
 #body-container,
 #header-content {
-  padding: 10px;
+  padding: var(--space-md);
   margin: auto;
   max-width: 1100px;
 }
@@ -65,7 +66,7 @@ select {
 #js-error-container {
   background-color: var(--color-danger);
   color: var(--color-on-danger);
-  padding: 10px;
+  padding: var(--space-md);
   text-align: center;
 }
 
@@ -83,7 +84,7 @@ select {
 
 .module-input-container {
   display: grid;
-  grid-gap: 5px;
+  gap: var(--space-sm);
 }
 
 .module-name-label {
@@ -129,7 +130,7 @@ select {
 }
 
 .elimination-container {
-  margin: 0 20px;
+  margin: 0 var(--space-lg);
 }
 
 .header,
@@ -143,11 +144,11 @@ select {
 }
 
 .grade-container {
-  margin: 0 20px;
+  margin: 0 var(--space-lg);
 }
 
 .module-grade-selection {
-  margin: 0 7px;
+  margin: 0 var(--space-sm);
 }
 
 .grade-input {
@@ -161,7 +162,7 @@ input.grade-input.invalid {
 }
 
 .controls-container {
-  margin-left: 5px;
+  margin-left: var(--space-sm);
 }
 
 .grade {
@@ -171,7 +172,7 @@ input.grade-input.invalid {
 
 .grade-value {
   font-weight: var(--font-weight-bold);
-  margin: 0 5px;
+  margin: 0 var(--space-xs);
 }
 
 .module-not-graded,
@@ -192,25 +193,29 @@ input.grade-input.invalid {
 .control-button {
   width: 25px;
   height: 25px;
+  padding: var(--space-xs);
 }
 
 .module-container {
-  margin: 4px;
-  padding: 2px 5px;
+  margin: var(--space-xs);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-sm);
   background-color: var(--color-surface-raised);
   box-shadow: var(--shadow-raised);
 }
 
 .module-area-container {
-  margin: 7px;
-  padding: 5px;
+  margin: var(--space-sm);
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
 }
 
 .curriculum-container {
-  margin: 10px 0;
-  padding: 5px;
+  margin: var(--space-md) 0;
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-raised);
 }
@@ -229,8 +234,9 @@ button,
   background-color: var(--color-primary);
   color: var(--color-on-primary);
   border: none;
-  margin: 2px;
-  padding: 5px;
+  margin: var(--space-2xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow-raised);
 }
 
@@ -254,7 +260,7 @@ button:disabled {
 
 #settings {
   display: grid;
-  grid-gap: 10px;
+  gap: var(--space-md);
 }
 
 .settings-container {
@@ -267,7 +273,7 @@ select {
   background-color: var(--color-input-background);
   color: var(--color-text);
   border: solid var(--color-border) 1px;
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
 }
 
 input[type='text']:hover:enabled,
@@ -283,7 +289,7 @@ input[type='checkbox'] {
 input[type='text'],
 input[type='number'],
 select {
-  padding: 3px 5px;
+  padding: var(--space-2xs) var(--space-sm);
   box-sizing: border-box;
 }
 
