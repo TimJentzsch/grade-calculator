@@ -45,11 +45,20 @@
       : 'The average grade of this module area',
   );
 
-  const creditsTitle = $derived(
-    area.requiredCredits === undefined
-      ? `The total credit points of this ${label}`
-      : `The credit points of the modules in this ${label}, of ${area.requiredCredits} required`,
-  );
+  /**
+   * The credits the modules are short of the required credits.
+   * For the curriculum, this includes the credits missing in its module areas.
+   */
+  const shortCredits = $derived(Math.max(0, (area.requiredCredits ?? 0) - area.credits));
+  const creditsMissing = $derived(shortCredits > 0);
+
+  const creditsTitle = $derived.by(() => {
+    if (area.requiredCredits === undefined) {
+      return `The total credit points of this ${label}`;
+    }
+    const title = `The credit points of the modules in this ${label}, of ${area.requiredCredits} required`;
+    return creditsMissing ? `${title}. ${shortCredits} CP are still missing.` : title;
+  });
 
   const gradeBeforeElimination = $derived(
     area.gradeText !== area.eliminationGradeText ? area.gradeText : '',
@@ -87,7 +96,14 @@
         title="The best/worst possible grade in this {label}">{gradeLimits}</span
       >
     </div>
-    <div class="{kind}-credits-container credits-container" title={creditsTitle}>
+    <div
+      class={[
+        'credits-container',
+        `${kind}-credits-container`,
+        { 'credits-missing': creditsMissing },
+      ]}
+      title={creditsTitle}
+    >
       <span class="{kind}-credits-value">{area.credits}</span
       >{#if area.requiredCredits !== undefined}<span class="required-credits"
           >/{area.requiredCredits}</span
@@ -115,5 +131,11 @@
 <style>
   .required-credits {
     color: var(--color-text-muted);
+  }
+
+  /* The required credits are not reached yet */
+  .credits-missing,
+  .credits-missing .required-credits {
+    color: var(--color-warning);
   }
 </style>
