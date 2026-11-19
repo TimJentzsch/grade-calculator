@@ -37,11 +37,9 @@
     align-items: center;
     justify-content: center;
     vertical-align: middle;
-    /* The icon and button size scale with the font size */
     font-size: var(--font-size-base);
-    width: 1.75em;
-    height: 1.75em;
-    margin: 0 var(--space-2xs);
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
     padding: 0;
     border: none;
     border-radius: var(--radius-sm);

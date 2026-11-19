@@ -27,7 +27,7 @@
         >&#xd7;&#xFE0E;{module.weight.toFixed(1)}</span
       >
     {/if}
-    <div class="module-grade-container grade-container">
+    <div class="module-grade-container grade-container" class:ungraded={!module.isGraded}>
       {#if module.isGraded}
         <IconButton
           icon="ban"

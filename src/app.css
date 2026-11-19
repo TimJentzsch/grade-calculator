@@ -126,7 +126,8 @@ select {
   grid-area: controls;
   display: flex;
   justify-content: flex-end;
-  min-width: 6rem;
+  gap: var(--space-xs);
+  min-width: calc(3 * var(--icon-button-size) + 2 * var(--space-xs));
 }
 
 /* On narrow screens, the details move below the title */
@@ -171,6 +172,7 @@ select {
 
 .editor-controls {
   display: flex;
+  gap: var(--space-xs);
 }
 
 .label {
@@ -197,10 +199,16 @@ input[type='number'] {
 
 .module-grade-container {
   display: grid;
-  /* The grade column is reserved for ungraded modules too, so that all toggles line up */
-  grid-template-columns: auto 4em;
+  /* A toggle and the grade, both columns are reserved so that rows line up */
+  grid-template-columns: var(--icon-button-size) 4em;
   align-items: center;
   gap: var(--space-xs);
+}
+
+/* Ungraded modules show the passed toggle in the grade column, centered like the grades */
+.module-grade-container.ungraded > * {
+  grid-column: 2;
+  justify-self: center;
 }
 
 /* An input that looks like normal text until it is hovered or focused */
