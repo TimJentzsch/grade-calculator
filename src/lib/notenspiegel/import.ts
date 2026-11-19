@@ -3,6 +3,7 @@ import Curriculum, { type CurriculumObject } from '../model/curriculum.svelte.ts
 import { allEntries, modulesOf, type ProgramImporter } from './entries.ts';
 import type { Notenspiegel, NotenspiegelEntry } from './parse.ts';
 import computerScienceBsc2018 from './programs/computer-science-bsc-2018.ts';
+import computerScienceMsc2023 from './programs/computer-science-msc-2023.ts';
 
 /** The curriculum filled with the grades of a Notenspiegel. */
 export interface ImportResult {
@@ -11,7 +12,7 @@ export interface ImportResult {
   warnings: string[];
 }
 
-const importers: ProgramImporter[] = [computerScienceBsc2018];
+const importers: ProgramImporter[] = [computerScienceBsc2018, computerScienceMsc2023];
 
 /** Thrown if there is no importer for the course of study of the Notenspiegel. */
 export class UnsupportedProgramError extends Error {

@@ -238,7 +238,8 @@ describe('importNotenspiegel', () => {
       UnsupportedProgramError,
     );
     expect(() => importNotenspiegel(parse({ program: 'Mathematik' }))).toThrow(
-      'Mathematik (PO 2018) is not supported yet. Supported: Computer Science B.Sc. (PO 2018).',
+      'Mathematik (PO 2018) is not supported yet. ' +
+        'Supported: Computer Science B.Sc. (PO 2018), Computer Science M.Sc. (PO 2023).',
     );
     expect(() =>
       importNotenspiegel(parse({ degree: 'Master of Science RWTH Aachen University' })),
