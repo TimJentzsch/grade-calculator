@@ -1,38 +1,5 @@
-:root {
-  --light-primary: #3f51b5;
-  --light-primary-variant: #1a237e;
-  --light-secondary: #4fc3f7;
-  --light-secondary-variant: #039be5;
-
-  --light-background: #ffffff;
-  --light-surface: #ffffff;
-  --light-error: #b00020;
-
-  --light-on-primary: #ffffff;
-  --light-on-secondary: #000000;
-  --light-on-background: #000000;
-  --light-on-surface: #000000;
-  --light-on-error: #ffffff;
-
-  --dark-primary: #9fa8da;
-  --dark-primary-variant: #3f51b5;
-  --dark-secondary: #81d4fa;
-
-  --dark-background: #121212;
-  --dark-surface: #121212;
-  --dark-elevation-background: rgba(255, 255, 255, 0.08);
-  --dark-error: #cf6679;
-
-  --dark-on-primary: #000000;
-  --dark-on-secondary: #000000;
-  --dark-on-background: #ffffff;
-  --dark-on-surface: #ffffff;
-  --dark-on-disabled: #cccccc;
-  --dark-on-error: #000000;
-
-  --shadow-1: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
-  --shadow-hover: 0 2px 4px 2px rgba(0, 0, 0, 0.2);
-}
+@import './lib/styles/palette.css';
+@import './lib/styles/theme.css';
 
 * {
   margin: 0;
@@ -41,7 +8,19 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--light-background);
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-heading);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
 }
 
 #body-container,
@@ -59,8 +38,8 @@ body {
 }
 
 #js-error-container {
-  background-color: var(--light-error);
-  color: var(--light-on-error);
+  background-color: var(--color-danger);
+  color: var(--color-on-danger);
   padding: 10px;
   text-align: center;
 }
@@ -74,7 +53,7 @@ body {
 }
 
 .invalid-elimination {
-  color: var(--light-error);
+  color: var(--color-danger);
 }
 
 .module-input-container {
@@ -152,8 +131,8 @@ body {
 }
 
 input.grade-input.invalid {
-  border-color: var(--light-error);
-  outline-color: var(--light-error);
+  border-color: var(--color-danger);
+  outline-color: var(--color-danger);
 }
 
 .controls-container {
@@ -172,7 +151,7 @@ input.grade-input.invalid {
 .module-not-graded,
 .eliminated,
 .disabled {
-  color: gray;
+  color: var(--color-text-disabled);
 }
 
 .eliminated {
@@ -192,19 +171,22 @@ input.grade-input.invalid {
 .module-container {
   margin: 4px;
   padding: 2px 5px;
-  box-shadow: var(--shadow-1);
+  background-color: var(--color-surface-raised);
+  box-shadow: var(--shadow-raised);
 }
 
 .module-area-container {
   margin: 7px;
   padding: 5px;
-  box-shadow: var(--shadow-1);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 .curriculum-container {
   margin: 10px 0;
   padding: 5px;
-  box-shadow: var(--shadow-1);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-raised);
 }
 
 button,
@@ -218,19 +200,26 @@ button,
 
   cursor: pointer;
 
-  background-color: var(--light-primary);
-  color: var(--light-on-primary);
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
   border: none;
   margin: 2px;
   padding: 5px;
-  box-shadow: var(--shadow-1);
+  box-shadow: var(--shadow-raised);
 }
 
 button:hover,
 .upload-button:hover,
 .save-button:hover {
-  background-color: var(--light-primary-variant);
+  background-color: var(--color-primary-hover);
   box-shadow: var(--shadow-hover);
+}
+
+button:disabled {
+  cursor: default;
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-disabled);
+  box-shadow: none;
 }
 
 .save-button {
@@ -249,8 +238,20 @@ button:hover,
 input[type='text'],
 input[type='number'],
 select {
-  border: solid var(--light-primary-variant) 1px;
+  background-color: var(--color-input-background);
+  color: var(--color-text);
+  border: solid var(--color-border) 1px;
   border-radius: 5px;
+}
+
+input[type='text']:hover:enabled,
+input[type='number']:hover:enabled,
+select:hover:enabled {
+  border-color: var(--color-border-strong);
+}
+
+input[type='checkbox'] {
+  accent-color: var(--color-primary);
 }
 
 input[type='text'],
@@ -262,82 +263,24 @@ select {
 
 input:disabled,
 select:disabled {
-  border: solid lightgray 1px;
+  border-color: var(--color-border-disabled);
+  color: var(--color-text-disabled);
 }
 
 header {
-  background-color: var(--light-primary);
-  color: var(--light-on-primary);
+  background-color: var(--color-header);
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: var(--dark-background);
-    color: var(--dark-on-background);
-  }
+.github-link {
+  display: flex;
+  color: var(--color-text);
+}
 
-  header {
-    background-color: var(--dark-elevation-background);
-    color: var(--dark-primary);
-  }
-
-  button,
-  .upload-button,
-  .save-button {
-    box-shadow: none;
-    background-color: var(--dark-primary);
-    color: var(--dark-on-primary);
-  }
-
-  button:hover,
-  .upload-button:hover,
-  .save-button:hover {
-    box-shadow: none;
-    background-color: var(--dark-primary-variant);
-    color: var(--dark-on-primary);
-  }
-
-  .module-container,
-  .module-area-container,
-  .curriculum-container {
-    background-color: var(--dark-elevation-background);
-  }
-
-  h1,
-  h2,
-  h3 {
-    color: var(--dark-primary);
-  }
-
-  input,
-  select {
-    background-color: var(--dark-surface);
-    color: var(--dark-on-surface);
-  }
-
-  input[type='text'],
-  input[type='number'],
-  select {
-    border: none;
-  }
-
-  .module-not-graded,
-  .eliminated,
-  .disabled {
-    color: var(--dark-on-disabled);
-  }
-
-  .invalid-elimination {
-    color: var(--dark-error);
-  }
-
-  input.grade-input.invalid {
-    border: solid var(--dark-error) 1px;
-    outline-color: var(--dark-error);
-  }
+.github-link:hover {
+  color: var(--color-primary);
 }
 
 /* Decimal places of a grade that are cut off, shown to indicate how close the next grade is */
 .truncated-digits {
-  color: gray;
+  color: var(--color-text-muted);
 }

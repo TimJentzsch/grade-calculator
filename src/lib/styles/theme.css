@@ -1,0 +1,44 @@
+/*
+ * Semantic color tokens, based on the Catppuccin palette from `palette.css`.
+ *
+ * The palette switches between dark and light mode, so these tokens only need to be defined once.
+ * The app should only use these tokens, never the palette colors directly.
+ */
+
+:root {
+  /* Text */
+  --color-text: var(--ctp-text);
+  --color-text-muted: var(--ctp-subtext0);
+  --color-text-disabled: var(--ctp-overlay1);
+  --color-heading: var(--ctp-blue);
+
+  /* Surfaces, from back to front */
+  --color-background: var(--ctp-mantle);
+  --color-header: var(--ctp-crust);
+  --color-surface: var(--ctp-base);
+  --color-surface-raised: var(--ctp-surface0);
+  --color-surface-hover: var(--ctp-surface1);
+  --color-input-background: var(--ctp-base);
+
+  /* Borders */
+  --color-border: var(--ctp-surface1);
+  --color-border-strong: var(--ctp-overlay0);
+  --color-border-disabled: var(--ctp-surface0);
+
+  /* Primary actions */
+  --color-primary: var(--ctp-blue);
+  --color-primary-hover: color-mix(in oklab, var(--ctp-blue) 80%, var(--ctp-text));
+  /* Text on a primary background */
+  --color-on-primary: var(--ctp-base);
+  --color-focus-ring: var(--ctp-lavender);
+
+  /* Status */
+  --color-danger: var(--ctp-red);
+  /* Text on a danger background */
+  --color-on-danger: var(--ctp-base);
+  --color-success: var(--ctp-green);
+
+  /* Shadows */
+  --shadow-raised: 0 1px 3px 0 color-mix(in srgb, var(--ctp-crust) 50%, transparent);
+  --shadow-hover: 0 2px 6px 0 color-mix(in srgb, var(--ctp-crust) 70%, transparent);
+}
