@@ -31,6 +31,11 @@
       !!eliminatedModuleCount &&
       eliminatedModuleCount > eliminationLimit,
   );
+
+  // The noun refers to the last number shown, e.g. "0/1 module" or "2 modules"
+  const moduleNoun = $derived(
+    (eliminationLimit || eliminatedModuleCount) === 1 ? 'module' : 'modules',
+  );
 </script>
 
 <div class="{kind}-elimination elimination-container">
@@ -50,7 +55,7 @@
       class:invalid-elimination={invalidCount}
       ><span class="elimination-count">{eliminatedModuleCount}</span><span
         class="elimination-count-limit">{eliminationLimit ? `/${eliminationLimit}` : ''}</span
-      ><span class="elimination-count-description">{' modules'}</span></span
+      ><span class="elimination-count-description">{` ${moduleNoun}`}</span></span
     >
   {/if}
 </div>

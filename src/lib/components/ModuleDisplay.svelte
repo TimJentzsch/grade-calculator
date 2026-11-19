@@ -13,7 +13,9 @@
 </script>
 
 <div class="module-display-container module-container row">
-  <span class="module-title row-title">{module.name}</span>
+  <span class="module-title row-title" class:eliminated={module.isGraded && module.eliminated}
+    >{module.name}</span
+  >
   <div class="row-details">
     {#if module.weight !== 1}
       <span class="module-weight-value weight-value" title="The weighting of this module"
