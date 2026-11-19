@@ -1,7 +1,7 @@
 import type { CurriculumObject } from '../model/curriculum.svelte';
 
 const computerScienceBsc: CurriculumObject = {
-  name: 'RWTH Computer Science B.Sc.',
+  name: 'RWTH Computer Science B.Sc. (PO 2018)',
   eliminationCPLimit: 30,
   moduleAreas: [
     {

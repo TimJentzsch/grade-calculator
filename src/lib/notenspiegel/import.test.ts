@@ -105,7 +105,7 @@ describe('importNotenspiegel', () => {
   const grade = truncateGrade(curriculum.eliminationGrade as number);
 
   test('fills all modules of the PO 2018', () => {
-    expect(curriculum.name).toBe('RWTH Computer Science B.Sc.');
+    expect(curriculum.name).toBe('RWTH Computer Science B.Sc. (PO 2018)');
     expect(curriculum.modules.every((module) => module.completed)).toBe(true);
     expect(modules.get('Programming (Progra)')?.grade).toBe(1.7);
     expect(modules.get('Mathematical Logic I (MaLo)')?.grade).toBe(2.7);
