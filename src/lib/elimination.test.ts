@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import {
   applyElimination,
-  getBestEliminationIndices as getBestEliminationIndicesPlain,
   getEliminationGrade,
   isValidElimination,
   toEliminationCurriculum,
@@ -11,11 +10,11 @@ import Curriculum from './model/curriculum.svelte';
 import ModuleArea from './model/module-area.svelte';
 import Module from './model/module.svelte';
 
-function getBestEliminationIndices(curriculum: Curriculum): number[] {
-  return getBestEliminationIndicesPlain(toEliminationCurriculum(curriculum));
-}
-
-/** The original search on the Svelte models, used as a reference for the plain implementation. */
+/**
+ * Finds the best elimination by trying every combination on the Svelte models.
+ * This is far too slow for real curricula, but obviously correct, so it is the reference
+ * that the dynamic programming is checked against.
+ */
 function referenceBestElimination(curriculum: Curriculum, index: number): Curriculum {
   const module = curriculum.modules[index];
   if (!module) return curriculum;
@@ -33,18 +32,16 @@ function referenceBestElimination(curriculum: Curriculum, index: number): Curric
     : noElimBest;
 }
 
-/** The eliminated flags of all modules after running the reference search. */
-function referenceEliminationResult(curriculum: Curriculum): (boolean | undefined)[] {
+/** The indices into `curriculum.modules` of the modules eliminated by the reference search. */
+function referenceBestIndices(curriculum: Curriculum): number[] {
   const clear = curriculum.clone();
-  clear.resetElimination();
-  return referenceBestElimination(clear, 0).modules.map((module) => module.eliminated);
-}
-
-/** The eliminated flags of all modules after applying the plain search, as the app does. */
-function eliminationResult(curriculum: Curriculum): (boolean | undefined)[] {
-  const result = curriculum.clone();
-  applyElimination(result, getBestEliminationIndices(curriculum));
-  return result.modules.map((module) => module.eliminated);
+  // `resetElimination` only resets graded modules, but other modules may still be flagged
+  clear.modules.forEach((module) => {
+    module.eliminated = undefined;
+  });
+  return referenceBestElimination(clear, 0).modules.flatMap((module, index) =>
+    module.eliminated ? [index] : [],
+  );
 }
 
 /** A small deterministic pseudo-random number generator (mulberry32). */
@@ -111,20 +108,11 @@ describe('elimination', () => {
         );
       }
     });
-
-    test('best elimination', () => {
-      for (const curriculum of curricula) {
-        expect(eliminationResult(curriculum)).toEqual(referenceEliminationResult(curriculum));
-      }
-    });
   });
 
-  describe.each([
-    ['brute force', getBestEliminationIndicesPlain],
-    ['dynamic programming', getBestEliminationIndicesDp],
-  ])('getBestEliminationIndices (%s)', (_, implementation) => {
+  describe('getBestEliminationIndicesDp', () => {
     const bestIndices = (curriculum: Curriculum) =>
-      implementation(toEliminationCurriculum(curriculum));
+      getBestEliminationIndicesDp(toEliminationCurriculum(curriculum));
 
     test('eliminates the worst grade when one module may be eliminated', () => {
       const curriculum = new Curriculum(
@@ -272,7 +260,7 @@ describe('elimination', () => {
     });
   });
 
-  describe('dynamic programming matches the brute force search', () => {
+  describe('dynamic programming matches the exhaustive search', () => {
     /** The grade after applying the elimination, which must also be valid. */
     function gradeOf(curriculum: Curriculum, indices: number[]): number | undefined {
       const plain = toEliminationCurriculum(curriculum);
@@ -291,7 +279,7 @@ describe('elimination', () => {
       for (let i = 0; i < 1000; i += 1) {
         const curriculum = randomCurriculum(random);
         const plain = toEliminationCurriculum(curriculum);
-        const expected = gradeOf(curriculum, getBestEliminationIndicesPlain(plain));
+        const expected = gradeOf(curriculum, referenceBestIndices(curriculum));
         const actual = gradeOf(curriculum, getBestEliminationIndicesDp(plain));
 
         if (expected === undefined) {
@@ -306,7 +294,7 @@ describe('elimination', () => {
       const random = createRandom(2024);
       for (let i = 0; i < 1000; i += 1) {
         const curriculum = randomCurriculum(random);
-        const optimal = getBestEliminationIndicesPlain(toEliminationCurriculum(curriculum));
+        const optimal = referenceBestIndices(curriculum);
         applyElimination(curriculum, optimal);
 
         expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual(optimal);

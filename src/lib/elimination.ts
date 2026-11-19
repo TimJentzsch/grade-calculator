@@ -61,7 +61,7 @@ export function toEliminationCurriculum(curriculum: Curriculum): EliminationCurr
 }
 
 /**
- * Applies an elimination calculated by `getBestEliminationIndices` to the curriculum.
+ * Applies an elimination calculated by `getBestEliminationIndicesDp` to the curriculum.
  * Existing eliminations are reset first.
  * @param curriculum The curriculum to modify.
  * @param indices The indices into `curriculum.modules` of the modules to eliminate.
@@ -241,77 +241,4 @@ export function getEliminationGrade(
   });
 
   return weightedGrade / weightedCredits;
-}
-
-/**
- * Calculates the best possible elimination for the given curriculum.
- * @param curriculum The curriculum to calculate the elimination for.
- * @param modules The modules of the curriculum, indexed like `elimination`.
- * @param elimination The modules that have been eliminated so far.
- * @param index The index of the current module.
- * @returns The best elimination of the curriculum.
- */
-function calculateBestElimination(
-  curriculum: EliminationCurriculum,
-  modules: EliminationModule[],
-  elimination: Elimination,
-  index: number,
-): Elimination {
-  const module = modules[index];
-
-  if (!module) {
-    // We reached the end
-    return elimination;
-  }
-
-  // Calculate the best outcome WITHOUT the elimination
-  const noElimBest = calculateBestElimination(curriculum, modules, elimination, index + 1);
-
-  if (!isCompleted(module) || !hasGrade(module, elimination[index])) {
-    // If the module has no grade yet we don't need to eliminate it
-    return noElimBest;
-  }
-
-  // Eliminate the module
-  const elim = [...elimination];
-  elim[index] = true;
-
-  // Check if the module can still be eliminated
-  if (!isValidElimination(curriculum, elim)) {
-    return noElimBest;
-  }
-
-  // Calculate the best outcome WITH the elimination
-  const elimBest = calculateBestElimination(curriculum, modules, elim, index + 1);
-
-  if (
-    (getEliminationGrade(curriculum, elimBest) as number) <
-    (getEliminationGrade(curriculum, noElimBest) as number)
-  ) {
-    // If the elimination gives a better result, use it
-    return elimBest;
-  }
-
-  // Otherwise do not eliminate
-  return noElimBest;
-}
-
-/**
- * Calculates the best possible elimination for the given curriculum.
- * Existing eliminations are ignored.
- *
- * This can take a long time for larger curricula, so it should not be run on the main thread.
- * @param curriculum The curriculum to calculate the elimination for.
- * @returns The indices into `curriculum.modules` of the modules that should be eliminated.
- */
-export function getBestEliminationIndices(curriculum: EliminationCurriculum): number[] {
-  const modules = curriculum.moduleAreas.flatMap((moduleArea) => moduleArea.modules);
-  const elimination = calculateBestElimination(
-    curriculum,
-    modules,
-    modules.map(() => false),
-    0,
-  );
-
-  return elimination.flatMap((eliminated, index) => (eliminated ? [index] : []));
 }
