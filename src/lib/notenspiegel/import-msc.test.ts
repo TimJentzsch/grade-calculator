@@ -121,7 +121,7 @@ describe('importNotenspiegel for the M.Sc. PO 2023', () => {
     const { curriculum, area, modules, warnings } = load(mscRows(), { totalGrade: '1,8' });
 
     test('assigns the modules to their areas', () => {
-      expect(curriculum.name).toBe('RWTH Computer Science M.Sc. (PO 2023)');
+      expect(curriculum.name).toBe('Computer Science M.Sc. (PO 2023)');
       expect(modules('Theoretical Computer Science')).toEqual([
         ['Effiziente Algorithmen', '2.0', 6],
         ['Komplexitätstheorie', '2.7', 6],

@@ -11,7 +11,7 @@ import type { CurriculumObject } from '../model/curriculum.svelte';
  * 15 CP may be eliminated, but not the focus colloquium (§ 8 (5)).
  */
 const computerScienceMsc: CurriculumObject = {
-  name: 'RWTH Computer Science M.Sc. (PO 2023)',
+  name: 'Computer Science M.Sc. (PO 2023)',
   eliminationLimit: 1,
   eliminationCPLimit: 15,
   requiredCredits: 120,
