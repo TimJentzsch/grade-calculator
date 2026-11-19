@@ -142,6 +142,11 @@ select {
     justify-content: flex-start;
   }
 
+  /* The details are aligned to the left now, so the weight moves to the end to keep the toggles aligned */
+  .weight-value {
+    order: 1;
+  }
+
   .row-controls {
     min-width: 0;
   }
@@ -191,11 +196,11 @@ input[type='number'] {
 }
 
 .module-grade-container {
-  display: flex;
+  display: grid;
+  /* The grade column is reserved for ungraded modules too, so that all toggles line up */
+  grid-template-columns: auto 4em;
   align-items: center;
   gap: var(--space-xs);
-  /* Room for the toggle and the grade, so the toggles line up for ungraded modules too */
-  min-width: 6em;
 }
 
 /* An input that looks like normal text until it is hovered or focused */
