@@ -63,7 +63,7 @@
     <div class="{kind}-grade-container grade-container">
       <span
         class="{kind}-eliminated-grade-value grade eliminated"
-        title="The grade before elimination"><GradeText text={gradeBeforeElimination} /></span
+        title="The grade before elimination">{gradeBeforeElimination}</span
       ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
         ><GradeText text={area.eliminationGradeText} /></span
       ><span
