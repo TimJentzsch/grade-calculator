@@ -178,6 +178,13 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      docutext:
+        specifier: 1.2.1
+        version: 1.2.1(fflate@0.8.3)
+      fflate:
+        specifier: ~0.8.3
+        version: 0.8.3
     devDependencies:
       '@eslint/js':
         specifier: 10.0.1
@@ -720,6 +727,15 @@ packages:
   devalue@5.9.4:
     resolution: {integrity: sha512-sPAT4pztbu6586/hrhOnMKS17IJrvg12mXiSPSS3W5qDeN2RGgvZ0diZCm31dBbnevfVmujNO3IM2wrS4Y2Rhg==}
 
+  docutext@1.2.1:
+    resolution: {integrity: sha512-LOdrA2MTM3DhiwAwM56hjLVXjNskwvxkv+WY/tzM8vIb+N7QD6DRyazeNagwYniGYOqVXUY3cM8T91hG8rapSw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      fflate: ^0.8.0
+    peerDependenciesMeta:
+      fflate:
+        optional: true
+
   es-module-lexer@2.3.2:
     resolution: {integrity: sha512-poHGpORABojJJucnV9KbOavETW8lBVnphkW77ER5/BQ5Fz7oXSoCNek7IH3vR5nRjdsEz926ibFYX8KtLQmdyw==}
 
@@ -849,6 +865,9 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  fflate@0.8.3:
+    resolution: {integrity: sha512-tbZNuJrLwGUp3zshBtdy4W+ORxZuIh8a5ilyIEQDC5rY1f3U20JMry0Ll3WBzU58EZKsEuJFXhb5gwv8CsPvgA==}
 
   file-entry-cache@11.1.5:
     resolution: {integrity: sha512-+PFTHITI08JIGhnNpGNI8T8inUpgZfk3GNEqfT9R2zZV2iFXg3CvqzSl/uEhs7TSGujYRELEANyDvS8Fj7+S7Q==}
@@ -1835,6 +1854,10 @@ snapshots:
 
   devalue@5.9.4: {}
 
+  docutext@1.2.1(fflate@0.8.3):
+    optionalDependencies:
+      fflate: 0.8.3
+
   es-module-lexer@2.3.2: {}
 
   escape-string-regexp@4.0.0: {}
@@ -1972,6 +1995,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  fflate@0.8.3: {}
 
   file-entry-cache@11.1.5:
     dependencies:
