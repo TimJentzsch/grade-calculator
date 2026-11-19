@@ -1,6 +1,6 @@
 <script lang="ts">
   import type Module from '#lib/model/module.svelte.ts';
-  import ControlButton from './ControlButton.svelte';
+  import IconButton from './IconButton.svelte';
   import GradeInput from './GradeInput.svelte';
 
   interface Props {
@@ -56,9 +56,10 @@
       </div>
     </div>
     <div class="controls-container">
-      <ControlButton variant="edit" title="Edit this module" onclick={onEdit} /><ControlButton
-        variant="remove"
-        title="Remove this module"
+      <IconButton icon="pencil" label="Edit this module" onclick={onEdit} /><IconButton
+        icon="trash"
+        variant="danger"
+        label="Remove this module"
         onclick={onRemove}
       />
     </div>

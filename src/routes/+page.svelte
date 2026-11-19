@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Button from '#lib/components/Button.svelte';
   import CurriculumView from '#lib/components/CurriculumView.svelte';
   import runAutoElimination from '#lib/auto-elimination.ts';
   import Curriculum, { type CurriculumObject } from '#lib/model/curriculum.svelte.ts';
@@ -18,6 +19,8 @@
   function loadConfig(config: CurriculumObject) {
     curriculum = Curriculum.fromObject(config);
   }
+
+  let fileInput: HTMLInputElement | undefined = $state();
 
   function loadConfiguration(event: Event & { currentTarget: HTMLInputElement }) {
     const input = event.currentTarget;
@@ -66,69 +69,38 @@
 <div id="body-container">
   <div id="settings">
     <div class="settings-container">
-      <div id="template-container">
-        Curriculum templates:
-        <button
-          id="new-curriculum-button"
-          class="template-button"
-          title="Create a new empty curriculum"
-          onclick={newCurriculum}
-        >
-          Empty Curriculum
-        </button>
-        {#each templates as template (template.name)}<button
-            class="template-button"
-            title="Load the {template.name} curriculum"
-            onclick={() => loadConfig(template)}>{template.name}</button
-          >{/each}
-      </div>
+      Curriculum templates:
+      <Button title="Create a new empty curriculum" onclick={newCurriculum}>Empty Curriculum</Button
+      >{#each templates as template (template.name)}<Button
+          title="Load the {template.name} curriculum"
+          onclick={() => loadConfig(template)}>{template.name}</Button
+        >{/each}
     </div>
     <div class="settings-container">
-      <label>
-        Load curriculum:
-        <label class="upload-button" title="Upload a saved curriculum">
-          Load...
-          <input
-            id="load-config"
-            type="file"
-            accept=".json"
-            name="configurationInput"
-            style="display: none"
-            onchange={loadConfiguration}
-          />
-        </label>
-      </label>
+      Load curriculum:
+      <Button title="Upload a saved curriculum" onclick={() => fileInput?.click()}>Load...</Button>
+      <input
+        bind:this={fileInput}
+        type="file"
+        accept=".json"
+        name="configurationInput"
+        hidden
+        onchange={loadConfiguration}
+      />
     </div>
     <div class="settings-container">
-      <span>
-        Save curriculum:
-        <!-- eslint-disable svelte/no-navigation-without-resolve -- data: URL download, not a route -->
-        <a
-          id="save-config"
-          class="save-button"
-          href={saveHref}
-          download={saveFileName}
-          target="_blank"
-          title="Download the curriculum configuration"
-        >
-          Save...
-        </a>
-        <!-- eslint-enable svelte/no-navigation-without-resolve -->
-      </span>
+      Save curriculum:
+      <Button href={saveHref} download={saveFileName} title="Download the curriculum configuration"
+        >Save...</Button
+      >
     </div>
     <div class="settings-container">
-      <label>
-        Auto elimination:
-        <button
-          id="auto-elimination-button"
-          class="template-button"
-          title="Automatically eliminate modules for the best grade"
-          onclick={autoElimination}
-          disabled={eliminating}
-        >
-          Eliminate...
-        </button>
-      </label>
+      Auto elimination:
+      <Button
+        title="Automatically eliminate modules for the best grade"
+        onclick={autoElimination}
+        disabled={eliminating}>Eliminate...</Button
+      >
 
       <span id="auto-elimination-loading-indicator">{eliminating ? 'Calculating…' : ''}</span>
     </div>

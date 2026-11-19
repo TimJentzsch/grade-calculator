@@ -2,7 +2,7 @@
   import { untrack } from 'svelte';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
-  import ControlButton from './ControlButton.svelte';
+  import IconButton from './IconButton.svelte';
 
   interface Props {
     kind: 'curriculum' | 'module-area';
@@ -87,9 +87,9 @@
     </div>
   </div>
   <div class="controls-container">
-    <ControlButton variant="save" title="Save the changes" onclick={save} /><ControlButton
-      variant="discard"
-      title="Discard the changes"
+    <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton
+      icon="x"
+      label="Discard the changes"
       onclick={onDiscard}
     />
   </div>

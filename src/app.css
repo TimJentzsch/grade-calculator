@@ -190,12 +190,6 @@ input.grade-input.invalid {
   text-align: right;
 }
 
-.control-button {
-  width: 25px;
-  height: 25px;
-  padding: var(--space-xs);
-}
-
 .module-container {
   margin: var(--space-xs);
   padding: var(--space-2xs) var(--space-sm);
@@ -218,44 +212,6 @@ input.grade-input.invalid {
   border-radius: var(--radius-md);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-raised);
-}
-
-button,
-.upload-button,
-.save-button {
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--line-height-tight);
-  display: table-cell;
-  vertical-align: middle;
-
-  cursor: pointer;
-
-  background-color: var(--color-primary);
-  color: var(--color-on-primary);
-  border: none;
-  margin: var(--space-2xs);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-raised);
-}
-
-button:hover,
-.upload-button:hover,
-.save-button:hover {
-  background-color: var(--color-primary-hover);
-  box-shadow: var(--shadow-hover);
-}
-
-button:disabled {
-  cursor: default;
-  background-color: var(--color-surface-hover);
-  color: var(--color-text-disabled);
-  box-shadow: none;
-}
-
-.save-button {
-  text-decoration: none;
 }
 
 #settings {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { untrack } from 'svelte';
   import type Module from '#lib/model/module.svelte.ts';
-  import ControlButton from './ControlButton.svelte';
+  import IconButton from './IconButton.svelte';
   import GradeInput from './GradeInput.svelte';
 
   interface Props {
@@ -133,9 +133,9 @@
     >
   </div>
   <div class="controls-container">
-    <ControlButton variant="save" title="Save the changes" onclick={save} /><ControlButton
-      variant="discard"
-      title="Discard the changes"
+    <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton
+      icon="x"
+      label="Discard the changes"
       onclick={onDiscard}
     />
   </div>

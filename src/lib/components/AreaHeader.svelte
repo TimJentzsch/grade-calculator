@@ -1,7 +1,7 @@
 <script lang="ts">
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
-  import ControlButton from './ControlButton.svelte';
+  import IconButton from './IconButton.svelte';
   import EliminationInfo from './EliminationInfo.svelte';
   import GradeText from './GradeText.svelte';
 
@@ -83,17 +83,18 @@
       </div>
     </div>
     <div class="controls-container">
-      <ControlButton
-        variant="add"
-        title={kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'}
+      <IconButton
+        icon="plus"
+        label={kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'}
         onclick={onAdd}
-      /><ControlButton
-        variant="edit"
-        title="Edit this {label}"
+      /><IconButton
+        icon="pencil"
+        label="Edit this {label}"
         onclick={onEdit}
-      />{#if onRemove}<ControlButton
-          variant="remove"
-          title="Remove this {label}"
+      />{#if onRemove}<IconButton
+          icon="trash"
+          variant="danger"
+          label="Remove this {label}"
           onclick={onRemove}
         />{/if}
     </div>
