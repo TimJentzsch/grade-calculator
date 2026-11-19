@@ -45,6 +45,12 @@
       : 'The average grade of this module area',
   );
 
+  const creditsTitle = $derived(
+    area.requiredCredits === undefined
+      ? `The total credit points of this ${label}`
+      : `The credit points of the modules in this ${label}, of ${area.requiredCredits} required`,
+  );
+
   const gradeBeforeElimination = $derived(
     area.gradeText !== area.eliminationGradeText ? area.gradeText : '',
   );
@@ -81,13 +87,11 @@
         title="The best/worst possible grade in this {label}">{gradeLimits}</span
       >
     </div>
-    <div
-      class="{kind}-credits-container credits-container"
-      title="The total credit points of this {label}"
-    >
-      <span class="{kind}-credits-value">{area.credits}</span><span
-        class="{kind}-credits-description">{' CP'}</span
-      >
+    <div class="{kind}-credits-container credits-container" title={creditsTitle}>
+      <span class="{kind}-credits-value">{area.credits}</span
+      >{#if area.requiredCredits !== undefined}<span class="required-credits"
+          >/{area.requiredCredits}</span
+        >{/if}<span class="{kind}-credits-description">{' CP'}</span>
     </div>
   </div>
   <div class="row-controls">
@@ -107,3 +111,9 @@
       />{/if}
   </div>
 </div>
+
+<style>
+  .required-credits {
+    color: var(--color-text-muted);
+  }
+</style>
