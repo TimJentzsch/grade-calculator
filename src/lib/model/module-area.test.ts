@@ -658,4 +658,52 @@ describe('ModuleArea', () => {
       expect(moduleArea.gradeText).toBe('TBD');
     });
   });
+
+  describe('required credits', () => {
+    const moduleArea = () =>
+      new ModuleArea(
+        'Electives',
+        [new Module('Module 1', 6, 2.0), new Module('Module 2', 6, undefined)],
+        undefined,
+        undefined,
+        20,
+      );
+
+    test('counts the missing credits without open modules', () => {
+      expect(moduleArea().missingCredits).toBe(8);
+      expect(moduleArea().plannedCredits).toBe(20);
+    });
+
+    test('has no missing credits once they are reached', () => {
+      const area = moduleArea();
+      area.addModule(new Module('Module 3', 10, 1.0));
+      expect(area.missingCredits).toBe(0);
+      expect(area.plannedCredits).toBe(22);
+    });
+
+    test('has no missing credits without required credits', () => {
+      const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)]);
+      expect(area.missingCredits).toBe(0);
+    });
+
+    test('the best case fills the missing credits with 1.0', () => {
+      const best = moduleArea().bestCase();
+      expect(best.modules.map((module) => [module.name, module.credits, module.grade])).toEqual([
+        ['Module 1', 6, 2.0],
+        ['Module 2', 6, 1.0],
+        ['Missing credits', 8, 1.0],
+      ]);
+      // (2.0·6 + 1.0·14) / 20
+      expect(best.grade).toBeCloseTo(1.3);
+    });
+
+    test('the worst case fills the missing credits with 4.0', () => {
+      // (2.0·6 + 4.0·14) / 20
+      expect(moduleArea().worstCase().grade).toBeCloseTo(3.4);
+    });
+
+    test('survives saving and loading', () => {
+      expect(ModuleArea.fromObject(moduleArea().toObject()).requiredCredits).toBe(20);
+    });
+  });
 });

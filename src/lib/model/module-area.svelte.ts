@@ -1,4 +1,4 @@
-import { formatAverageGrade } from '../grade';
+import { formatAverageGrade, MAX_GRADE, MIN_GRADE } from '../grade';
 import Module, { type ModuleObject } from './module.svelte';
 
 /** The serialized form of a module area, as used in templates and saved files. */
@@ -7,7 +7,12 @@ export interface ModuleAreaObject {
   modules: ModuleObject[];
   eliminationLimit?: number;
   eliminationCPLimit?: number;
+  /** The credits that have to be reached, e.g. for areas whose modules are chosen freely. */
+  requiredCredits?: number;
 }
+
+/** The name of the module that stands for missing credits in the best and worst case. */
+export const MISSING_CREDITS_NAME = 'Missing credits';
 
 function sum<T>(items: T[], value: (item: T) => number): number {
   let total = 0;
@@ -22,6 +27,7 @@ export default class ModuleArea {
   modules: Module[] = $state([]);
   eliminationLimit: number | undefined = $state();
   eliminationCPLimit: number | undefined = $state();
+  requiredCredits: number | undefined = $state();
 
   /**
    * Creates a new module area.
@@ -29,21 +35,34 @@ export default class ModuleArea {
    * @param modules - The modules available in this module area.
    * @param eliminationLimit - The maximum number of modules that can be eliminated.
    * @param eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
+   * @param requiredCredits - The credits that have to be reached in this module area.
    */
   constructor(
     name: string | undefined,
     modules: Module[],
     eliminationLimit?: number,
     eliminationCPLimit?: number,
+    requiredCredits?: number,
   ) {
     this.name = name;
     this.modules = modules;
     this.eliminationLimit = eliminationLimit;
     this.eliminationCPLimit = eliminationCPLimit;
+    this.requiredCredits = requiredCredits;
   }
 
   get credits(): number {
     return sum(this.modules, (module) => module.credits);
+  }
+
+  /** The credits that are still missing to reach the required credits, without open modules. */
+  get missingCredits(): number {
+    return Math.max(0, (this.requiredCredits ?? 0) - this.credits);
+  }
+
+  /** The credits this module area will have in the end, at least the required credits. */
+  get plannedCredits(): number {
+    return this.credits + this.missingCredits;
   }
 
   /** The total amount of eliminated credit points. */
@@ -222,22 +241,32 @@ export default class ModuleArea {
     this.modules.push(module);
   }
 
-  bestCase(): ModuleArea {
+  /**
+   * Completes the module area with the given grade for all open modules and missing credits.
+   * Missing credits are assumed to be graded, as a module with that grade.
+   */
+  private completedWith(grade: number, complete: (module: Module) => Module): ModuleArea {
+    const modules = this.modules.map(complete);
+    if (this.missingCredits > 0) {
+      modules.push(new Module(MISSING_CREDITS_NAME, this.missingCredits, grade));
+    }
     return new ModuleArea(
       this.name,
-      this.modules.map((module) => module.bestCase()),
+      modules,
       this.eliminationLimit,
       this.eliminationCPLimit,
+      this.requiredCredits,
     );
   }
 
+  /** The module area with the best grade for all open modules and missing credits. */
+  bestCase(): ModuleArea {
+    return this.completedWith(MIN_GRADE, (module) => module.bestCase());
+  }
+
+  /** The module area with the worst passing grade for all open modules and missing credits. */
   worstCase(): ModuleArea {
-    return new ModuleArea(
-      this.name,
-      this.modules.map((module) => module.worstCase()),
-      this.eliminationLimit,
-      this.eliminationCPLimit,
-    );
+    return this.completedWith(MAX_GRADE, (module) => module.worstCase());
   }
 
   clone(): ModuleArea {
@@ -246,6 +275,7 @@ export default class ModuleArea {
       this.modules.map((module) => module.clone()),
       this.eliminationLimit,
       this.eliminationCPLimit,
+      this.requiredCredits,
     );
   }
 
@@ -255,6 +285,7 @@ export default class ModuleArea {
       modules: this.modules.map((module) => module.toObject()),
       eliminationLimit: this.eliminationLimit,
       eliminationCPLimit: this.eliminationCPLimit,
+      requiredCredits: this.requiredCredits,
     };
   }
 
@@ -264,6 +295,7 @@ export default class ModuleArea {
       obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),
       obj.eliminationLimit,
       obj.eliminationCPLimit,
+      obj.requiredCredits,
     );
   }
 }
