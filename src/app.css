@@ -312,6 +312,11 @@ input.number-input.invalid:hover:enabled {
   font-weight: var(--font-weight-bold);
 }
 
+/* The best and worst possible grade, which is secondary information */
+.grade-limits {
+  color: var(--color-text-muted);
+}
+
 /* Space between the grade before elimination, the grade and the limits, if they are shown */
 .grade:not(:empty) + .grade:not(:empty) {
   margin-left: var(--space-xs);
