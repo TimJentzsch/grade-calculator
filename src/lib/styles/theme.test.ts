@@ -4,8 +4,8 @@ import { describe, expect, test } from 'vitest';
 
 const SRC_DIR = join(import.meta.dirname, '..', '..');
 
-/** The only files that may define raw colors. */
-const THEME_FILES = ['lib/styles/palette.css', 'lib/styles/theme.css'];
+/** The only files that may define raw colors and fonts. */
+const THEME_FILES = ['lib/styles/palette.css', 'lib/styles/theme.css', 'lib/styles/typography.css'];
 
 const NAMED_COLORS = [
   'black',
@@ -31,6 +31,8 @@ const FORBIDDEN: [string, RegExp][] = [
   ['hex color', /#[0-9a-f]{3,8}\b/i],
   ['color function', /\b(rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(/i],
   ['named color', new RegExp(`:[^;{}]*\\b(${NAMED_COLORS.join('|')})\\b`, 'i')],
+  ['font without token', /\bfont-(family|size|weight)\s*:(?!\s*var\(--font-)/],
+  ['font shorthand', /\bfont\s*:(?!\s*inherit\s*;)/],
 ];
 
 function listFiles(dir: string): string[] {
@@ -57,7 +59,7 @@ const styledFiles = listFiles(SRC_DIR)
   .filter((path) => !THEME_FILES.includes(path));
 
 describe('theming', () => {
-  test.each(styledFiles)('%s only uses semantic color tokens', (path) => {
+  test.each(styledFiles)('%s only uses theme tokens for colors and fonts', (path) => {
     const lines = extractCss(join(SRC_DIR, path)).split('\n');
     const violations = lines.flatMap((line) =>
       FORBIDDEN.filter(([, pattern]) => pattern.test(line)).map(

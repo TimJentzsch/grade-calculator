@@ -1,5 +1,6 @@
 @import './lib/styles/palette.css';
 @import './lib/styles/theme.css';
+@import './lib/styles/typography.css';
 
 * {
   margin: 0;
@@ -7,7 +8,10 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-base);
   background-color: var(--color-background);
   color: var(--color-text);
 }
@@ -16,6 +20,27 @@ h1,
 h2,
 h3 {
   color: var(--color-heading);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h1 {
+  font-size: var(--font-size-2xl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+}
+
+h3 {
+  font-size: var(--font-size-lg);
+}
+
+/* Form controls don't inherit the font by default */
+button,
+input,
+select {
+  font: inherit;
 }
 
 :focus-visible {
@@ -141,10 +166,11 @@ input.grade-input.invalid {
 
 .grade {
   display: inline-block;
+  font-variant-numeric: tabular-nums;
 }
 
 .grade-value {
-  font-weight: bold;
+  font-weight: var(--font-weight-bold);
   margin: 0 5px;
 }
 
@@ -192,9 +218,9 @@ input.grade-input.invalid {
 button,
 .upload-button,
 .save-button {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
-  line-height: 1em;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
   display: table-cell;
   vertical-align: middle;
 
