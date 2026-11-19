@@ -259,10 +259,11 @@ input[type='text'].weight-input {
     opacity: 0;
   }
 
+  /* Only keyboard focus counts, so that clicking a button doesn't keep them visible */
   .module-display-container:hover .row-controls,
-  .module-display-container:focus-within .row-controls,
+  .module-display-container:has(:focus-visible) .row-controls,
   .module-display-container:hover .default-weight,
-  .module-display-container:focus-within .default-weight {
+  .module-display-container:has(:focus-visible) .default-weight {
     opacity: 1;
   }
 }

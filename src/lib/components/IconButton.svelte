@@ -52,29 +52,28 @@
     color: var(--color-text-muted);
   }
 
-  .ghost:hover {
-    background-color: var(--color-surface-hover);
-    color: var(--color-primary);
-  }
-
-  .danger:hover {
-    background-color: var(--color-surface-hover);
-    color: var(--color-danger);
-  }
-
-  .primary {
-    background-color: var(--color-primary);
-    color: var(--color-on-primary);
-  }
-
-  .primary:hover,
-  [aria-pressed='true']:hover {
-    background-color: var(--color-primary-hover);
-    color: var(--color-on-primary);
-  }
-
+  .primary,
   [aria-pressed='true'] {
     background-color: var(--color-primary);
     color: var(--color-on-primary);
+  }
+
+  /* Only on devices with a mouse, touch devices would keep the hover effect after tapping */
+  @media (hover: hover) {
+    .ghost:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-primary);
+    }
+
+    .danger:hover {
+      background-color: var(--color-surface-hover);
+      color: var(--color-danger);
+    }
+
+    .primary:hover,
+    [aria-pressed='true']:hover {
+      background-color: var(--color-primary-hover);
+      color: var(--color-on-primary);
+    }
   }
 </style>

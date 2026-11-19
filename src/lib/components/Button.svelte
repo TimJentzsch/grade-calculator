@@ -53,17 +53,9 @@
     cursor: pointer;
   }
 
-  .button:hover {
-    box-shadow: var(--shadow-hover);
-  }
-
   .primary {
     background-color: var(--color-primary);
     color: var(--color-on-primary);
-  }
-
-  .primary:hover {
-    background-color: var(--color-primary-hover);
   }
 
   .secondary {
@@ -72,8 +64,19 @@
     color: var(--color-text);
   }
 
-  .secondary:hover {
-    background-color: var(--color-surface-hover);
+  /* Only on devices with a mouse, touch devices would keep the hover effect after tapping */
+  @media (hover: hover) {
+    .button:hover {
+      box-shadow: var(--shadow-hover);
+    }
+
+    .primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .secondary:hover {
+      background-color: var(--color-surface-hover);
+    }
   }
 
   .button:disabled,

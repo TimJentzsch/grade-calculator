@@ -123,10 +123,6 @@
     overflow-wrap: anywhere;
   }
 
-  .editable-text:hover {
-    background-color: var(--color-surface-hover);
-  }
-
   .empty {
     color: var(--color-text-muted);
   }
@@ -139,9 +135,19 @@
     opacity: 0;
   }
 
-  .editable-text:hover .edit-hint,
   .editable-text:focus-visible .edit-hint {
     opacity: 1;
+  }
+
+  /* Only on devices with a mouse, touch devices would keep the hover effect after tapping */
+  @media (hover: hover) {
+    .editable-text:hover {
+      background-color: var(--color-surface-hover);
+    }
+
+    .editable-text:hover .edit-hint {
+      opacity: 1;
+    }
   }
 
   .editable-text-input {
