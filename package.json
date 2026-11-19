@@ -49,5 +49,8 @@
   "imports": {
     "#lib/*": "./src/lib/*"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "yalps": "^0.6.4"
+  }
 }

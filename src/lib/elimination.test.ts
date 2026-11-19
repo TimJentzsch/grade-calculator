@@ -6,6 +6,7 @@ import {
   isValidElimination,
   toEliminationCurriculum,
 } from './elimination';
+import { getBestEliminationIndicesMip } from './elimination-mip';
 import Curriculum from './model/curriculum.svelte';
 import ModuleArea from './model/module-area.svelte';
 import Module from './model/module.svelte';
@@ -118,7 +119,13 @@ describe('elimination', () => {
     });
   });
 
-  describe('getBestEliminationIndices', () => {
+  describe.each([
+    ['brute force', getBestEliminationIndicesPlain],
+    ['integer programming', getBestEliminationIndicesMip],
+  ])('getBestEliminationIndices (%s)', (_, implementation) => {
+    const bestIndices = (curriculum: Curriculum) =>
+      implementation(toEliminationCurriculum(curriculum));
+
     test('eliminates the worst grade when one module may be eliminated', () => {
       const curriculum = new Curriculum(
         'Test curriculum',
@@ -132,7 +139,7 @@ describe('elimination', () => {
         1,
       );
 
-      expect(getBestEliminationIndices(curriculum)).toEqual([1]);
+      expect(bestIndices(curriculum)).toEqual([1]);
     });
 
     test('respects the elimination limit', () => {
@@ -149,7 +156,7 @@ describe('elimination', () => {
         2,
       );
 
-      expect(getBestEliminationIndices(curriculum)).toEqual([1, 2]);
+      expect(bestIndices(curriculum)).toEqual([1, 2]);
     });
 
     test('respects the elimination CP limit', () => {
@@ -166,7 +173,7 @@ describe('elimination', () => {
         10,
       );
 
-      expect(getBestEliminationIndices(curriculum)).toEqual([2]);
+      expect(bestIndices(curriculum)).toEqual([2]);
     });
 
     test('respects the module area limits', () => {
@@ -179,7 +186,7 @@ describe('elimination', () => {
         ),
       ]);
 
-      expect(getBestEliminationIndices(curriculum)).toEqual([2]);
+      expect(bestIndices(curriculum)).toEqual([2]);
     });
 
     test('ignores modules without a grade', () => {
@@ -195,7 +202,7 @@ describe('elimination', () => {
         1,
       );
 
-      expect(getBestEliminationIndices(curriculum)).toEqual([]);
+      expect(bestIndices(curriculum)).toEqual([]);
     });
 
     test('ignores existing eliminations', () => {
@@ -211,7 +218,72 @@ describe('elimination', () => {
         1,
       );
 
-      expect(getBestEliminationIndices(curriculum)).toEqual([1]);
+      expect(bestIndices(curriculum)).toEqual([1]);
+    });
+  });
+
+  describe('integer programming matches the brute force search', () => {
+    /** The grade after applying the elimination, which must also be valid. */
+    function gradeOf(curriculum: Curriculum, indices: number[]): number | undefined {
+      const plain = toEliminationCurriculum(curriculum);
+      const elimination = curriculum.modules.map(() => false);
+      for (const index of indices) {
+        elimination[index] = true;
+      }
+      expect(isValidElimination(plain, elimination)).toBe(true);
+      return getEliminationGrade(plain, elimination);
+    }
+
+    test('on random curricula', () => {
+      const random = createRandom(1337);
+      for (let i = 0; i < 1000; i += 1) {
+        const curriculum = randomCurriculum(random);
+        const plain = toEliminationCurriculum(curriculum);
+        const expected = gradeOf(curriculum, getBestEliminationIndicesPlain(plain));
+        const actual = gradeOf(curriculum, getBestEliminationIndicesMip(plain));
+
+        if (expected === undefined) {
+          expect(actual).toBeUndefined();
+        } else {
+          expect(actual).toBeCloseTo(expected, 9);
+        }
+      }
+    });
+
+    test('solves large curricula quickly', () => {
+      const random = createRandom(7);
+      const grades = [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0];
+      const curriculum = new Curriculum(
+        'Large curriculum',
+        Array.from(
+          { length: 10 },
+          (_, areaIndex) =>
+            new ModuleArea(
+              `Area ${areaIndex}`,
+              Array.from(
+                { length: 8 },
+                (__, moduleIndex) =>
+                  new Module(
+                    `Module ${moduleIndex}`,
+                    [3, 5, 6, 8, 10][Math.floor(random() * 5)],
+                    grades[Math.floor(random() * grades.length)],
+                  ),
+              ),
+              2,
+              15,
+            ),
+        ),
+        8,
+        50,
+      );
+
+      const start = performance.now();
+      const indices = getBestEliminationIndicesMip(toEliminationCurriculum(curriculum));
+      const duration = performance.now() - start;
+
+      expect(indices.length).toBeGreaterThan(0);
+      expect(gradeOf(curriculum, indices)).toBeLessThan(curriculum.grade as number);
+      expect(duration).toBeLessThan(500);
     });
   });
 });

@@ -178,6 +178,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      yalps:
+        specifier: ^0.6.4
+        version: 0.6.4
     devDependencies:
       '@eslint/js':
         specifier: 10.0.1
@@ -888,6 +892,9 @@ packages:
     resolution: {integrity: sha512-iZyKG96/JwPz1N55vj2Ie2vXbhu440zfUfJvSwEqEbeLluk7NnapfGqa7LH0mOsnDxTF85Mx8/dyR6HfqcbmbQ==}
     engines: {node: '>=20'}
 
+  heap@0.2.7:
+    resolution: {integrity: sha512-2bsegYkkHO+h/9MGbn6KWcE45cHZgPANo5LXF7EvWdT0yT2EguSVO1nDgU5c8+ZOPwp2vMNa7YFsJhVcDR9Sdg==}
+
   hookified@1.15.1:
     resolution: {integrity: sha512-MvG/clsADq1GPM2KGo2nyfaWVyn9naPiXrqIe4jYjXNZQt238kWyOGrsyc/DmRAQ+Re6yeo6yX/yoNCG5KAEVg==}
 
@@ -1376,6 +1383,9 @@ packages:
   word-wrap@1.2.5:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
+
+  yalps@0.6.4:
+    resolution: {integrity: sha512-PfOgB86E32G89K4IPiKZDCd9is2tQCSV89/t5HWdbAzbVPAL8vJ8es6Z1Ox6oN8d1k2mM/dqIQJDoaooFxIc+w==}
 
   yaml@1.10.3:
     resolution: {integrity: sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA==}
@@ -2008,6 +2018,8 @@ snapshots:
     dependencies:
       hookified: 1.15.1
 
+  heap@0.2.7: {}
+
   hookified@1.15.1: {}
 
   hookified@2.2.0: {}
@@ -2398,6 +2410,10 @@ snapshots:
   why-is-node-running@3.2.1: {}
 
   word-wrap@1.2.5: {}
+
+  yalps@0.6.4:
+    dependencies:
+      heap: 0.2.7
 
   yaml@1.10.3: {}
 
