@@ -37,6 +37,7 @@
   /* Text on a danger background */
   --color-on-danger: var(--ctp-base);
   --color-success: var(--ctp-green);
+  --color-warning: var(--ctp-peach);
 
   /* Shadows */
   --shadow-raised: 0 1px 3px 0 color-mix(in srgb, var(--ctp-crust) 50%, transparent);

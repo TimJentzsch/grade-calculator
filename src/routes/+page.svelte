@@ -1,8 +1,11 @@
 <script lang="ts">
   import Button from '#lib/components/Button.svelte';
   import CurriculumView from '#lib/components/CurriculumView.svelte';
+  import IconButton from '#lib/components/IconButton.svelte';
   import runAutoElimination from '#lib/auto-elimination.ts';
   import Curriculum, { type CurriculumObject } from '#lib/model/curriculum.svelte.ts';
+  import { importNotenspiegel } from '#lib/notenspiegel/import.ts';
+  import readNotenspiegel from '#lib/notenspiegel/read-notenspiegel.ts';
   import templates, { computerScienceBsc } from '#lib/templates/index.ts';
 
   let curriculum = $state(Curriculum.fromObject(computerScienceBsc));
@@ -34,6 +37,49 @@
       reader.readAsText(input.files[0]);
     } else {
       console.warn('No input specified!');
+    }
+  }
+
+  let notenspiegelInput: HTMLInputElement | undefined = $state();
+
+  /** Whether a Notenspiegel is currently being imported. */
+  let importing = $state(false);
+
+  /** The result of the last import, shown below the toolbar until dismissed. */
+  let importNotice:
+    { kind: 'success' | 'warning' | 'error'; message: string; details: string[] } | undefined =
+    $state();
+
+  async function onNotenspiegelSelected(event: Event & { currentTarget: HTMLInputElement }) {
+    const input = event.currentTarget;
+    const file = input.files?.[0];
+    // Allows selecting the same file again
+    input.value = '';
+    if (!file) {
+      return;
+    }
+
+    importing = true;
+    importNotice = undefined;
+    try {
+      const result = importNotenspiegel(await readNotenspiegel(file));
+      loadConfig(result.curriculum);
+      importNotice =
+        result.warnings.length > 0
+          ? {
+              kind: 'warning',
+              message: 'The Notenspiegel was imported, but please check the following:',
+              details: result.warnings,
+            }
+          : { kind: 'success', message: 'The Notenspiegel was imported.', details: [] };
+    } catch (error) {
+      importNotice = {
+        kind: 'error',
+        message: 'The Notenspiegel could not be imported.',
+        details: [error instanceof Error ? error.message : String(error)],
+      };
+    } finally {
+      importing = false;
     }
   }
 
@@ -107,6 +153,25 @@
         />
       </div>
     </div>
+    <div class="toolbar-group" role="group" aria-labelledby="import-label">
+      <span id="import-label" class="toolbar-label">RWTH Online</span>
+      <div class="toolbar-buttons">
+        <Button
+          variant="secondary"
+          title="Import your grades from a Notenspiegel PDF exported from RWTH Online. The file stays in your browser."
+          onclick={() => notenspiegelInput?.click()}
+          disabled={importing}>{importing ? 'Importing…' : 'Import Notenspiegel…'}</Button
+        >
+        <input
+          bind:this={notenspiegelInput}
+          type="file"
+          accept=".pdf,application/pdf"
+          name="notenspiegelInput"
+          hidden
+          onchange={onNotenspiegelSelected}
+        />
+      </div>
+    </div>
     <div class="toolbar-group elimination-group" role="group" aria-labelledby="elimination-label">
       <span id="elimination-label" class="toolbar-label">Elimination</span>
       <div class="toolbar-buttons" aria-live="polite">
@@ -117,6 +182,26 @@
         >
       </div>
     </div>
+  </div>
+  <div class="notice-region" aria-live="polite">
+    {#if importNotice}
+      <div
+        class="notice {importNotice.kind}"
+        role={importNotice.kind === 'error' ? 'alert' : 'status'}
+      >
+        <div class="notice-text">
+          <p>{importNotice.message}</p>
+          {#if importNotice.details.length > 0}
+            <ul>
+              {#each importNotice.details as detail (detail)}
+                <li>{detail}</li>
+              {/each}
+            </ul>
+          {/if}
+        </div>
+        <IconButton icon="x" label="Dismiss" onclick={() => (importNotice = undefined)} />
+      </div>
+    {/if}
   </div>
   <div id="content">
     {#key curriculum}
@@ -154,6 +239,35 @@
     display: flex;
     flex-flow: row wrap;
     gap: var(--space-sm);
+  }
+
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    margin: var(--space-md) 0;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-surface);
+    border-left: 4px solid var(--color-success);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .notice.warning {
+    border-left-color: var(--color-warning);
+  }
+
+  .notice.error {
+    border-left-color: var(--color-danger);
+  }
+
+  .notice-text {
+    flex: 1;
+  }
+
+  .notice p,
+  .notice ul {
+    margin: var(--space-xs) 0;
   }
 
   /* The main action, aligned to the right if there is enough space */
