@@ -129,13 +129,8 @@
 </div>
 
 <style>
-  .required-credits {
-    color: var(--color-text-muted);
-  }
-
   /* The required credits are not reached yet */
-  .credits-missing,
-  .credits-missing .required-credits {
+  .credits-missing {
     color: var(--color-warning);
   }
 </style>
