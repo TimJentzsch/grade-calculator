@@ -106,7 +106,6 @@ const computerScienceBsc: CurriculumObject = {
         {
           name: 'Software Project Lab (SPP)',
           credits: 6,
-          weight: 0,
         },
         {
           name: 'Proseminar Computer Science',
