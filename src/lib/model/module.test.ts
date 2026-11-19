@@ -270,4 +270,39 @@ describe('Module', () => {
       });
     });
   });
+
+  describe('setGraded', () => {
+    test('an entered grade counts as passed', () => {
+      const module = new Module('Programming', 8, 2.3, 1, false, undefined, true);
+      module.setGraded(false);
+      expect(module.isGraded).toBe(false);
+      expect(module.passed).toBe(true);
+      expect(module.grade).toBeUndefined();
+      expect(module.eliminated).toBeUndefined();
+      expect(module.completed).toBe(true);
+    });
+
+    test('an open grade stays open', () => {
+      const module = new Module('Programming', 8);
+      module.setGraded(false);
+      expect(module.passed).toBeFalsy();
+      expect(module.completed).toBe(false);
+    });
+
+    test('a passed module starts with an open grade', () => {
+      const module = new Module('Lab', 6, undefined, 1, true, true);
+      module.setGraded(true);
+      expect(module.isGraded).toBe(true);
+      expect(module.passed).toBeUndefined();
+      expect(module.grade).toBeUndefined();
+      expect(module.gradeText).toBe('TBD');
+    });
+
+    test('does nothing if the type does not change', () => {
+      const module = new Module('Programming', 8, 2.3, 1, false, undefined, true);
+      module.setGraded(true);
+      expect(module.grade).toBe(2.3);
+      expect(module.eliminated).toBe(true);
+    });
+  });
 });

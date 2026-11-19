@@ -1,33 +1,55 @@
 <script lang="ts">
+  import { parseCredits } from '#lib/credits.ts';
   import type Module from '#lib/model/module.svelte.ts';
-  import CreditsInput from './CreditsInput.svelte';
+  import { formatWeight, parseWeight } from '#lib/weight.ts';
   import EditableText from './EditableText.svelte';
-  import IconButton from './IconButton.svelte';
   import GradeInput from './GradeInput.svelte';
+  import IconButton from './IconButton.svelte';
+  import NumberInput from './NumberInput.svelte';
 
   interface Props {
     module: Module;
-    onEdit: () => void;
+    /** Whether the module was just added, which starts editing its name. */
+    isNew?: boolean;
     onRemove: () => void;
   }
 
-  const { module, onEdit, onRemove }: Props = $props();
+  const { module, isNew = false, onRemove }: Props = $props();
 
   /** The module name for the labels of the controls. */
   const name = $derived(module.name || 'this module');
+
+  /** A new module is removed again if no name was entered. */
+  function onNameDone() {
+    if (isNew && module.isEmpty) {
+      onRemove();
+    }
+  }
 </script>
 
 <div class="module-display-container module-container row">
-  <div class="module-title row-title" class:eliminated={module.isGraded && module.eliminated}>
-    <EditableText bind:value={module.name} label="module name" placeholder="Unnamed module" />
+  <div class={['module-title row-title', { eliminated: module.isGraded && module.eliminated }]}>
+    <EditableText
+      bind:value={module.name}
+      label="module name"
+      placeholder="Unnamed module"
+      startEditing={isNew}
+      onDone={onNameDone}
+    />
   </div>
   <div class="row-details">
-    {#if module.weight !== 1}
-      <span class="module-weight-value weight-value" title="The weighting of this module"
-        >&#xd7;&#xFE0E;{module.weight.toFixed(1)}</span
-      >
-    {/if}
-    <div class="module-grade-container grade-container" class:ungraded={!module.isGraded}>
+    <!-- A weight of 1 is only shown on hover, but can still be edited -->
+    <span class={['weight-value', { 'default-weight': module.weight === 1 }]}
+      ><span aria-hidden="true">&#xd7;&#xFE0E;</span><NumberInput
+        class="inline-input weight-input"
+        label="Weight of {name}"
+        hint="Enter the weighting of this module, e.g. 2.0 to count it twice or 0.0 to not count it"
+        parse={parseWeight}
+        format={formatWeight}
+        bind:value={module.weight}
+      /></span
+    >
+    <div class={['module-grade-container grade-container', { ungraded: !module.isGraded }]}>
       {#if module.isGraded}
         <IconButton
           icon="ban"
@@ -36,7 +58,7 @@
           onclick={() => (module.eliminated = !module.eliminated)}
         />
         <GradeInput
-          class="inline-input module-grade-selection"
+          class="inline-input"
           label="Grade of {name}"
           allowTBD
           bind:value={module.grade}
@@ -51,15 +73,23 @@
       {/if}
     </div>
     <div class="module-credits-container credits-container">
-      <CreditsInput
-        class="inline-input module-credits-value"
+      <NumberInput
+        class="inline-input credit-points-input module-credits-value"
         label="Credit points of {name}"
+        hint="Enter the credit points"
+        parse={parseCredits}
         bind:value={module.credits}
-      /><span class="module-credits-description" aria-hidden="true">{' CP'}</span>
+      /><span class="module-credits-description" aria-hidden="true">CP</span>
     </div>
   </div>
   <div class="row-controls">
-    <IconButton icon="pencil" label="Edit all properties of {name}" onclick={onEdit} />
+    <!-- Ungraded modules are the exception, so the toggle is only highlighted for them -->
+    <IconButton
+      icon="pass-fail"
+      label="Only pass or fail {name}, without a grade"
+      pressed={!module.isGraded}
+      onclick={() => module.setGraded(!module.isGraded)}
+    />
     <IconButton icon="trash" variant="danger" label="Remove {name}" onclick={onRemove} />
   </div>
 </div>

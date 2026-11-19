@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { untrack } from 'svelte';
   import Icon from './Icon.svelte';
 
   interface Props {
@@ -7,13 +8,24 @@
     label: string;
     /** Shown if the value is empty. */
     placeholder?: string;
+    /** Whether to start in the edit mode, e.g. for a newly added item. */
+    startEditing?: boolean;
+    /** Called when the edit mode is left, after the value has been saved. */
+    onDone?: () => void;
     class?: string;
   }
 
-  let { value = $bindable(), label, placeholder = '', class: className }: Props = $props();
+  let {
+    value = $bindable(),
+    label,
+    placeholder = '',
+    startEditing: initiallyEditing = false,
+    onDone,
+    class: className,
+  }: Props = $props();
 
-  let editing = $state(false);
-  let draft = $state('');
+  let editing = $state(untrack(() => initiallyEditing));
+  let draft = $state(untrack(() => (initiallyEditing ? (value ?? '') : '')));
   /** Whether the text should get the focus once the input is gone. */
   let restoreFocus = false;
 
@@ -36,6 +48,7 @@
     }
     restoreFocus = refocus;
     editing = false;
+    onDone?.();
   }
 
   function focusInput(input: HTMLInputElement) {

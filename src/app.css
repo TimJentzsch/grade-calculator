@@ -227,14 +227,42 @@ input[type='text'].inline-input:focus {
   border-color: var(--color-border-strong);
 }
 
-/* On devices with a mouse, the controls of a module are only shown on hover or focus */
+/* The weighting of a module, e.g. "×2.0" */
+.weight-value {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-muted);
+}
+
+.module-credits-description {
+  margin-left: var(--space-xs);
+}
+
+input[type='text'].weight-input {
+  width: 3.5em;
+  padding-left: var(--space-2xs);
+  color: inherit;
+}
+
+/* A weight of 1 is the default, which is less important */
+.default-weight {
+  color: var(--color-text-disabled);
+}
+
+/*
+ * On devices with a mouse, the controls and the default weight of a module are only shown
+ * on hover or focus. On touch devices, they are always shown.
+ */
 @media (hover: hover) {
-  .module-display-container .row-controls {
+  .module-display-container .row-controls,
+  .module-display-container .default-weight {
     opacity: 0;
   }
 
   .module-display-container:hover .row-controls,
-  .module-display-container:focus-within .row-controls {
+  .module-display-container:focus-within .row-controls,
+  .module-display-container:hover .default-weight,
+  .module-display-container:focus-within .default-weight {
     opacity: 1;
   }
 }
@@ -268,8 +296,8 @@ input.credit-points-input {
 
 input.grade-input.invalid,
 input.grade-input.invalid:hover:enabled,
-input.credit-points-input.invalid,
-input.credit-points-input.invalid:hover:enabled {
+input.number-input.invalid,
+input.number-input.invalid:hover:enabled {
   border-color: var(--color-danger);
   outline-color: var(--color-danger);
 }
