@@ -201,6 +201,41 @@ describe('parseNotenspiegel', () => {
     ]);
   });
 
+  test('nests rows without credits into the preceding area', () => {
+    const withComponents = parseNotenspiegel(
+      notenspiegelItems({
+        rows: [
+          area('Informatik', '1,0', '4,00'),
+          area('Praktikum, Seminare, Schwerpunkt-Kolloquium', '1,0', '4,00'),
+          area('Seminar Informatik', '1,0', '4,00'),
+          exam('Ein Seminar', '1,0', 'BE', '4,00'),
+          area('Modulbaustein Wissenschaftliche Integrität', 'B', '0,00'),
+          area('Modulbaustein Wissenschaftliche Integrität', 'B', '0,00'),
+          exam('Wissenschaftliche Integrität', 'B', 'BE', '0,00'),
+        ],
+      }),
+    );
+
+    expect(outline(withComponents.root)).toEqual([
+      'Informatik',
+      '  Praktikum, Seminare, Schwerpunkt-Kolloquium',
+      '    Seminar Informatik',
+      '      Ein Seminar',
+      '    Modulbaustein Wissenschaftliche Integrität',
+      '      Modulbaustein Wissenschaftliche Integrität',
+      '        Wissenschaftliche Integrität',
+    ]);
+  });
+
+  test('ignores invalid results', () => {
+    const withInvalid = parseNotenspiegel(
+      notenspiegelItems({
+        rows: [...rows.slice(0, 4), exam('(!) Diskrete Strukturen', '1,0', 'BE', '6,00')],
+      }),
+    );
+    expect(withInvalid.root.children[0].children[0].children).toHaveLength(1);
+  });
+
   test('rejects other documents', () => {
     expect(() =>
       parseNotenspiegel([{ page: 0, x: 10, y: 10, width: 50, text: 'Invoice', bold: false }]),

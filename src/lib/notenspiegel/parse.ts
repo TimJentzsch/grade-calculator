@@ -57,6 +57,8 @@ const CELL_GAP = 1.5;
  */
 const WRAPPED_LINE_GAP = 13;
 const CREDITS_TOLERANCE = 0.01;
+/** Marks invalid results ("ungültige Leistung"), which don't count. */
+const INVALID_MARKER = '(!)';
 
 interface Cell {
   x: number;
@@ -280,6 +282,9 @@ function readRows(lines: Line[]): {
     } else if (cells.name === undefined || cells.credits === undefined) {
       // Every row has credits, so this is e.g. the topic of the thesis or the page footer
       previous = { line, row: undefined };
+    } else if (cells.name.startsWith(INVALID_MARKER)) {
+      // Invalid results don't count
+      previous = { line, row: undefined };
     } else {
       const row = { cells, bold, thesis };
       rows.push(row);
@@ -294,12 +299,16 @@ function readRows(lines: Line[]): {
   return { language, rows, totalCredits, totalGrade };
 }
 
+function parseCredits(row: Row): number {
+  return parseNumber(row.cells.credits) ?? 0;
+}
+
 function toEntry(row: Row): NotenspiegelEntry {
   return {
     name: row.cells.name ?? '',
     grade: parseGradeCell(row.cells.grade),
     annotation: row.cells.annotation,
-    credits: parseNumber(row.cells.credits) ?? 0,
+    credits: parseCredits(row),
     date: parseDate(row.cells.date),
     semester: row.cells.semester,
     children: [],
@@ -327,7 +336,12 @@ function buildTree(rows: Row[], start: number): [NotenspiegelEntry, number] {
   }
 
   let credits = 0;
-  while (index < rows.length && credits < entry.credits - CREDITS_TOLERANCE) {
+  // Rows without credits directly at the end also belong to the entry, e.g. failed modules or
+  // "Modulbausteine" (module components) that are only passed or failed
+  while (
+    index < rows.length &&
+    (credits < entry.credits - CREDITS_TOLERANCE || parseCredits(rows[index]) === 0)
+  ) {
     const [child, next] = buildTree(rows, index);
     entry.children.push(child);
     credits += child.credits;
