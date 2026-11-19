@@ -1,6 +1,13 @@
 import type { CurriculumObject } from '../../model/curriculum.svelte.ts';
 import computerScienceBsc from '../../templates/computer-science-bsc.ts';
-import { applyEntry, findEntry, type ProgramImporter, modulesOf, thesisGrade } from '../entries.ts';
+import {
+  applyEntry,
+  fillAreas,
+  findEntry,
+  modulesOf,
+  type ProgramImporter,
+  thesisGrade,
+} from '../entries.ts';
 
 /** The German and English names of the modules in the Notenspiegel, by template module name. */
 const MODULE_NAMES: Record<string, string[]> = {
@@ -83,15 +90,7 @@ const computerScienceBsc2018: ProgramImporter = {
     for (const area of curriculum.moduleAreas) {
       if (area.name === ELECTIVES_AREA) {
         const electivesArea = findEntry(notenspiegel.root, ELECTIVES_NAMES);
-        const electives = electivesArea ? modulesOf(electivesArea) : [];
-        // Fill the open slots of the template, and add modules if there are more
-        electives.forEach((entry, index) => {
-          use(entry);
-          area.modules[index] = applyEntry(
-            { ...area.modules[index], name: entry.name, credits: entry.credits },
-            entry,
-          );
-        });
+        fillAreas([{ area, entries: electivesArea ? modulesOf(electivesArea) : [] }], use);
       } else if (area.name === APPLICATION_AREA) {
         // The application subject is one module of the template, e.g. "Anwendungsfach Biologie"
         const entry = findEntry(notenspiegel.root, APPLICATION_NAMES);
