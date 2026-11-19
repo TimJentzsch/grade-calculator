@@ -7,6 +7,8 @@
     /** Whether an empty input is allowed, meaning "TBD" for modules without a grade yet. */
     allowTBD?: boolean;
     disabled?: boolean;
+    /** Shown while no grade is entered, "TBD" by default if `allowTBD` is set. */
+    placeholder?: string;
     /** Describes the input for screen readers, if it has no visible label. */
     label?: string;
     class?: string;
@@ -16,6 +18,7 @@
     value = $bindable(),
     allowTBD = false,
     disabled = false,
+    placeholder = allowTBD ? 'TBD' : undefined,
     label,
     class: className,
   }: Props = $props();
@@ -54,7 +57,7 @@
   inputmode="decimal"
   name="grade-input"
   size="4"
-  placeholder={allowTBD ? 'TBD' : undefined}
+  {placeholder}
   title={hint}
   aria-label={label}
   aria-invalid={invalid}

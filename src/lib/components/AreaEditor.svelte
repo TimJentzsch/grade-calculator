@@ -20,6 +20,8 @@
     count: area.eliminationLimit ?? 0,
     cpLimited: area.eliminationCPLimit !== undefined,
     cp: area.eliminationCPLimit ?? 0,
+    creditsRequired: area.requiredCredits !== undefined,
+    requiredCredits: area.requiredCredits ?? 0,
   }));
 
   let name = $state(initial.name);
@@ -27,11 +29,14 @@
   let count: number | null = $state(initial.count);
   let cpLimited = $state(initial.cpLimited);
   let cp: number | null = $state(initial.cp);
+  let creditsRequired = $state(initial.creditsRequired);
+  let requiredCredits: number | null = $state(initial.requiredCredits);
 
   function save() {
     area.name = name;
     area.eliminationLimit = countLimited ? (count ?? 0) : undefined;
     area.eliminationCPLimit = cpLimited ? (cp ?? 0) : undefined;
+    area.requiredCredits = creditsRequired ? (requiredCredits ?? 0) : undefined;
     onSave();
   }
 </script>
@@ -85,6 +90,26 @@
         /></label
       >
     </div>
+    <label
+      class="label required-credits-label"
+      title="The credits that have to be reached. Missing credits count towards the possible grade range."
+      >Required credits: <input
+        class="checkbox required-credits-checkbox"
+        name="required-credits-checkbox"
+        type="checkbox"
+        bind:checked={creditsRequired}
+      /><input
+        class="input required-credits-input"
+        name="required-credits-input"
+        type="number"
+        step="1"
+        min="0"
+        placeholder="0"
+        size="3"
+        disabled={!creditsRequired}
+        bind:value={requiredCredits}
+      /></label
+    >
   </div>
   <div class="editor-controls">
     <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton

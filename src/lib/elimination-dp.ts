@@ -4,6 +4,7 @@ import {
   getEliminationGrade,
   hasGrade,
   isCompleted,
+  isGradeUnknown,
   isValidElimination,
 } from './elimination.ts';
 
@@ -28,6 +29,39 @@ interface Candidate {
   weightedCredits: number;
   /** How much eliminating the module improves the objective of the current subproblem. */
   profit: number;
+}
+
+/** The modules that are always eliminated, because their grade is unknown. */
+interface FixedElimination {
+  indices: number[];
+  /** The number of fixed modules per module area. */
+  areaCounts: number[];
+  /** The credits of the fixed modules per module area. */
+  areaCredits: number[];
+}
+
+function getFixedElimination(curriculum: EliminationCurriculum): FixedElimination {
+  const fixed: FixedElimination = { indices: [], areaCounts: [], areaCredits: [] };
+  let index = 0;
+
+  curriculum.moduleAreas.forEach((moduleArea, areaIndex) => {
+    fixed.areaCounts[areaIndex] = 0;
+    fixed.areaCredits[areaIndex] = 0;
+    for (const module of moduleArea.modules) {
+      // All of them are returned, so `applyElimination` keeps them eliminated,
+      // but only those that count for the grade count towards the limits
+      if (isGradeUnknown(module)) {
+        fixed.indices.push(index);
+        if (countsForGrade(module)) {
+          fixed.areaCounts[areaIndex] += 1;
+          fixed.areaCredits[areaIndex] += module.credits;
+        }
+      }
+      index += 1;
+    }
+  });
+
+  return fixed;
 }
 
 /** The modules to eliminate and their total profit. */
@@ -125,6 +159,7 @@ function withinLimits(state: State, countLimit: number, creditLimit: number): bo
 function solveSubproblem(
   curriculum: EliminationCurriculum,
   candidates: Candidate[],
+  fixed: FixedElimination,
 ): SubproblemSolution {
   // Curriculum limits are only active when truthy, mirroring `Curriculum.isValidElimination`
   const countLimit = curriculum.eliminationLimit || Infinity;
@@ -139,7 +174,14 @@ function solveSubproblem(
 
   curriculum.moduleAreas.forEach((moduleArea, areaIndex) => {
     const areaCandidates = candidates.filter((candidate) => candidate.areaIndex === areaIndex);
-    if (areaCandidates.length === 0) {
+    // Fixed eliminations aren't selected, but count towards the limits
+    const areaStart: State = {
+      count: fixed.areaCounts[areaIndex],
+      credits: fixed.areaCredits[areaIndex],
+      profit: 0,
+      selection: null,
+    };
+    if (areaCandidates.length === 0 && areaStart.count === 0) {
       return;
     }
 
@@ -152,7 +194,7 @@ function solveSubproblem(
     };
 
     // Solve the area on its own (0/1 knapsack over its candidates)
-    let areaTable: StateTable = new Map([[key(empty, areaTracked), empty]]);
+    let areaTable: StateTable = new Map([[key(areaStart, areaTracked), areaStart]]);
     for (const candidate of areaCandidates) {
       const next = new Map(areaTable);
       for (const state of areaTable.values()) {
@@ -223,6 +265,8 @@ export function getBestEliminationIndicesDp(curriculum: EliminationCurriculum): 
     0,
   );
   const allCandidates = getCandidates(curriculum);
+  const fixed = getFixedElimination(curriculum);
+  // Modules with an unknown grade are treated as eliminated by the helpers, see `isGradeUnknown`
   const toElimination = (indices: number[]) => {
     const elimination = new Array<boolean>(moduleCount).fill(false);
     for (const index of indices) {
@@ -230,12 +274,14 @@ export function getBestEliminationIndicesDp(curriculum: EliminationCurriculum): 
     }
     return elimination;
   };
+  const withFixed = (indices: number[]) => [...fixed.indices, ...indices].sort((a, b) => a - b);
 
   let best: number[] = [];
   let bestGrade = getEliminationGrade(curriculum, toElimination(best));
 
-  if (bestGrade === undefined) {
-    return best;
+  // Nothing can be improved without a grade, or if the fixed eliminations already break a limit
+  if (bestGrade === undefined || !isValidElimination(curriculum, toElimination(best))) {
+    return withFixed(best);
   }
 
   // Start from the current elimination, if it is valid and at least as good as no elimination.
@@ -264,7 +310,7 @@ export function getBestEliminationIndicesDp(curriculum: EliminationCurriculum): 
         profit: candidate.weightedCredits * (candidate.grade - lambda),
       }));
 
-    const solution = solveSubproblem(curriculum, candidates);
+    const solution = solveSubproblem(curriculum, candidates, fixed);
     if (solution.profit <= EPSILON) {
       break;
     }
@@ -279,5 +325,5 @@ export function getBestEliminationIndicesDp(curriculum: EliminationCurriculum): 
     bestGrade = grade;
   }
 
-  return best;
+  return withFixed(best);
 }

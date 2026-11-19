@@ -907,4 +907,41 @@ describe('Curriculum', () => {
       });
     });
   });
+
+  describe('required credits', () => {
+    const curriculum = () =>
+      new Curriculum(
+        'Test curriculum',
+        [
+          new ModuleArea('Mandatory', [new Module('Module 1', 10, 2.0)]),
+          new ModuleArea('Electives', [new Module('Module 2', 5, 3.0)], undefined, undefined, 10),
+        ],
+        undefined,
+        undefined,
+        30,
+      );
+
+    test('counts the credits missing beyond the module areas', () => {
+      // 30 - 10 - 10 (planned for the electives)
+      expect(curriculum().missingCredits).toBe(10);
+    });
+
+    test('the best and worst case fill all missing credits', () => {
+      const best = curriculum().bestCase();
+      expect(best.credits).toBe(30);
+      expect(best.moduleAreas.at(-1)?.name).toBe('Missing credits');
+      // (2.0·10 + 3.0·5 + 1.0·15) / 30
+      expect(best.grade).toBeCloseTo(50 / 30);
+      // (2.0·10 + 3.0·5 + 4.0·15) / 30
+      expect(curriculum().worstCase().grade).toBeCloseTo(95 / 30);
+    });
+
+    test('does not change the current grade', () => {
+      expect(curriculum().grade).toBeCloseTo(35 / 15);
+    });
+
+    test('survives saving and loading', () => {
+      expect(Curriculum.fromObject(curriculum().toObject()).requiredCredits).toBe(30);
+    });
+  });
 });

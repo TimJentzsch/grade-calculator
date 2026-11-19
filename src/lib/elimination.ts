@@ -77,9 +77,19 @@ export function applyElimination(curriculum: Curriculum, indices: number[]): voi
 // The functions below mirror the corresponding getters of the Svelte models.
 // They must stay in sync with them, which is checked by the tests.
 
+/** Mirrors `Module.gradeUnknown`: such modules are always eliminated. */
+export function isGradeUnknown(module: EliminationModule): boolean {
+  return Boolean(
+    module.isGraded && module.eliminated && module.passed && module.grade === undefined,
+  );
+}
+
 /** Mirrors `Module.completed`. */
 export function isCompleted(module: EliminationModule): boolean {
-  return Boolean(module.credits && ((!module.isGraded && module.passed) || module.grade));
+  return Boolean(
+    module.credits &&
+    ((!module.isGraded && module.passed) || module.grade || isGradeUnknown(module)),
+  );
 }
 
 /** Mirrors `Module.hasGrade`. */
@@ -116,7 +126,8 @@ function getModuleAreaStats(
   const eliminatedModules: EliminationModule[] = [];
 
   moduleArea.modules.forEach((module, index) => {
-    const eliminated = elimination[offset + index];
+    // Modules with an unknown grade can't be part of the grade, so they stay eliminated
+    const eliminated = elimination[offset + index] || isGradeUnknown(module);
     const completed = isCompleted(module);
 
     if (completed) {

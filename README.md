@@ -11,6 +11,7 @@ Available at https://timjentzsch.github.io/grade-calculator/.
 - Support for ungraded and differently weighted modules
 - Loading and saving of curriculums
 - Template curriculums for faster configuration
+- Import of your grades from a Notenspiegel PDF exported from RWTH Online (currently Computer Science B.Sc., PO 2018). The PDF is read in your browser and never uploaded.
 
 ## Development
 

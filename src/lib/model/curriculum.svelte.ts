@@ -1,6 +1,6 @@
-import { formatAverageGrade } from '../grade';
-import type Module from './module.svelte';
-import ModuleArea, { type ModuleAreaObject } from './module-area.svelte';
+import { formatAverageGrade, MAX_GRADE, MIN_GRADE } from '../grade';
+import Module from './module.svelte';
+import ModuleArea, { MISSING_CREDITS_NAME, type ModuleAreaObject } from './module-area.svelte';
 
 /** The serialized form of a curriculum, as used in templates and saved files. */
 export interface CurriculumObject {
@@ -8,6 +8,8 @@ export interface CurriculumObject {
   moduleAreas: ModuleAreaObject[];
   eliminationLimit?: number;
   eliminationCPLimit?: number;
+  /** The credits that have to be reached to complete the curriculum. */
+  requiredCredits?: number;
 }
 
 function sum<T>(items: T[], value: (item: T) => number): number {
@@ -23,6 +25,7 @@ export default class Curriculum {
   moduleAreas: ModuleArea[] = $state([]);
   eliminationLimit: number | undefined = $state();
   eliminationCPLimit: number | undefined = $state();
+  requiredCredits: number | undefined = $state();
 
   /**
    * Creates a new curriculum.
@@ -30,21 +33,33 @@ export default class Curriculum {
    * @param moduleAreas - The module areas available in the curriculum.
    * @param eliminationLimit - The maximum number of modules that can be eliminated.
    * @param eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
+   * @param requiredCredits - The credits that have to be reached to complete the curriculum.
    */
   constructor(
     name: string | undefined,
     moduleAreas: ModuleArea[],
     eliminationLimit?: number,
     eliminationCPLimit?: number,
+    requiredCredits?: number,
   ) {
     this.name = name;
     this.moduleAreas = moduleAreas;
     this.eliminationLimit = eliminationLimit;
     this.eliminationCPLimit = eliminationCPLimit;
+    this.requiredCredits = requiredCredits;
   }
 
   get credits(): number {
     return sum(this.moduleAreas, (moduleArea) => moduleArea.credits);
+  }
+
+  /**
+   * The credits that are still missing to reach the required credits of the curriculum,
+   * beyond those missing in the module areas. Open modules are not missing.
+   */
+  get missingCredits(): number {
+    const planned = sum(this.moduleAreas, (moduleArea) => moduleArea.plannedCredits);
+    return Math.max(0, (this.requiredCredits ?? 0) - planned);
   }
 
   /** Determines how many credits have been eliminated in total. */
@@ -245,6 +260,7 @@ export default class Curriculum {
       moduleAreas: this.moduleAreas.map((moduleArea) => moduleArea.toObject()),
       eliminationLimit: this.eliminationLimit,
       eliminationCPLimit: this.eliminationCPLimit,
+      requiredCredits: this.requiredCredits,
     };
   }
 
@@ -254,6 +270,7 @@ export default class Curriculum {
       obj.moduleAreas.map((moduleAreaObj) => ModuleArea.fromObject(moduleAreaObj)),
       obj.eliminationLimit,
       obj.eliminationCPLimit,
+      obj.requiredCredits,
     );
   }
 
@@ -268,22 +285,36 @@ export default class Curriculum {
     this.moduleAreas.push(moduleArea);
   }
 
-  bestCase(): Curriculum {
+  /**
+   * Completes the curriculum with the given grade for all open modules and missing credits.
+   * Credits missing beyond those of the module areas are added as a module area of their own.
+   */
+  private completedWith(grade: number, complete: (area: ModuleArea) => ModuleArea): Curriculum {
+    const moduleAreas = this.moduleAreas.map(complete);
+    if (this.missingCredits > 0) {
+      moduleAreas.push(
+        new ModuleArea(MISSING_CREDITS_NAME, [
+          new Module(MISSING_CREDITS_NAME, this.missingCredits, grade),
+        ]),
+      );
+    }
     return new Curriculum(
       this.name,
-      this.moduleAreas.map((moduleArea) => moduleArea.bestCase()),
+      moduleAreas,
       this.eliminationLimit,
       this.eliminationCPLimit,
+      this.requiredCredits,
     );
   }
 
+  /** The curriculum with the best grade for all open modules and missing credits. */
+  bestCase(): Curriculum {
+    return this.completedWith(MIN_GRADE, (moduleArea) => moduleArea.bestCase());
+  }
+
+  /** The curriculum with the worst passing grade for all open modules and missing credits. */
   worstCase(): Curriculum {
-    return new Curriculum(
-      this.name,
-      this.moduleAreas.map((moduleArea) => moduleArea.worstCase()),
-      this.eliminationLimit,
-      this.eliminationCPLimit,
-    );
+    return this.completedWith(MAX_GRADE, (moduleArea) => moduleArea.worstCase());
   }
 
   clone(): Curriculum {
@@ -292,6 +323,7 @@ export default class Curriculum {
       this.moduleAreas.map((moduleArea) => moduleArea.clone()),
       this.eliminationLimit,
       this.eliminationCPLimit,
+      this.requiredCredits,
     );
   }
 }

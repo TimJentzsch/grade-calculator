@@ -43,4 +43,11 @@ describe('IconButton', () => {
     const body = html({ icon: 'x', label: 'Discard', onclick });
     expect(body.match(/<path /g)).toHaveLength(2);
   });
+
+  test('can be disabled', () => {
+    expect(html({ icon: 'ban', label: 'Eliminate', disabled: true, onclick })).toContain(
+      'disabled',
+    );
+    expect(html({ icon: 'ban', label: 'Eliminate', onclick })).not.toContain('disabled');
+  });
 });

@@ -49,5 +49,9 @@
   "imports": {
     "#lib/*": "./src/lib/*"
   },
-  "private": true
+  "private": true,
+  "dependencies": {
+    "docutext": "1.2.1",
+    "fflate": "~0.8.3"
+  }
 }
