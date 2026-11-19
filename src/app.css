@@ -78,77 +78,125 @@ select {
   display: block;
 }
 
+.elimination-container {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
 .invalid-elimination {
   color: var(--color-danger);
 }
 
-.module-input-container {
+.curriculum-container {
+  container: curriculum / inline-size;
+}
+
+/*
+ * A row of the curriculum, e.g. a module or the header of a module area.
+ * Shows a title, details like the grade and credits, and controls.
+ */
+.row {
   display: grid;
-  gap: var(--space-sm);
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: 'title details controls';
+  align-items: center;
+  column-gap: var(--space-md);
 }
 
-.module-name-label {
-  grid-row: 1;
-  grid-column: 1 / span 4;
+.row-title {
+  grid-area: title;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+  gap: 0 var(--space-md);
 }
 
-.module-credits-label {
-  grid-row: 1;
-  grid-column: 5;
-}
-
-.module-is-graded-label {
-  grid-row: 2;
-  grid-column: 1;
-}
-
-.module-has-completed-label {
-  grid-row: 2;
-  grid-column: 2;
-}
-
-.module-grade-selector-label {
-  grid-row: 2;
-  grid-column: 3;
-}
-
-.module-is-eliminated-label {
-  grid-row: 2;
-  grid-column: 4;
-}
-
-.module-weight-label {
-  grid-row: 2;
-  grid-column: 5;
-}
-
-.info-container,
-.title-container {
+.row-details {
+  grid-area: details;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-xs) var(--space-md);
 }
 
-.elimination-container {
-  margin: 0 var(--space-lg);
+/* Reserves space for three buttons, so that the details of all rows line up */
+.row-controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 6rem;
 }
 
-.header,
-.module-container,
-.module-edit-container,
-.edit-header {
+/* On narrow screens, the details move below the title */
+@container curriculum (max-width: 40rem) {
+  .row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'title controls'
+      'details details';
+  }
+
+  .row-details {
+    justify-content: flex-start;
+  }
+
+  .row-controls {
+    min-width: 0;
+  }
+}
+
+/* An editor with input fields and controls to save or discard the changes */
+.editor-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: var(--space-md);
+  padding: var(--space-xs) 0;
+}
+
+.editor-fields,
+.elimination-input-container {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-sm) var(--space-md);
 }
 
-.grade-container {
-  margin: 0 var(--space-lg);
+.editor-controls {
+  display: flex;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* The name takes the remaining space of its line */
+.name-label {
+  flex: 1 1 16rem;
+  /* Allows the input to shrink below its default size on narrow screens */
+  min-width: 0;
+}
+
+.name-input {
+  flex: 1;
+  min-width: 0;
+}
+
+input[type='number'] {
+  width: 5em;
 }
 
 .module-grade-selection {
-  margin: 0 var(--space-sm);
+  margin-left: var(--space-sm);
+}
+
+.credits-container {
+  min-width: 3.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .grade-input {
@@ -161,10 +209,6 @@ input.grade-input.invalid {
   outline-color: var(--color-danger);
 }
 
-.controls-container {
-  margin-left: var(--space-sm);
-}
-
 .grade {
   display: inline-block;
   font-variant-numeric: tabular-nums;
@@ -172,7 +216,11 @@ input.grade-input.invalid {
 
 .grade-value {
   font-weight: var(--font-weight-bold);
-  margin: 0 var(--space-xs);
+}
+
+/* Space between the grade before elimination, the grade and the limits, if they are shown */
+.grade:not(:empty) + .grade:not(:empty) {
+  margin-left: var(--space-xs);
 }
 
 .module-not-graded,
@@ -185,13 +233,8 @@ input.grade-input.invalid {
   text-decoration: line-through;
 }
 
-.module-grade-value {
-  min-width: 2em;
-  text-align: right;
-}
-
 .module-container {
-  margin: var(--space-xs);
+  margin: var(--space-xs) 0;
   padding: var(--space-2xs) var(--space-sm);
   border-radius: var(--radius-sm);
   background-color: var(--color-surface-raised);
@@ -199,7 +242,7 @@ input.grade-input.invalid {
 }
 
 .module-area-container {
-  margin: var(--space-sm);
+  margin: var(--space-sm) 0;
   padding: var(--space-sm);
   border-radius: var(--radius-md);
   background-color: var(--color-surface);

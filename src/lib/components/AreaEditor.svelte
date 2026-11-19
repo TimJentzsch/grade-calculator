@@ -36,8 +36,8 @@
   }
 </script>
 
-<div class="{kind}-edit-header edit-header">
-  <div class="input-container">
+<div class="{kind}-edit-header edit-header editor-row">
+  <div class="editor-fields">
     <label class="label name-label"
       >Name: <input
         class="input name-input"
@@ -49,7 +49,7 @@
       /></label
     >
     <div class="elimination-input-container">
-      Elimination: <label class="elimination-count-label"
+      Elimination: <label class="label elimination-count-label"
         >Limited count: <input
           class="checkbox elimination-count-checkbox"
           name="elimination-count-checkbox"
@@ -66,8 +66,8 @@
           disabled={!countLimited}
           bind:value={count}
         /></label
-      ><label class="elimination-cp-label"
-        >{' Limited credits: '}<input
+      ><label class="label elimination-cp-label"
+        >Limited credits: <input
           class="checkbox elimination-cp-checkbox"
           name="elimination-cp-checkbox"
           type="checkbox"
@@ -86,7 +86,7 @@
       >
     </div>
   </div>
-  <div class="controls-container">
+  <div class="editor-controls">
     <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton
       icon="x"
       label="Discard the changes"

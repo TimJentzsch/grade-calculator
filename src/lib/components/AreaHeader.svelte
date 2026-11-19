@@ -26,8 +26,7 @@
     if (gradeText === bestGrade && gradeText === worstGrade) {
       return '';
     }
-    const limits = `(${bestGrade}-${worstGrade})`;
-    return kind === 'curriculum' ? ` ${limits}` : limits;
+    return `(${bestGrade}-${worstGrade})`;
   });
 
   const gradeTitle = $derived(
@@ -42,11 +41,11 @@
 </script>
 
 <div
-  class="header"
+  class="header row"
   class:curriculum-header={kind === 'curriculum'}
   class:module-area-display-header={kind === 'module-area'}
 >
-  <div class="{kind}-title title-container">
+  <div class="{kind}-title row-title">
     {#if kind === 'curriculum'}
       <h2 class="curriculum-name">{area.name ?? ''}</h2>
     {:else}
@@ -60,43 +59,41 @@
       eliminatedCredits={area.eliminatedCredits}
     />
   </div>
-  <div class="info-container">
-    <div class="info-container">
-      <div class="{kind}-grade-container grade-container">
-        <span
-          class="{kind}-eliminated-grade-value grade eliminated"
-          title="The grade before elimination"><GradeText text={gradeBeforeElimination} /></span
-        ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
-          ><GradeText text={area.eliminationGradeText} /></span
-        ><span
-          class="{kind}-grade-limits grade-limits grade"
-          title="The best/worst possible grade in this {label}">{gradeLimits}</span
-        >
-      </div>
-      <div
-        class="{kind}-credits-container credits-container"
-        title="The total credit points of this {label}"
+  <div class="row-details">
+    <div class="{kind}-grade-container grade-container">
+      <span
+        class="{kind}-eliminated-grade-value grade eliminated"
+        title="The grade before elimination"><GradeText text={gradeBeforeElimination} /></span
+      ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
+        ><GradeText text={area.eliminationGradeText} /></span
+      ><span
+        class="{kind}-grade-limits grade-limits grade"
+        title="The best/worst possible grade in this {label}">{gradeLimits}</span
       >
-        <span class="{kind}-credits-value">{area.credits}</span><span
-          class="{kind}-credits-description">{' CP'}</span
-        >
-      </div>
     </div>
-    <div class="controls-container">
-      <IconButton
-        icon="plus"
-        label={kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'}
-        onclick={onAdd}
-      /><IconButton
-        icon="pencil"
-        label="Edit this {label}"
-        onclick={onEdit}
-      />{#if onRemove}<IconButton
-          icon="trash"
-          variant="danger"
-          label="Remove this {label}"
-          onclick={onRemove}
-        />{/if}
+    <div
+      class="{kind}-credits-container credits-container"
+      title="The total credit points of this {label}"
+    >
+      <span class="{kind}-credits-value">{area.credits}</span><span
+        class="{kind}-credits-description">{' CP'}</span
+      >
     </div>
+  </div>
+  <div class="row-controls">
+    <IconButton
+      icon="plus"
+      label={kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'}
+      onclick={onAdd}
+    /><IconButton
+      icon="pencil"
+      label="Edit this {label}"
+      onclick={onEdit}
+    />{#if onRemove}<IconButton
+        icon="trash"
+        variant="danger"
+        label="Remove this {label}"
+        onclick={onRemove}
+      />{/if}
   </div>
 </div>

@@ -59,8 +59,8 @@
   }
 </script>
 
-<div class="module-edit-container module-container">
-  <div class="input-container module-input-container">
+<div class="module-edit-container module-container editor-row">
+  <div class="editor-fields">
     <label class="label name-label module-name-label"
       >Name: <input
         class="input name-input"
@@ -132,7 +132,7 @@
       /></label
     >
   </div>
-  <div class="controls-container">
+  <div class="editor-controls">
     <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton
       icon="x"
       label="Discard the changes"
