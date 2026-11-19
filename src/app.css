@@ -331,20 +331,23 @@ input.number-input.invalid:hover:enabled {
   padding: var(--space-2xs) var(--space-sm);
   border-radius: var(--radius-sm);
   background-color: var(--color-surface-raised);
-  box-shadow: var(--shadow-raised);
 }
 
+/* Module areas are sections of the curriculum, without a card of their own */
 .module-area-container {
-  margin: var(--space-sm) 0;
-  padding: var(--space-sm);
-  border-radius: var(--radius-md);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  margin-top: var(--space-lg);
+}
+
+/* Headers and editors have the same padding as the modules, so everything lines up */
+.header,
+.edit-header {
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
 }
 
 .curriculum-container {
   margin: var(--space-md) 0;
-  padding: var(--space-sm);
+  padding: var(--space-md) var(--space-sm);
   border-radius: var(--radius-md);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-raised);
