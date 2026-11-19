@@ -4,10 +4,18 @@ import {
   getEliminationGrade,
   hasGrade,
   isCompleted,
+  isValidElimination,
 } from './elimination.ts';
 
 /** Objective improvements at or below this value are treated as no improvement. */
 const EPSILON = 1e-9;
+
+/**
+ * A new elimination only replaces the current one if it improves the grade by more than this.
+ * Without it, an equally good elimination could replace the current one due to rounding errors.
+ * It is far below any difference that shows up in the displayed grade.
+ */
+const GRADE_TOLERANCE = 1e-9;
 
 /** A module that can be eliminated, i.e. one that counts towards the grade. */
 interface Candidate {
@@ -195,14 +203,17 @@ function solveSubproblem(
 /**
  * Calculates the best possible elimination for the given curriculum with Dinkelbach's method
  * and dynamic programming.
- * Existing eliminations are ignored.
  *
  * The elimination grade is the ratio `Σ g·w / Σ w` over the modules that are not eliminated.
- * Starting with `λ` as the grade without elimination, repeatedly find the valid elimination
+ * Starting with `λ` as the grade of the current elimination (or of no elimination, if that is
+ * better or the current elimination is invalid), repeatedly find the valid elimination
  * maximizing `Σ w·(g − λ)` over the eliminated modules (a small knapsack problem solved by
  * dynamic programming), and update `λ` to the resulting grade, until no further improvement is
  * possible. Only modules with a grade worse than `λ` have a positive profit, so the others are
  * never passed to the subproblem.
+ *
+ * Because an elimination is only replaced by a strictly better one, a current elimination that is
+ * already optimal is kept, even if other eliminations reach the same grade.
  * @param curriculum The curriculum to calculate the elimination for.
  * @returns The indices into `curriculum.modules` of the modules that should be eliminated.
  */
@@ -212,12 +223,34 @@ export function getBestEliminationIndicesDp(curriculum: EliminationCurriculum): 
     0,
   );
   const allCandidates = getCandidates(curriculum);
+  const toElimination = (indices: number[]) => {
+    const elimination = new Array<boolean>(moduleCount).fill(false);
+    for (const index of indices) {
+      elimination[index] = true;
+    }
+    return elimination;
+  };
 
   let best: number[] = [];
-  let bestGrade = getEliminationGrade(curriculum, new Array<boolean>(moduleCount).fill(false));
+  let bestGrade = getEliminationGrade(curriculum, toElimination(best));
 
   if (bestGrade === undefined) {
     return best;
+  }
+
+  // Start from the current elimination, if it is valid and at least as good as no elimination.
+  // Eliminated flags of modules that cannot be eliminated (e.g. ungraded ones) are ignored.
+  const modules = curriculum.moduleAreas.flatMap((moduleArea) => moduleArea.modules);
+  const current = allCandidates
+    .filter((candidate) => modules[candidate.index].eliminated)
+    .map((candidate) => candidate.index);
+
+  if (current.length > 0 && isValidElimination(curriculum, toElimination(current))) {
+    const currentGrade = getEliminationGrade(curriculum, toElimination(current));
+    if (currentGrade !== undefined && currentGrade <= bestGrade) {
+      best = current;
+      bestGrade = currentGrade;
+    }
   }
 
   // Each iteration strictly improves the grade, so this terminates.
@@ -237,13 +270,8 @@ export function getBestEliminationIndicesDp(curriculum: EliminationCurriculum): 
     }
 
     const indices = [...solution.indices].sort((a, b) => a - b);
-    const elimination = new Array<boolean>(moduleCount).fill(false);
-    for (const index of indices) {
-      elimination[index] = true;
-    }
-
-    const grade = getEliminationGrade(curriculum, elimination);
-    if (grade === undefined || grade >= bestGrade) {
+    const grade = getEliminationGrade(curriculum, toElimination(indices));
+    if (grade === undefined || grade >= bestGrade - GRADE_TOLERANCE) {
       break;
     }
 

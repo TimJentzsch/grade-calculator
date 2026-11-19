@@ -222,6 +222,56 @@ describe('elimination', () => {
     });
   });
 
+  describe('dynamic programming starts from the current elimination', () => {
+    /** Two modules with the same grade and credits, so eliminating either is optimal. */
+    function tiedCurriculum(eliminated: number): Curriculum {
+      const modules = [
+        new Module('Test module 1', 6, 1.0),
+        new Module('Test module 2', 6, 3.0),
+        new Module('Test module 3', 6, 3.0),
+      ];
+      modules[eliminated].eliminated = true;
+      return new Curriculum('Test curriculum', [new ModuleArea('Test module area', modules)], 1);
+    }
+
+    test('keeps an optimal elimination when another one is equally good', () => {
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(tiedCurriculum(1)))).toEqual([1]);
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(tiedCurriculum(2)))).toEqual([2]);
+    });
+
+    test('replaces an elimination that is not optimal', () => {
+      const curriculum = new Curriculum(
+        'Test curriculum',
+        [
+          new ModuleArea('Test module area', [
+            new Module('Test module 1', 6, 1.0),
+            new Module('Test module 2', 6, 3.0, undefined, undefined, undefined, true),
+            new Module('Test module 3', 6, 4.0),
+          ]),
+        ],
+        1,
+      );
+
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual([2]);
+    });
+
+    test('ignores an elimination that exceeds the limits', () => {
+      const curriculum = new Curriculum(
+        'Test curriculum',
+        [
+          new ModuleArea('Test module area', [
+            new Module('Test module 1', 6, 1.0),
+            new Module('Test module 2', 6, 3.7, undefined, undefined, undefined, true),
+            new Module('Test module 3', 6, 4.0, undefined, undefined, undefined, true),
+          ]),
+        ],
+        1,
+      );
+
+      expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual([2]);
+    });
+  });
+
   describe('dynamic programming matches the brute force search', () => {
     /** The grade after applying the elimination, which must also be valid. */
     function gradeOf(curriculum: Curriculum, indices: number[]): number | undefined {
@@ -234,6 +284,8 @@ describe('elimination', () => {
       return getEliminationGrade(plain, elimination);
     }
 
+    // The random curricula also contain eliminated modules, valid or not,
+    // which the dynamic programming uses as its starting point
     test('on random curricula', () => {
       const random = createRandom(1337);
       for (let i = 0; i < 1000; i += 1) {
@@ -247,6 +299,17 @@ describe('elimination', () => {
         } else {
           expect(actual).toBeCloseTo(expected, 9);
         }
+      }
+    });
+
+    test('keeps the current elimination if it is optimal', () => {
+      const random = createRandom(2024);
+      for (let i = 0; i < 1000; i += 1) {
+        const curriculum = randomCurriculum(random);
+        const optimal = getBestEliminationIndicesPlain(toEliminationCurriculum(curriculum));
+        applyElimination(curriculum, optimal);
+
+        expect(getBestEliminationIndicesDp(toEliminationCurriculum(curriculum))).toEqual(optimal);
       }
     });
 

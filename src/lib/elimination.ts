@@ -7,6 +7,8 @@ export interface EliminationModule {
   weight: number;
   isGraded: boolean;
   passed: boolean | undefined;
+  /** Whether the module is currently eliminated, used as the starting point of the search. */
+  eliminated?: boolean;
 }
 
 /** The data of a module area that is relevant for the elimination. */
@@ -48,6 +50,7 @@ export function toEliminationCurriculum(curriculum: Curriculum): EliminationCurr
         weight: module.weight,
         isGraded: module.isGraded,
         passed: module.passed,
+        eliminated: Boolean(module.eliminated),
       })),
       eliminationLimit: moduleArea.eliminationLimit,
       eliminationCPLimit: moduleArea.eliminationCPLimit,
