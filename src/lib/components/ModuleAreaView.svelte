@@ -4,7 +4,7 @@
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
   import AreaEditor from './AreaEditor.svelte';
   import AreaHeader from './AreaHeader.svelte';
-  import ModuleView from './ModuleView.svelte';
+  import ModuleDisplay from './ModuleDisplay.svelte';
 
   interface Props {
     moduleArea: ModuleArea;
@@ -17,7 +17,7 @@
 
   let editing = $state(untrack(() => startEditing));
 
-  /** Modules added by the user, which start in the editor. */
+  /** Modules added by the user, which start with editing the name. */
   const addedModules = new WeakSet<Module>();
 
   function addModule() {
@@ -54,9 +54,9 @@
   {/if}
   <div class="module-area-module-container">
     {#each moduleArea.modules as module, index (module)}
-      <ModuleView
+      <ModuleDisplay
         {module}
-        startEditing={addedModules.has(module)}
+        isNew={addedModules.has(module)}
         onRemove={() => moduleArea.modules.splice(index, 1)}
       />
     {/each}

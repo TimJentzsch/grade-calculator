@@ -90,6 +90,24 @@ export default class Module {
     return formatGrade(this.grade as number);
   }
 
+  /**
+   * Switches between a graded and an ungraded module.
+   * An entered grade counts as passed, a passed module starts with an open grade (TBD).
+   */
+  setGraded(isGraded: boolean) {
+    if (isGraded === this.isGraded) {
+      return;
+    }
+    if (isGraded) {
+      this.passed = undefined;
+    } else {
+      this.passed = this.grade !== undefined || this.passed;
+      this.grade = undefined;
+      this.eliminated = undefined;
+    }
+    this.isGraded = isGraded;
+  }
+
   get isEmpty(): boolean {
     return !this.name;
   }

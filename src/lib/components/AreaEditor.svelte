@@ -2,7 +2,7 @@
   import { untrack } from 'svelte';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
-  import ControlButton from './ControlButton.svelte';
+  import IconButton from './IconButton.svelte';
 
   interface Props {
     kind: 'curriculum' | 'module-area';
@@ -36,8 +36,8 @@
   }
 </script>
 
-<div class="{kind}-edit-header edit-header">
-  <div class="input-container">
+<div class="{kind}-edit-header edit-header editor-row">
+  <div class="editor-fields">
     <label class="label name-label"
       >Name: <input
         class="input name-input"
@@ -49,7 +49,7 @@
       /></label
     >
     <div class="elimination-input-container">
-      Elimination: <label class="elimination-count-label"
+      Elimination: <label class="label elimination-count-label"
         >Limited count: <input
           class="checkbox elimination-count-checkbox"
           name="elimination-count-checkbox"
@@ -66,8 +66,8 @@
           disabled={!countLimited}
           bind:value={count}
         /></label
-      ><label class="elimination-cp-label"
-        >{' Limited credits: '}<input
+      ><label class="label elimination-cp-label"
+        >Limited credits: <input
           class="checkbox elimination-cp-checkbox"
           name="elimination-cp-checkbox"
           type="checkbox"
@@ -86,10 +86,10 @@
       >
     </div>
   </div>
-  <div class="controls-container">
-    <ControlButton variant="save" title="Save the changes" onclick={save} /><ControlButton
-      variant="discard"
-      title="Discard the changes"
+  <div class="editor-controls">
+    <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton
+      icon="x"
+      label="Discard the changes"
       onclick={onDiscard}
     />
   </div>

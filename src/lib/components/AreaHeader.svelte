@@ -1,7 +1,8 @@
 <script lang="ts">
+  import { formatGrade } from '#lib/grade.ts';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
-  import ControlButton from './ControlButton.svelte';
+  import IconButton from './IconButton.svelte';
   import EliminationInfo from './EliminationInfo.svelte';
   import GradeText from './GradeText.svelte';
 
@@ -18,16 +19,24 @@
 
   const label = $derived(kind === 'curriculum' ? 'curriculum' : 'module area');
 
-  const gradeLimits = $derived.by(() => {
-    const { gradeText } = area;
-    const bestGrade = area.bestCase().eliminationGradeText;
-    const worstGrade = area.worstCase().eliminationGradeText;
+  /**
+   * A limit of the possible grade range, e.g. `1.4`.
+   * Only shows the first decimal place like the final grade, as the user can't change the range.
+   */
+  function formatLimit(limit: Curriculum | ModuleArea): string {
+    const grade = limit.eliminationGrade;
+    return grade === undefined ? limit.eliminationGradeText : formatGrade(grade);
+  }
 
-    if (gradeText === bestGrade && gradeText === worstGrade) {
+  const gradeLimits = $derived.by(() => {
+    const bestGrade = formatLimit(area.bestCase());
+    const worstGrade = formatLimit(area.worstCase());
+
+    // Once the grade can't change anymore, the range isn't needed
+    if (bestGrade === worstGrade) {
       return '';
     }
-    const limits = `(${bestGrade}-${worstGrade})`;
-    return kind === 'curriculum' ? ` ${limits}` : limits;
+    return `(${bestGrade}-${worstGrade})`;
   });
 
   const gradeTitle = $derived(
@@ -42,11 +51,11 @@
 </script>
 
 <div
-  class="header"
+  class="header row"
   class:curriculum-header={kind === 'curriculum'}
   class:module-area-display-header={kind === 'module-area'}
 >
-  <div class="{kind}-title title-container">
+  <div class="{kind}-title row-title">
     {#if kind === 'curriculum'}
       <h2 class="curriculum-name">{area.name ?? ''}</h2>
     {:else}
@@ -60,42 +69,41 @@
       eliminatedCredits={area.eliminatedCredits}
     />
   </div>
-  <div class="info-container">
-    <div class="info-container">
-      <div class="{kind}-grade-container grade-container">
-        <span
-          class="{kind}-eliminated-grade-value grade eliminated"
-          title="The grade before elimination"><GradeText text={gradeBeforeElimination} /></span
-        ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
-          ><GradeText text={area.eliminationGradeText} /></span
-        ><span
-          class="{kind}-grade-limits grade-limits grade"
-          title="The best/worst possible grade in this {label}">{gradeLimits}</span
-        >
-      </div>
-      <div
-        class="{kind}-credits-container credits-container"
-        title="The total credit points of this {label}"
+  <div class="row-details">
+    <div class="{kind}-grade-container grade-container">
+      <span
+        class="{kind}-eliminated-grade-value grade eliminated"
+        title="The grade before elimination">{gradeBeforeElimination}</span
+      ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
+        ><GradeText text={area.eliminationGradeText} /></span
+      ><span
+        class="{kind}-grade-limits grade-limits grade"
+        title="The best/worst possible grade in this {label}">{gradeLimits}</span
       >
-        <span class="{kind}-credits-value">{area.credits}</span><span
-          class="{kind}-credits-description">{' CP'}</span
-        >
-      </div>
     </div>
-    <div class="controls-container">
-      <ControlButton
-        variant="add"
-        title={kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'}
-        onclick={onAdd}
-      /><ControlButton
-        variant="edit"
-        title="Edit this {label}"
-        onclick={onEdit}
-      />{#if onRemove}<ControlButton
-          variant="remove"
-          title="Remove this {label}"
-          onclick={onRemove}
-        />{/if}
+    <div
+      class="{kind}-credits-container credits-container"
+      title="The total credit points of this {label}"
+    >
+      <span class="{kind}-credits-value">{area.credits}</span><span
+        class="{kind}-credits-description">{' CP'}</span
+      >
     </div>
+  </div>
+  <div class="row-controls">
+    <IconButton
+      icon="plus"
+      label={kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'}
+      onclick={onAdd}
+    /><IconButton
+      icon="pencil"
+      label="Edit this {label}"
+      onclick={onEdit}
+    />{#if onRemove}<IconButton
+        icon="trash"
+        variant="danger"
+        label="Remove this {label}"
+        onclick={onRemove}
+      />{/if}
   </div>
 </div>

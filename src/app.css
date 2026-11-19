@@ -1,38 +1,7 @@
-:root {
-  --light-primary: #3f51b5;
-  --light-primary-variant: #1a237e;
-  --light-secondary: #4fc3f7;
-  --light-secondary-variant: #039be5;
-
-  --light-background: #ffffff;
-  --light-surface: #ffffff;
-  --light-error: #b00020;
-
-  --light-on-primary: #ffffff;
-  --light-on-secondary: #000000;
-  --light-on-background: #000000;
-  --light-on-surface: #000000;
-  --light-on-error: #ffffff;
-
-  --dark-primary: #9fa8da;
-  --dark-primary-variant: #3f51b5;
-  --dark-secondary: #81d4fa;
-
-  --dark-background: #121212;
-  --dark-surface: #121212;
-  --dark-elevation-background: rgba(255, 255, 255, 0.08);
-  --dark-error: #cf6679;
-
-  --dark-on-primary: #000000;
-  --dark-on-secondary: #000000;
-  --dark-on-background: #ffffff;
-  --dark-on-surface: #ffffff;
-  --dark-on-disabled: #cccccc;
-  --dark-on-error: #000000;
-
-  --shadow-1: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
-  --shadow-hover: 0 2px 4px 2px rgba(0, 0, 0, 0.2);
-}
+@import './lib/styles/palette.css';
+@import './lib/styles/theme.css';
+@import './lib/styles/typography.css';
+@import './lib/styles/spacing.css';
 
 * {
   margin: 0;
@@ -40,13 +9,49 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--light-background);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-base);
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--color-heading);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h1 {
+  font-size: var(--font-size-2xl);
+}
+
+h2 {
+  font-size: var(--font-size-xl);
+}
+
+h3 {
+  font-size: var(--font-size-lg);
+}
+
+/* Form controls don't inherit the font by default */
+button,
+input,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
 }
 
 #body-container,
 #header-content {
-  padding: 10px;
+  padding: var(--space-md);
   margin: auto;
   max-width: 1100px;
 }
@@ -59,9 +64,9 @@ body {
 }
 
 #js-error-container {
-  background-color: var(--light-error);
-  color: var(--light-on-error);
-  padding: 10px;
+  background-color: var(--color-danger);
+  color: var(--color-on-danger);
+  padding: var(--space-md);
   text-align: center;
 }
 
@@ -73,77 +78,216 @@ body {
   display: block;
 }
 
-.invalid-elimination {
-  color: var(--light-error);
-}
-
-.module-input-container {
-  display: grid;
-  grid-gap: 5px;
-}
-
-.module-name-label {
-  grid-row: 1;
-  grid-column: 1 / span 4;
-}
-
-.module-credits-label {
-  grid-row: 1;
-  grid-column: 5;
-}
-
-.module-is-graded-label {
-  grid-row: 2;
-  grid-column: 1;
-}
-
-.module-has-completed-label {
-  grid-row: 2;
-  grid-column: 2;
-}
-
-.module-grade-selector-label {
-  grid-row: 2;
-  grid-column: 3;
-}
-
-.module-is-eliminated-label {
-  grid-row: 2;
-  grid-column: 4;
-}
-
-.module-weight-label {
-  grid-row: 2;
-  grid-column: 5;
-}
-
-.info-container,
-.title-container {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-}
-
 .elimination-container {
-  margin: 0 20px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
 }
 
-.header,
-.module-container,
-.module-edit-container,
-.edit-header {
+.invalid-elimination {
+  color: var(--color-danger);
+}
+
+.curriculum-container {
+  container: curriculum / inline-size;
+}
+
+/*
+ * A row of the curriculum, e.g. a module or the header of a module area.
+ * Shows a title, details like the grade and credits, and controls.
+ */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  grid-template-areas: 'title details controls';
+  align-items: center;
+  column-gap: var(--space-md);
+}
+
+.row-title {
+  grid-area: title;
+  min-width: 0;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+  gap: 0 var(--space-md);
+}
+
+.row-details {
+  grid-area: details;
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: var(--space-xs) var(--space-md);
 }
 
-.grade-container {
-  margin: 0 20px;
+/* Reserves space for three buttons, so that the details of all rows line up */
+.row-controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-xs);
+  min-width: calc(3 * var(--icon-button-size) + 2 * var(--space-xs));
 }
 
-.module-grade-selection {
-  margin: 0 7px;
+/* On narrow screens, the details move below the title */
+@container curriculum (max-width: 40rem) {
+  .row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'title controls'
+      'details details';
+  }
+
+  .row-details {
+    justify-content: flex-start;
+  }
+
+  /* The details are aligned to the left now, so the weight moves to the end to keep the toggles aligned */
+  .weight-value {
+    order: 1;
+  }
+
+  .row-controls {
+    min-width: 0;
+  }
+}
+
+/* An editor with input fields and controls to save or discard the changes */
+.editor-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: var(--space-md);
+  padding: var(--space-xs) 0;
+}
+
+.editor-fields,
+.elimination-input-container {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+}
+
+.editor-controls {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* The name takes the remaining space of its line */
+.name-label {
+  flex: 1 1 16rem;
+  /* Allows the input to shrink below its default size on narrow screens */
+  min-width: 0;
+}
+
+.name-input {
+  flex: 1;
+  min-width: 0;
+}
+
+input[type='number'] {
+  width: 5em;
+}
+
+.module-grade-container {
+  display: grid;
+  /* A toggle and the grade, both columns are reserved so that rows line up */
+  grid-template-columns: var(--icon-button-size) 4em;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Ungraded modules show the passed toggle in the grade column, centered like the grades */
+.module-grade-container.ungraded > * {
+  grid-column: 2;
+  justify-self: center;
+}
+
+/* An input that looks like normal text until it is hovered or focused */
+input[type='text'].inline-input {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+input[type='text'].inline-input:hover:enabled {
+  background-color: var(--color-surface-hover);
+  border-color: transparent;
+}
+
+input[type='text'].inline-input:focus {
+  background-color: var(--color-input-background);
+  border-color: var(--color-border-strong);
+}
+
+/* The weighting of a module, e.g. "×2.0" */
+.weight-value {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-muted);
+}
+
+.module-credits-description {
+  margin-left: var(--space-xs);
+}
+
+input[type='text'].weight-input {
+  width: 3.5em;
+  padding-left: var(--space-2xs);
+  color: inherit;
+}
+
+/* A weight of 1 is the default, which is less important */
+.default-weight {
+  color: var(--color-text-disabled);
+}
+
+/*
+ * On devices with a mouse, the controls and the default weight of a module are only shown
+ * on hover or focus. On touch devices, they are always shown.
+ */
+@media (hover: hover) {
+  .module-display-container .row-controls,
+  .module-display-container .default-weight {
+    opacity: 0;
+  }
+
+  /* Only keyboard focus counts, so that clicking a button doesn't keep them visible */
+  .module-display-container:hover .row-controls,
+  .module-display-container:has(:focus-visible) .row-controls,
+  .module-display-container:hover .default-weight,
+  .module-display-container:has(:focus-visible) .default-weight {
+    opacity: 1;
+  }
+}
+
+/* Hides content visually, but keeps it available to screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Credit points inside a row, followed by the "CP" unit */
+input.credit-points-input {
+  width: 3.5em;
+  text-align: right;
+}
+
+.credits-container {
+  min-width: 3.5em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .grade-input {
@@ -151,193 +295,120 @@ body {
   text-align: center;
 }
 
-input.grade-input.invalid {
-  border-color: var(--light-error);
-  outline-color: var(--light-error);
-}
-
-.controls-container {
-  margin-left: 5px;
+input.grade-input.invalid,
+input.grade-input.invalid:hover:enabled,
+input.number-input.invalid,
+input.number-input.invalid:hover:enabled {
+  border-color: var(--color-danger);
+  outline-color: var(--color-danger);
 }
 
 .grade {
   display: inline-block;
+  font-variant-numeric: tabular-nums;
 }
 
 .grade-value {
-  font-weight: bold;
-  margin: 0 5px;
+  font-weight: var(--font-weight-bold);
+}
+
+/* The best and worst possible grade, which is secondary information */
+.grade-limits {
+  color: var(--color-text-muted);
+}
+
+/* Space between the grade before elimination, the grade and the limits, if they are shown */
+.grade:not(:empty) + .grade:not(:empty) {
+  margin-left: var(--space-xs);
 }
 
 .module-not-graded,
 .eliminated,
 .disabled {
-  color: gray;
+  color: var(--color-text-disabled);
 }
 
 .eliminated {
   text-decoration: line-through;
 }
 
-.module-grade-value {
-  min-width: 2em;
-  text-align: right;
-}
-
-.control-button {
-  width: 25px;
-  height: 25px;
-}
-
 .module-container {
-  margin: 4px;
-  padding: 2px 5px;
-  box-shadow: var(--shadow-1);
+  margin: var(--space-xs) 0;
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
 }
 
+/* Module areas are sections of the curriculum, without a card of their own */
 .module-area-container {
-  margin: 7px;
-  padding: 5px;
-  box-shadow: var(--shadow-1);
+  margin-top: var(--space-lg);
+}
+
+/* Headers and editors have the same padding as the modules, so everything lines up */
+.header,
+.edit-header {
+  padding-left: var(--space-sm);
+  padding-right: var(--space-sm);
 }
 
 .curriculum-container {
-  margin: 10px 0;
-  padding: 5px;
-  box-shadow: var(--shadow-1);
-}
-
-button,
-.upload-button,
-.save-button {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
-  line-height: 1em;
-  display: table-cell;
-  vertical-align: middle;
-
-  cursor: pointer;
-
-  background-color: var(--light-primary);
-  color: var(--light-on-primary);
-  border: none;
-  margin: 2px;
-  padding: 5px;
-  box-shadow: var(--shadow-1);
-}
-
-button:hover,
-.upload-button:hover,
-.save-button:hover {
-  background-color: var(--light-primary-variant);
-  box-shadow: var(--shadow-hover);
-}
-
-.save-button {
-  text-decoration: none;
-}
-
-#settings {
-  display: grid;
-  grid-gap: 10px;
-}
-
-.settings-container {
-  min-height: 30px;
+  margin: var(--space-md) 0;
+  padding: var(--space-md) var(--space-sm);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-raised);
 }
 
 input[type='text'],
 input[type='number'],
 select {
-  border: solid var(--light-primary-variant) 1px;
-  border-radius: 5px;
+  background-color: var(--color-input-background);
+  color: var(--color-text);
+  border: solid var(--color-border) 1px;
+  border-radius: var(--radius-sm);
+}
+
+input[type='text']:hover:enabled,
+input[type='number']:hover:enabled,
+select:hover:enabled {
+  border-color: var(--color-border-strong);
+}
+
+input[type='checkbox'] {
+  accent-color: var(--color-primary);
 }
 
 input[type='text'],
 input[type='number'],
 select {
-  padding: 3px 5px;
+  padding: var(--space-2xs) var(--space-sm);
   box-sizing: border-box;
 }
 
 input:disabled,
 select:disabled {
-  border: solid lightgray 1px;
+  border-color: var(--color-border-disabled);
+  color: var(--color-text-disabled);
 }
 
 header {
-  background-color: var(--light-primary);
-  color: var(--light-on-primary);
+  background-color: var(--color-header);
 }
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: var(--dark-background);
-    color: var(--dark-on-background);
-  }
+header h1 {
+  font-size: var(--font-size-xl);
+}
 
-  header {
-    background-color: var(--dark-elevation-background);
-    color: var(--dark-primary);
-  }
+.github-link {
+  display: flex;
+  color: var(--color-text);
+}
 
-  button,
-  .upload-button,
-  .save-button {
-    box-shadow: none;
-    background-color: var(--dark-primary);
-    color: var(--dark-on-primary);
-  }
-
-  button:hover,
-  .upload-button:hover,
-  .save-button:hover {
-    box-shadow: none;
-    background-color: var(--dark-primary-variant);
-    color: var(--dark-on-primary);
-  }
-
-  .module-container,
-  .module-area-container,
-  .curriculum-container {
-    background-color: var(--dark-elevation-background);
-  }
-
-  h1,
-  h2,
-  h3 {
-    color: var(--dark-primary);
-  }
-
-  input,
-  select {
-    background-color: var(--dark-surface);
-    color: var(--dark-on-surface);
-  }
-
-  input[type='text'],
-  input[type='number'],
-  select {
-    border: none;
-  }
-
-  .module-not-graded,
-  .eliminated,
-  .disabled {
-    color: var(--dark-on-disabled);
-  }
-
-  .invalid-elimination {
-    color: var(--dark-error);
-  }
-
-  input.grade-input.invalid {
-    border: solid var(--dark-error) 1px;
-    outline-color: var(--dark-error);
-  }
+.github-link:hover {
+  color: var(--color-primary);
 }
 
 /* Decimal places of a grade that are cut off, shown to indicate how close the next grade is */
 .truncated-digits {
-  color: gray;
+  color: var(--color-text-muted);
 }

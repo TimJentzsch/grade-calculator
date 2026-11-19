@@ -7,6 +7,8 @@
     /** Whether an empty input is allowed, meaning "TBD" for modules without a grade yet. */
     allowTBD?: boolean;
     disabled?: boolean;
+    /** Describes the input for screen readers, if it has no visible label. */
+    label?: string;
     class?: string;
   }
 
@@ -14,6 +16,7 @@
     value = $bindable(),
     allowTBD = false,
     disabled = false,
+    label,
     class: className,
   }: Props = $props();
 
@@ -53,6 +56,7 @@
   size="4"
   placeholder={allowTBD ? 'TBD' : undefined}
   title={hint}
+  aria-label={label}
   aria-invalid={invalid}
   {disabled}
   bind:value={text}

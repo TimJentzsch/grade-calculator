@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Button from '#lib/components/Button.svelte';
   import CurriculumView from '#lib/components/CurriculumView.svelte';
   import runAutoElimination from '#lib/auto-elimination.ts';
   import Curriculum, { type CurriculumObject } from '#lib/model/curriculum.svelte.ts';
@@ -18,6 +19,8 @@
   function loadConfig(config: CurriculumObject) {
     curriculum = Curriculum.fromObject(config);
   }
+
+  let fileInput: HTMLInputElement | undefined = $state();
 
   function loadConfiguration(event: Event & { currentTarget: HTMLInputElement }) {
     const input = event.currentTarget;
@@ -64,73 +67,55 @@
 </script>
 
 <div id="body-container">
-  <div id="settings">
-    <div class="settings-container">
-      <div id="template-container">
-        Curriculum templates:
-        <button
-          id="new-curriculum-button"
-          class="template-button"
-          title="Create a new empty curriculum"
-          onclick={newCurriculum}
+  <div class="toolbar">
+    <div class="toolbar-group" role="group" aria-labelledby="templates-label">
+      <span id="templates-label" class="toolbar-label">Start from</span>
+      <div class="toolbar-buttons">
+        <Button variant="secondary" title="Create a new empty curriculum" onclick={newCurriculum}
+          >Empty curriculum</Button
         >
-          Empty Curriculum
-        </button>
-        {#each templates as template (template.name)}<button
-            class="template-button"
+        {#each templates as template (template.name)}
+          <Button
+            variant="secondary"
             title="Load the {template.name} curriculum"
-            onclick={() => loadConfig(template)}>{template.name}</button
-          >{/each}
+            onclick={() => loadConfig(template)}>{template.name}</Button
+          >
+        {/each}
       </div>
     </div>
-    <div class="settings-container">
-      <label>
-        Load curriculum:
-        <label class="upload-button" title="Upload a saved curriculum">
-          Load...
-          <input
-            id="load-config"
-            type="file"
-            accept=".json"
-            name="configurationInput"
-            style="display: none"
-            onchange={loadConfiguration}
-          />
-        </label>
-      </label>
-    </div>
-    <div class="settings-container">
-      <span>
-        Save curriculum:
-        <!-- eslint-disable svelte/no-navigation-without-resolve -- data: URL download, not a route -->
-        <a
-          id="save-config"
-          class="save-button"
+    <div class="toolbar-group" role="group" aria-labelledby="file-label">
+      <span id="file-label" class="toolbar-label">File</span>
+      <div class="toolbar-buttons">
+        <Button
+          variant="secondary"
+          title="Load a saved curriculum from a file"
+          onclick={() => fileInput?.click()}>Load…</Button
+        >
+        <Button
+          variant="secondary"
           href={saveHref}
           download={saveFileName}
-          target="_blank"
-          title="Download the curriculum configuration"
+          title="Save the curriculum to a file">Save…</Button
         >
-          Save...
-        </a>
-        <!-- eslint-enable svelte/no-navigation-without-resolve -->
-      </span>
+        <input
+          bind:this={fileInput}
+          type="file"
+          accept=".json"
+          name="configurationInput"
+          hidden
+          onchange={loadConfiguration}
+        />
+      </div>
     </div>
-    <div class="settings-container">
-      <label>
-        Auto elimination:
-        <button
-          id="auto-elimination-button"
-          class="template-button"
+    <div class="toolbar-group elimination-group" role="group" aria-labelledby="elimination-label">
+      <span id="elimination-label" class="toolbar-label">Elimination</span>
+      <div class="toolbar-buttons" aria-live="polite">
+        <Button
           title="Automatically eliminate modules for the best grade"
           onclick={autoElimination}
-          disabled={eliminating}
+          disabled={eliminating}>{eliminating ? 'Calculating…' : 'Auto-eliminate'}</Button
         >
-          Eliminate...
-        </button>
-      </label>
-
-      <span id="auto-elimination-loading-indicator">{eliminating ? 'Calculating…' : ''}</span>
+      </div>
     </div>
   </div>
   <div id="content">
@@ -139,3 +124,40 @@
     {/key}
   </div>
 </div>
+
+<style>
+  .toolbar {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-end;
+    gap: var(--space-md) var(--space-xl);
+    margin: var(--space-md) 0;
+    padding: var(--space-md);
+    background-color: var(--color-surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-raised);
+  }
+
+  .toolbar-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .toolbar-label {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+  }
+
+  .toolbar-buttons {
+    display: flex;
+    flex-flow: row wrap;
+    gap: var(--space-sm);
+  }
+
+  /* The main action, aligned to the right if there is enough space */
+  .elimination-group {
+    margin-left: auto;
+  }
+</style>
