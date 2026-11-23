@@ -1,17 +1,5 @@
 import { formatAverageGrade, MAX_GRADE, MIN_GRADE } from '../grade';
-import Module, { type ModuleObject } from './module.svelte';
-
-/** The serialized form of a module area, as used in templates and saved files. */
-export interface ModuleAreaObject {
-  name?: string;
-  modules: ModuleObject[];
-  eliminationLimit?: number;
-  eliminationCPLimit?: number;
-  /** The credits that have to be reached at least, e.g. for areas whose modules are chosen freely. */
-  minCredits?: number;
-  /** The credits that may be reached at most. Further modules have to be additional modules. */
-  maxCredits?: number;
-}
+import Module from './module.svelte';
 
 /** The name of the module that stands for missing credits in the best and worst case. */
 export const MISSING_CREDITS_NAME = 'Missing credits';
@@ -25,6 +13,10 @@ function sum<T>(items: T[], value: (item: T) => number): number {
 }
 
 export default class ModuleArea {
+  /** The id of the area in the curriculum definition. */
+  id: string | undefined;
+  /** Whether the student chooses the modules of this area, e.g. electives. */
+  openChoice = false;
   name: string | undefined = $state();
   modules: Module[] = $state([]);
   eliminationLimit: number | undefined = $state();
@@ -257,6 +249,13 @@ export default class ModuleArea {
     return this.hasValidEliminationCount && this.hasValidEliminationCP;
   }
 
+  /** Copies the references to the curriculum definition to the given area. */
+  private withRefs(area: ModuleArea): ModuleArea {
+    area.id = this.id;
+    area.openChoice = this.openChoice;
+    return area;
+  }
+
   addModule(module: Module): void {
     this.modules.push(module);
   }
@@ -270,13 +269,15 @@ export default class ModuleArea {
     if (this.missingCredits > 0) {
       modules.push(new Module(MISSING_CREDITS_NAME, this.missingCredits, grade));
     }
-    return new ModuleArea(
-      this.name,
-      modules,
-      this.eliminationLimit,
-      this.eliminationCPLimit,
-      this.minCredits,
-      this.maxCredits,
+    return this.withRefs(
+      new ModuleArea(
+        this.name,
+        modules,
+        this.eliminationLimit,
+        this.eliminationCPLimit,
+        this.minCredits,
+        this.maxCredits,
+      ),
     );
   }
 
@@ -291,35 +292,15 @@ export default class ModuleArea {
   }
 
   clone(): ModuleArea {
-    return new ModuleArea(
-      this.name,
-      this.modules.map((module) => module.clone()),
-      this.eliminationLimit,
-      this.eliminationCPLimit,
-      this.minCredits,
-      this.maxCredits,
-    );
-  }
-
-  toObject(): ModuleAreaObject {
-    return {
-      name: this.name,
-      modules: this.modules.map((module) => module.toObject()),
-      eliminationLimit: this.eliminationLimit,
-      eliminationCPLimit: this.eliminationCPLimit,
-      minCredits: this.minCredits,
-      maxCredits: this.maxCredits,
-    };
-  }
-
-  static fromObject(obj: ModuleAreaObject): ModuleArea {
-    return new ModuleArea(
-      obj.name,
-      obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),
-      obj.eliminationLimit,
-      obj.eliminationCPLimit,
-      obj.minCredits,
-      obj.maxCredits,
+    return this.withRefs(
+      new ModuleArea(
+        this.name,
+        this.modules.map((module) => module.clone()),
+        this.eliminationLimit,
+        this.eliminationCPLimit,
+        this.minCredits,
+        this.maxCredits,
+      ),
     );
   }
 }

@@ -1,18 +1,7 @@
 import { formatAverageGrade, MAX_GRADE, MIN_GRADE } from '../grade';
 import Module from './module.svelte';
-import ModuleArea, { MISSING_CREDITS_NAME, type ModuleAreaObject } from './module-area.svelte';
-
-/** The serialized form of a curriculum, as used in templates and saved files. */
-export interface CurriculumObject {
-  name?: string;
-  moduleAreas: ModuleAreaObject[];
-  eliminationLimit?: number;
-  eliminationCPLimit?: number;
-  /** The credits that have to be reached at least, e.g. for areas whose modules are chosen freely. */
-  minCredits?: number;
-  /** The credits that may be reached at most. Further modules have to be additional modules. */
-  maxCredits?: number;
-}
+import type { CurriculumDefinition } from '../curricula/definition';
+import ModuleArea, { MISSING_CREDITS_NAME } from './module-area.svelte';
 
 function sum<T>(items: T[], value: (item: T) => number): number {
   let total = 0;
@@ -23,6 +12,8 @@ function sum<T>(items: T[], value: (item: T) => number): number {
 }
 
 export default class Curriculum {
+  /** The definition the curriculum was built from, see `buildCurriculum`. */
+  definition: CurriculumDefinition | undefined;
   name: string | undefined = $state();
   moduleAreas: ModuleArea[] = $state([]);
   eliminationLimit: number | undefined = $state();
@@ -269,28 +260,6 @@ export default class Curriculum {
     return true;
   }
 
-  toObject(): CurriculumObject {
-    return {
-      name: this.name,
-      moduleAreas: this.moduleAreas.map((moduleArea) => moduleArea.toObject()),
-      eliminationLimit: this.eliminationLimit,
-      eliminationCPLimit: this.eliminationCPLimit,
-      minCredits: this.minCredits,
-      maxCredits: this.maxCredits,
-    };
-  }
-
-  static fromObject(obj: CurriculumObject): Curriculum {
-    return new Curriculum(
-      obj.name,
-      obj.moduleAreas.map((moduleAreaObj) => ModuleArea.fromObject(moduleAreaObj)),
-      obj.eliminationLimit,
-      obj.eliminationCPLimit,
-      obj.minCredits,
-      obj.maxCredits,
-    );
-  }
-
   resetElimination(): void {
     this.gradedModules.forEach((module) => {
       const newModule = module;
@@ -298,8 +267,10 @@ export default class Curriculum {
     });
   }
 
-  addModuleArea(moduleArea: ModuleArea): void {
-    this.moduleAreas.push(moduleArea);
+  /** Copies the reference to the curriculum definition to the given curriculum. */
+  private withDefinition(curriculum: Curriculum): Curriculum {
+    curriculum.definition = this.definition;
+    return curriculum;
   }
 
   /**
@@ -315,13 +286,15 @@ export default class Curriculum {
         ]),
       );
     }
-    return new Curriculum(
-      this.name,
-      moduleAreas,
-      this.eliminationLimit,
-      this.eliminationCPLimit,
-      this.minCredits,
-      this.maxCredits,
+    return this.withDefinition(
+      new Curriculum(
+        this.name,
+        moduleAreas,
+        this.eliminationLimit,
+        this.eliminationCPLimit,
+        this.minCredits,
+        this.maxCredits,
+      ),
     );
   }
 
@@ -336,13 +309,15 @@ export default class Curriculum {
   }
 
   clone(): Curriculum {
-    return new Curriculum(
-      this.name,
-      this.moduleAreas.map((moduleArea) => moduleArea.clone()),
-      this.eliminationLimit,
-      this.eliminationCPLimit,
-      this.minCredits,
-      this.maxCredits,
+    return this.withDefinition(
+      new Curriculum(
+        this.name,
+        this.moduleAreas.map((moduleArea) => moduleArea.clone()),
+        this.eliminationLimit,
+        this.eliminationCPLimit,
+        this.minCredits,
+        this.maxCredits,
+      ),
     );
   }
 }

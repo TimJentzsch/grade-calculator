@@ -21,6 +21,11 @@ export default class Module {
   passed: boolean | undefined = $state();
   eliminated: boolean | undefined = $state();
   additional: boolean | undefined = $state();
+  /**
+   * The id of the module in the curriculum definition, if the curriculum gives this module.
+   * Such modules can't be changed by the user, only their results.
+   */
+  definitionId: string | undefined;
 
   /**
    * Creates a new module.
@@ -165,7 +170,7 @@ export default class Module {
   }
 
   clone(): Module {
-    return new Module(
+    const clone = new Module(
       this.name,
       this.credits,
       this.grade,
@@ -175,6 +180,8 @@ export default class Module {
       this.eliminated,
       this.additional,
     );
+    clone.definitionId = this.definitionId;
+    return clone;
   }
 
   toObject(): ModuleObject {

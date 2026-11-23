@@ -2,7 +2,8 @@ import { describe, expect, test } from 'vitest';
 import { getBestEliminationIndicesDp } from '../elimination-dp';
 import { applyElimination, toEliminationCurriculum } from '../elimination';
 import { truncateGrade } from '../grade';
-import Curriculum from '../model/curriculum.svelte';
+import type Curriculum from '../model/curriculum.svelte';
+import { curriculumOf } from '../study';
 import { importNotenspiegel } from './import';
 import { parseNotenspiegel } from './parse';
 import { type FixtureRow, notenspiegelItems } from './test-fixtures';
@@ -107,7 +108,7 @@ function load(rows: FixtureRow[], options: { totalGrade?: string; thesis?: Fixtu
     }),
   );
   const result = importNotenspiegel(notenspiegel);
-  const curriculum = Curriculum.fromObject(result.curriculum);
+  const curriculum = curriculumOf(result.study) as Curriculum;
   const area = (name: string) => curriculum.moduleAreas.find((a) => a.name === name);
   const modules = (name: string) =>
     area(name)?.modules.map((module) => [module.name, module.gradeText, module.credits]);

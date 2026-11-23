@@ -1,23 +1,20 @@
 import { MAX_GRADE, MIN_GRADE, truncateGrade } from '../grade.ts';
-import type { CurriculumObject } from '../model/curriculum.svelte.ts';
-import type { ModuleAreaObject } from '../model/module-area.svelte.ts';
+import type { CurriculumDefinition, ModuleDefinition } from '../curricula/definition.ts';
 import type { ModuleObject } from '../model/module.svelte.ts';
+import type { ChosenModule, ModuleResult, StudyObject } from '../study.ts';
 import type { Notenspiegel, NotenspiegelEntry } from './parse.ts';
 
 /** Converts a Notenspiegel of a specific course of study and examination regulations. */
 export interface ProgramImporter {
-  /** The course of study, e.g. "Computer Science B.Sc. (PO 2018)". */
-  name: string;
+  /** The built-in curriculum of the course of study, e.g. "Computer Science B.Sc. (PO 2018)". */
+  curriculum: CurriculumDefinition;
   matches(notenspiegel: Notenspiegel): boolean;
   /**
-   * Fills the curriculum template with the grades.
+   * Collects the results of the Notenspiegel for the curriculum.
    * @param notenspiegel The parsed Notenspiegel.
    * @param use Marks an entry as assigned, so it isn't reported as unassigned.
    */
-  toCurriculum(
-    notenspiegel: Notenspiegel,
-    use: (entry: NotenspiegelEntry) => void,
-  ): CurriculumObject;
+  toStudy(notenspiegel: Notenspiegel, use: (entry: NotenspiegelEntry) => void): StudyObject;
 }
 
 /** Annotations of an exam whose grade was eliminated ("Note gestrichen"). */
@@ -97,18 +94,43 @@ export function thesisGrade(thesis: NotenspiegelEntry | undefined): number | und
 }
 
 /**
+ * Stores the result of a module of the Notenspiegel for a module given by the curriculum.
+ * @param study The study to add the result to.
+ * @param module The module of the curriculum.
+ * @param entry The module of the Notenspiegel.
+ * @param use Marks an entry as assigned.
+ */
+export function addResult(
+  study: StudyObject,
+  module: ModuleDefinition,
+  entry: NotenspiegelEntry,
+  use: (entry: NotenspiegelEntry) => void,
+): void {
+  use(entry);
+  const { grade, passed, eliminated } = applyEntry({ notGraded: module.notGraded }, entry);
+  const result: ModuleResult = {};
+  if (grade !== undefined) result.grade = grade;
+  if (passed) result.passed = passed;
+  if (eliminated) result.eliminated = eliminated;
+  study.results[module.id] = result;
+}
+
+/**
  * Adds modules of the Notenspiegel to an area whose modules are chosen freely, e.g. electives.
- * @param area The area of the curriculum.
+ * @param study The study to add the modules to.
+ * @param areaId The id of the area in the curriculum.
  * @param entries The modules of the Notenspiegel.
  * @param use Marks an entry as assigned.
  */
 export function addModules(
-  area: ModuleAreaObject,
+  study: StudyObject,
+  areaId: string,
   entries: NotenspiegelEntry[],
   use: (entry: NotenspiegelEntry) => void,
 ): void {
+  const chosen: ChosenModule[] = (study.chosenModules[areaId] ??= []);
   for (const entry of entries) {
     use(entry);
-    area.modules.push(applyEntry({ name: entry.name, credits: entry.credits }, entry));
+    chosen.push(applyEntry({ name: entry.name, credits: entry.credits }, entry));
   }
 }

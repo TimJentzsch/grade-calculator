@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import type { CurriculumObject } from './model/curriculum.svelte.ts';
-import { CURRICULUM_STORAGE_KEY, loadSavedCurriculum, saveCurriculum } from './storage.ts';
+import { STUDY_STORAGE_KEY, loadSavedStudy, saveStudy } from './storage.ts';
+import type { StudyObject } from './study.ts';
 
 /** A minimal in-memory implementation of the Storage interface. */
 class MemoryStorage implements Storage {
@@ -31,34 +31,64 @@ class MemoryStorage implements Storage {
   }
 }
 
-const curriculum: CurriculumObject = {
-  name: 'Test curriculum',
-  moduleAreas: [{ name: 'Area', modules: [{ name: 'Module', credits: 6, grade: 1.7 }] }],
-  eliminationLimit: 2,
+const study: StudyObject = {
+  version: 1,
+  curriculum: { id: 'rwth-computer-science-bsc-2018' },
+  results: { progra: { grade: 1.7 } },
+  chosenModules: { electives: [{ name: 'Module', credits: 6, grade: 1.7 }] },
+};
+
+const customStudy: StudyObject = {
+  version: 1,
+  curriculum: {
+    custom: {
+      id: 'custom',
+      name: 'Custom',
+      moduleAreas: [{ id: 'area', name: 'Area', modules: [{ id: 'm', name: 'M', credits: 6 }] }],
+    },
+  },
+  results: { m: { grade: 2.0 } },
+  chosenModules: {},
 };
 
 describe('storage', () => {
-  test('restores a saved curriculum', () => {
+  test.each([
+    ['built-in', study],
+    ['custom', customStudy],
+  ])('restores a saved study with a %s curriculum', (_, saved) => {
     const storage = new MemoryStorage();
-    saveCurriculum(storage, curriculum);
-    expect(loadSavedCurriculum(storage)).toEqual(curriculum);
+    saveStudy(storage, saved);
+    expect(loadSavedStudy(storage)).toEqual(saved);
+  });
+
+  test('removes the saved study', () => {
+    const storage = new MemoryStorage();
+    saveStudy(storage, study);
+    saveStudy(storage, undefined);
+    expect(loadSavedStudy(storage)).toBeUndefined();
   });
 
   test('returns undefined if nothing is saved', () => {
-    expect(loadSavedCurriculum(new MemoryStorage())).toBeUndefined();
+    expect(loadSavedStudy(new MemoryStorage())).toBeUndefined();
   });
 
   test.each([
     ['invalid JSON', '{'],
     ['a non-object', '42'],
     ['null', 'null'],
-    ['missing module areas', '{"name": "Test"}'],
-    ['module areas without modules', '{"moduleAreas": [{"name": "Area"}]}'],
+    ['an old curriculum', '{"name": "Test", "moduleAreas": []}'],
+    ['an unknown version', JSON.stringify({ ...study, version: 2 })],
+    ['an unknown curriculum', JSON.stringify({ ...study, curriculum: { id: 'unknown' } })],
+    ['missing results', JSON.stringify({ ...study, results: undefined })],
+    [
+      'a custom curriculum without areas',
+      JSON.stringify({ ...customStudy, curriculum: { custom: { id: 'custom' } } }),
+    ],
   ])('ignores %s', (_, value) => {
     vi.spyOn(console, 'warn').mockImplementation(() => {});
     const storage = new MemoryStorage();
-    storage.setItem(CURRICULUM_STORAGE_KEY, value);
-    expect(loadSavedCurriculum(storage)).toBeUndefined();
+    storage.setItem(STUDY_STORAGE_KEY, value);
+    expect(loadSavedStudy(storage)).toBeUndefined();
   });
 
   test('ignores storage that cannot be read', () => {
@@ -67,7 +97,7 @@ describe('storage', () => {
     vi.spyOn(storage, 'getItem').mockImplementation(() => {
       throw new Error('Access denied');
     });
-    expect(loadSavedCurriculum(storage)).toBeUndefined();
+    expect(loadSavedStudy(storage)).toBeUndefined();
   });
 
   test('ignores storage that cannot be written', () => {
@@ -76,7 +106,7 @@ describe('storage', () => {
     vi.spyOn(storage, 'setItem').mockImplementation(() => {
       throw new Error('Quota exceeded');
     });
-    expect(() => saveCurriculum(storage, curriculum)).not.toThrow();
+    expect(() => saveStudy(storage, study)).not.toThrow();
     expect(warn).toHaveBeenCalled();
   });
 });

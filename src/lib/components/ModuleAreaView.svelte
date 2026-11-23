@@ -1,21 +1,14 @@
 <script lang="ts">
-  import { untrack } from 'svelte';
   import Module from '#lib/model/module.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
-  import AreaEditor from './AreaEditor.svelte';
   import AreaHeader from './AreaHeader.svelte';
   import ModuleDisplay from './ModuleDisplay.svelte';
 
   interface Props {
     moduleArea: ModuleArea;
-    /** Whether to open the editor right away, e.g. for a newly added module area. */
-    startEditing?: boolean;
-    onRemove: () => void;
   }
 
-  const { moduleArea, startEditing = false, onRemove }: Props = $props();
-
-  let editing = $state(untrack(() => startEditing));
+  const { moduleArea }: Props = $props();
 
   /** Modules added by the user, which start with editing the name. */
   const addedModules = new WeakSet<Module>();
@@ -25,33 +18,15 @@
     addedModules.add(module);
     moduleArea.addModule(module);
   }
-
-  function discard() {
-    if (moduleArea.isEmpty) {
-      onRemove();
-    } else {
-      editing = false;
-    }
-  }
 </script>
 
 <div class="module-area-container">
-  {#if editing}
-    <AreaEditor
-      kind="module-area"
-      area={moduleArea}
-      onSave={() => (editing = false)}
-      onDiscard={discard}
-    />
-  {:else}
-    <AreaHeader
-      kind="module-area"
-      area={moduleArea}
-      onAdd={addModule}
-      onEdit={() => (editing = true)}
-      {onRemove}
-    />
-  {/if}
+  <!-- Only the modules of areas with open choice, e.g. electives, are chosen by the student -->
+  <AreaHeader
+    kind="module-area"
+    area={moduleArea}
+    onAdd={moduleArea.openChoice ? addModule : undefined}
+  />
   <div class="module-area-module-container">
     {#each moduleArea.modules as module, index (module)}
       <ModuleDisplay

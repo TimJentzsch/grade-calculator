@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import { truncateGrade } from '../grade';
-import Curriculum from '../model/curriculum.svelte';
+import type Curriculum from '../model/curriculum.svelte';
+import { curriculumOf } from '../study';
 import { importNotenspiegel, UnsupportedProgramError } from './import';
 import { type Notenspiegel, parseNotenspiegel } from './parse';
 import { type FixtureOptions, type FixtureRow, notenspiegelItems } from './test-fixtures';
@@ -95,7 +96,7 @@ function parse(options: Partial<FixtureOptions> = {}): Notenspiegel {
 /** The curriculum grade (truncated) and the modules by name. */
 function load(notenspiegel: Notenspiegel) {
   const result = importNotenspiegel(notenspiegel);
-  const curriculum = Curriculum.fromObject(result.curriculum);
+  const curriculum = curriculumOf(result.study) as Curriculum;
   const modules = new Map(curriculum.modules.map((module) => [module.name, module]));
   return { ...result, curriculum, modules };
 }

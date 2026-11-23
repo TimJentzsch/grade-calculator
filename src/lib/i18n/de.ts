@@ -24,25 +24,51 @@ const de = {
     'Ohne JavaScript funktioniert diese Seite nicht. ' +
     'Bitte aktiviere es in den Einstellungen oder nutze einen anderen Browser.',
   toolbar: {
-    startFrom: 'Starten mit',
-    emptyCurriculum: 'Leerer Studienplan',
-    emptyCurriculumTitle: 'Einen neuen, leeren Studienplan anlegen',
-    loadTemplateTitle: (name: string) => `Den Studienplan ${name} laden`,
     file: 'Datei',
     load: 'Laden…',
-    loadTitle: 'Einen gespeicherten Studienplan aus einer Datei laden',
+    loadTitle: 'Gespeicherte Noten aus einer Datei laden',
+    loadError: 'Die Datei enthält keine gespeicherten Noten dieses Notenrechners.',
     save: 'Speichern…',
-    saveTitle: 'Den Studienplan in einer Datei speichern',
-    defaultFileName: 'studienplan',
+    saveTitle: 'Deine Noten in einer Datei speichern',
+    defaultFileName: 'noten',
     importNotenspiegel: 'Notenspiegel importieren…',
     importing: 'Importiere…',
     importTitle:
       'Importiere deine Noten aus einem Notenspiegel-PDF aus RWTH Online. ' +
       'Die Datei bleibt in deinem Browser.',
+    curriculum: 'Studienplan',
+    duplicate: 'Als eigenen Studienplan kopieren',
+    duplicateTitle:
+      'Den Studienplan kopieren, um Modulbereiche, Module und Grenzen zu ändern. ' +
+      'Deine Noten bleiben erhalten.',
+    editCurriculum: 'Studienplan bearbeiten',
+    editCurriculumTitle: 'Modulbereiche, Module und Grenzen dieses Studienplans ändern',
+    startOver: 'Neu beginnen',
+    startOverTitle: 'Alle Eingaben entfernen und einen anderen Studienplan wählen',
+    confirmStartOver:
+      'Alle deine Noten und Module entfernen? Das kann nicht rückgängig gemacht werden.',
+    confirmReplace:
+      'Deine bisherigen Noten und Module durch die importierten ersetzen? ' +
+      'Das kann nicht rückgängig gemacht werden.',
     elimination: 'Streichung',
     autoEliminate: 'Automatisch streichen',
     calculating: 'Berechne…',
     autoEliminateTitle: 'Module automatisch so streichen, dass die Note am besten ist',
+  },
+  start: {
+    title: 'Lade deinen Notenspiegel hoch',
+    description:
+      'Exportiere deinen Notenspiegel in RWTH Online als PDF und lade ihn hier hoch. ' +
+      'Dein Studiengang und deine Prüfungsordnung werden automatisch erkannt.',
+    chooseFile: 'PDF auswählen…',
+    dropHint: 'oder hierher ziehen',
+    privacy: 'Die Datei wird nur in deinem Browser gelesen und nirgendwo hochgeladen.',
+    manualTitle: 'Ohne Notenspiegel starten',
+    chooseCurriculum: 'Studienplan wählen',
+    chooseTitle: (name: string) => `Mit dem Studienplan ${name} starten`,
+    otherOptions: 'Weitere Möglichkeiten',
+    custom: 'Eigener Studienplan',
+    customTitle: 'Einen eigenen Studienplan mit Modulbereichen, Modulen und Grenzen anlegen',
   },
   import: {
     success: 'Der Notenspiegel wurde importiert.',
@@ -55,7 +81,8 @@ const de = {
     gradeMismatch: (calculated: string, official: string) =>
       `Die berechnete Note ${calculated} weicht von der Note ${official} im Notenspiegel ab.`,
     unsupported: (program: string | undefined, supported: string) =>
-      `${program ?? 'Dieser Studiengang'} wird noch nicht unterstützt. Unterstützt: ${supported}.`,
+      `${program ?? 'Dieser Studiengang'} wird noch nicht unterstützt. Unterstützt: ${supported}. ` +
+      'Du kannst aber einen eigenen Studienplan anlegen.',
     readErrors: {
       'not-pdf': 'Die Datei ist kein lesbares PDF.',
       'no-table': 'Im PDF wurde keine Tabelle mit Modulen gefunden.',
@@ -64,11 +91,6 @@ const de = {
     } satisfies Record<ReadErrorReason, string>,
   },
   area: {
-    /** Used in sentences like "Edit this curriculum". */
-    edit: (kind: AreaKind): string =>
-      kind === 'curriculum' ? 'Diesen Studienplan bearbeiten' : 'Diesen Modulbereich bearbeiten',
-    remove: (kind: AreaKind): string =>
-      kind === 'curriculum' ? 'Diesen Studienplan entfernen' : 'Diesen Modulbereich entfernen',
     add: (kind: AreaKind): string =>
       kind === 'curriculum' ? 'Einen neuen Modulbereich hinzufügen' : 'Ein neues Modul hinzufügen',
     finalGradeTitle:
@@ -90,23 +112,43 @@ const de = {
       `, von höchstens ${max} erlaubten. Markiere Module mit ${excess} CP als Zusatzleistungen.`,
   },
   editor: {
-    name: 'Name:',
+    newTitle: 'Eigener Studienplan',
+    editTitle: 'Studienplan bearbeiten',
+    intro:
+      'Lege die Modulbereiche, ihre festen Module und die Grenzen fest. ' +
+      'Deine Noten trägst du danach im Studienplan ein.',
+    name: 'Name',
     curriculumPlaceholder: 'Name des Studienplans…',
     moduleAreaPlaceholder: 'Name des Modulbereichs…',
-    elimination: 'Streichung:',
-    limitedCount: 'Begrenzte Anzahl:',
-    limitedCredits: 'Begrenzte Leistungspunkte:',
-    credits: 'Leistungspunkte:',
-    minimum: 'Minimum:',
+    modulePlaceholder: 'Name des Moduls…',
+    elimination: 'Streichung',
+    limitedCount: 'Anzahl begrenzt',
+    limitedCredits: 'Leistungspunkte begrenzt',
+    credits: 'Leistungspunkte',
+    minimum: 'Minimum',
     minimumTitle:
       'Die Leistungspunkte, die mindestens erreicht werden müssen. ' +
       'Fehlende Leistungspunkte fließen in den möglichen Notenbereich ein.',
-    maximum: 'Maximum:',
+    maximum: 'Maximum',
     maximumTitle:
       'Die Leistungspunkte, die höchstens erreicht werden dürfen. ' +
       'Markiere weitere Module als Zusatzleistungen.',
-    save: 'Änderungen speichern',
-    discard: 'Änderungen verwerfen',
+    moduleAreas: 'Modulbereiche',
+    addArea: 'Modulbereich hinzufügen',
+    removeArea: (name: string | undefined) =>
+      name ? `Modulbereich ${name} entfernen` : 'Diesen Modulbereich entfernen',
+    openChoice: 'Module werden frei gewählt, z. B. Wahlpflichtmodule',
+    openChoiceTitle: 'Du fügst die Module dieses Bereichs später selbst hinzu',
+    noModules: 'Keine festen Module',
+    addModule: 'Festes Modul hinzufügen',
+    removeModule: (name: string | undefined) =>
+      name ? `Modul ${name} entfernen` : 'Dieses Modul entfernen',
+    moduleName: 'Modulname',
+    moduleCredits: 'Leistungspunkte',
+    moduleWeight: 'Gewichtung',
+    moduleGraded: 'Benotet',
+    save: 'Speichern',
+    cancel: 'Abbrechen',
   },
   elimination: {
     noneAllowed: 'Keine Streichung erlaubt',
@@ -119,6 +161,7 @@ const de = {
     additionalTitle:
       'Eine Zusatzleistung, die weder in die Leistungspunkte noch in die Note eingeht',
     weightLabel: (name?: string) => (name ? `Gewichtung von ${name}` : 'Gewichtung dieses Moduls'),
+    fixedWeightTitle: 'Die Gewichtung in der Endnote laut Prüfungsordnung',
     weightHint:
       'Gib die Gewichtung dieses Moduls ein, z. B. 2.0, um es doppelt zu zählen, ' +
       'oder 0.0, um es nicht zu zählen',
