@@ -41,9 +41,15 @@ export interface Notenspiegel {
 
 /** Thrown if the text does not look like a Notenspiegel. */
 export class NotenspiegelParseError extends Error {
-  constructor(message: string) {
-    super(message);
+  /** Why the text is not a Notenspiegel, to show a translated message. */
+  readonly reason: 'no-table' | 'empty-table';
+
+  constructor(reason: 'no-table' | 'empty-table') {
+    super(
+      reason === 'no-table' ? 'No table of modules was found.' : 'The table of modules is empty.',
+    );
     this.name = 'NotenspiegelParseError';
+    this.reason = reason;
   }
 }
 
@@ -293,7 +299,7 @@ function readRows(lines: Line[]): {
   }
 
   if (language === undefined) {
-    throw new NotenspiegelParseError('No table of modules was found.');
+    throw new NotenspiegelParseError('no-table');
   }
 
   return { language, rows, totalCredits, totalGrade };
@@ -364,7 +370,7 @@ export function parseNotenspiegel(items: TextItem[]): Notenspiegel {
   const moduleRows = rows.filter((row) => !row.thesis);
   const thesisRows = rows.filter((row) => row.thesis);
   if (moduleRows.length === 0 || !moduleRows[0].bold) {
-    throw new NotenspiegelParseError('The table of modules is empty.');
+    throw new NotenspiegelParseError('empty-table');
   }
 
   const [root, end] = buildTree(moduleRows, 0);

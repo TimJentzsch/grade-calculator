@@ -3,12 +3,21 @@
   import CurriculumView from '#lib/components/CurriculumView.svelte';
   import IconButton from '#lib/components/IconButton.svelte';
   import runAutoElimination from '#lib/auto-elimination.ts';
+  import { formatGrade } from '#lib/grade.ts';
+  import { getI18n, type Messages } from '#lib/i18n/index.ts';
   import Curriculum, { type CurriculumObject } from '#lib/model/curriculum.svelte.ts';
-  import { importNotenspiegel } from '#lib/notenspiegel/import.ts';
-  import readNotenspiegel from '#lib/notenspiegel/read-notenspiegel.ts';
+  import {
+    importNotenspiegel,
+    UnsupportedProgramError,
+    type ImportWarning,
+  } from '#lib/notenspiegel/import.ts';
+  import readNotenspiegel, { NotenspiegelReadError } from '#lib/notenspiegel/read-notenspiegel.ts';
   import { loadSavedCurriculum, saveCurriculum } from '#lib/storage.ts';
   import templates, { computerScienceBsc } from '#lib/templates/index.ts';
   import { onMount } from 'svelte';
+
+  const i18n = getI18n();
+  const t = $derived(i18n.t);
 
   let curriculum = $state(Curriculum.fromObject(computerScienceBsc));
 
@@ -66,10 +75,42 @@
   /** Whether a Notenspiegel is currently being imported. */
   let importing = $state(false);
 
-  /** The result of the last import, shown below the toolbar until dismissed. */
+  /**
+   * The result of the last import, shown below the toolbar until dismissed.
+   * The texts are created when shown, so that they follow the language.
+   */
   let importNotice:
-    { kind: 'success' | 'warning' | 'error'; message: string; details: string[] } | undefined =
-    $state();
+    | {
+        kind: 'success' | 'warning' | 'error';
+        message: (messages: Messages) => string;
+        details: (messages: Messages) => string[];
+      }
+    | undefined = $state();
+
+  function warningText(messages: Messages, warning: ImportWarning): string {
+    switch (warning.kind) {
+      case 'unassigned':
+        return messages.import.unassigned(warning.name, warning.credits);
+      case 'elimination-limits':
+        return messages.import.eliminationLimits;
+      case 'grade-mismatch':
+        return messages.import.gradeMismatch(
+          formatGrade(warning.calculated),
+          formatGrade(warning.official),
+        );
+    }
+  }
+
+  function errorText(messages: Messages, error: unknown): string {
+    if (error instanceof UnsupportedProgramError) {
+      return messages.import.unsupported(error.program, error.supported.join(', '));
+    }
+    if (error instanceof NotenspiegelReadError) {
+      return messages.import.readErrors[error.reason];
+    }
+    console.error('Failed to import the Notenspiegel:', error);
+    return messages.import.readErrors.failed;
+  }
 
   async function onNotenspiegelSelected(event: Event & { currentTarget: HTMLInputElement }) {
     const input = event.currentTarget;
@@ -89,15 +130,16 @@
         result.warnings.length > 0
           ? {
               kind: 'warning',
-              message: 'The Notenspiegel was imported, but please check the following:',
-              details: result.warnings,
+              message: (messages) => messages.import.warning,
+              details: (messages) =>
+                result.warnings.map((warning) => warningText(messages, warning)),
             }
-          : { kind: 'success', message: 'The Notenspiegel was imported.', details: [] };
+          : { kind: 'success', message: (messages) => messages.import.success, details: () => [] };
     } catch (error) {
       importNotice = {
         kind: 'error',
-        message: 'The Notenspiegel could not be imported.',
-        details: [error instanceof Error ? error.message : String(error)],
+        message: (messages) => messages.import.error,
+        details: (messages) => [errorText(messages, error)],
       };
     } finally {
       importing = false;
@@ -125,7 +167,7 @@
   );
 
   const saveFileName = $derived.by(() => {
-    const curriculumName = (curriculum.name || 'curriculum')
+    const curriculumName = (curriculum.name || t.toolbar.defaultFileName)
       .toLowerCase()
       .replace(/\s+/g, '-')
       .replace(/[.?!;]/g, '');
@@ -136,33 +178,31 @@
 <div id="body-container">
   <div class="toolbar">
     <div class="toolbar-group" role="group" aria-labelledby="templates-label">
-      <span id="templates-label" class="toolbar-label">Start from</span>
+      <span id="templates-label" class="toolbar-label">{t.toolbar.startFrom}</span>
       <div class="toolbar-buttons">
-        <Button variant="secondary" title="Create a new empty curriculum" onclick={newCurriculum}
-          >Empty curriculum</Button
+        <Button variant="secondary" title={t.toolbar.emptyCurriculumTitle} onclick={newCurriculum}
+          >{t.toolbar.emptyCurriculum}</Button
         >
         {#each templates as template (template.name)}
           <Button
             variant="secondary"
-            title="Load the {template.name} curriculum"
+            title={t.toolbar.loadTemplateTitle(template.name ?? '')}
             onclick={() => loadConfig(template)}>{template.name}</Button
           >
         {/each}
       </div>
     </div>
     <div class="toolbar-group" role="group" aria-labelledby="file-label">
-      <span id="file-label" class="toolbar-label">File</span>
+      <span id="file-label" class="toolbar-label">{t.toolbar.file}</span>
       <div class="toolbar-buttons">
-        <Button
-          variant="secondary"
-          title="Load a saved curriculum from a file"
-          onclick={() => fileInput?.click()}>Load…</Button
+        <Button variant="secondary" title={t.toolbar.loadTitle} onclick={() => fileInput?.click()}
+          >{t.toolbar.load}</Button
         >
         <Button
           variant="secondary"
           href={saveHref}
           download={saveFileName}
-          title="Save the curriculum to a file">Save…</Button
+          title={t.toolbar.saveTitle}>{t.toolbar.save}</Button
         >
         <input
           bind:this={fileInput}
@@ -179,9 +219,10 @@
       <div class="toolbar-buttons">
         <Button
           variant="secondary"
-          title="Import your grades from a Notenspiegel PDF exported from RWTH Online. The file stays in your browser."
+          title={t.toolbar.importTitle}
           onclick={() => notenspiegelInput?.click()}
-          disabled={importing}>{importing ? 'Importing…' : 'Import Notenspiegel…'}</Button
+          disabled={importing}
+          >{importing ? t.toolbar.importing : t.toolbar.importNotenspiegel}</Button
         >
         <input
           bind:this={notenspiegelInput}
@@ -194,12 +235,13 @@
       </div>
     </div>
     <div class="toolbar-group elimination-group" role="group" aria-labelledby="elimination-label">
-      <span id="elimination-label" class="toolbar-label">Elimination</span>
+      <span id="elimination-label" class="toolbar-label">{t.toolbar.elimination}</span>
       <div class="toolbar-buttons" aria-live="polite">
         <Button
-          title="Automatically eliminate modules for the best grade"
+          title={t.toolbar.autoEliminateTitle}
           onclick={autoElimination}
-          disabled={eliminating}>{eliminating ? 'Calculating…' : 'Auto-eliminate'}</Button
+          disabled={eliminating}
+          >{eliminating ? t.toolbar.calculating : t.toolbar.autoEliminate}</Button
         >
       </div>
     </div>
@@ -211,16 +253,16 @@
         role={importNotice.kind === 'error' ? 'alert' : 'status'}
       >
         <div class="notice-text">
-          <p>{importNotice.message}</p>
-          {#if importNotice.details.length > 0}
+          <p>{importNotice.message(t)}</p>
+          {#if importNotice.details(t).length > 0}
             <ul>
-              {#each importNotice.details as detail (detail)}
+              {#each importNotice.details(t) as detail (detail)}
                 <li>{detail}</li>
               {/each}
             </ul>
           {/if}
         </div>
-        <IconButton icon="x" label="Dismiss" onclick={() => (importNotice = undefined)} />
+        <IconButton icon="x" label={t.import.dismiss} onclick={() => (importNotice = undefined)} />
       </div>
     {/if}
   </div>

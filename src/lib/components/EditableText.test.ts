@@ -1,9 +1,13 @@
 import { render } from 'svelte/server';
 import { describe, expect, test } from 'vitest';
+import { i18nContext } from '#lib/i18n/index.ts';
 import EditableText from './EditableText.svelte';
 
 function html(props: Parameters<typeof EditableText>[1]): string {
-  return render(EditableText, { props }).body.replace(/<!--.*?-->/g, '');
+  return render(EditableText, { props, context: i18nContext('en') }).body.replace(
+    /<!--.*?-->/g,
+    '',
+  );
 }
 
 describe('EditableText', () => {

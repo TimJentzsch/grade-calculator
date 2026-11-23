@@ -1,5 +1,6 @@
 <script lang="ts">
   import { formatGrade } from '#lib/grade.ts';
+  import { getI18n } from '#lib/i18n/index.ts';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
   import IconButton from './IconButton.svelte';
@@ -17,7 +18,8 @@
 
   const { kind, area, onAdd, onEdit, onRemove }: Props = $props();
 
-  const label = $derived(kind === 'curriculum' ? 'curriculum' : 'module area');
+  const i18n = getI18n();
+  const t = $derived(i18n.t);
 
   /**
    * A limit of the possible grade range, e.g. `1.4`.
@@ -40,20 +42,18 @@
   });
 
   const gradeTitle = $derived(
-    kind === 'curriculum'
-      ? 'The final grade. Only the first decimal place counts, hover to see the cut off second one.'
-      : 'The average grade of this module area',
+    kind === 'curriculum' ? t.area.finalGradeTitle : t.area.areaGradeTitle,
   );
 
   const creditsTitle = $derived.by(() => {
-    const title = `The credit points of the modules in this ${label}`;
+    const title = t.area.creditsTitle(kind);
     if (area.belowMinCredits) {
-      const missing = (area.minCredits as number) - area.credits;
-      return `${title}, of at least ${area.minCredits} required. ${missing} CP are still missing.`;
+      const min = area.minCredits as number;
+      return title + t.area.belowMinCredits(min, min - area.credits);
     }
     if (area.aboveMaxCredits) {
-      const excess = area.credits - (area.maxCredits as number);
-      return `${title}, of at most ${area.maxCredits} allowed. Mark modules with ${excess} CP as additional modules.`;
+      const max = area.maxCredits as number;
+      return title + t.area.aboveMaxCredits(max, area.credits - max);
     }
     return title;
   });
@@ -86,13 +86,12 @@
     <div class="{kind}-grade-container grade-container">
       <span
         class="{kind}-eliminated-grade-value grade eliminated"
-        title="The grade before elimination"
+        title={t.area.gradeBeforeEliminationTitle}
         >{#if gradeBeforeElimination}<GradeText text={gradeBeforeElimination} />{/if}</span
       ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
         ><GradeText text={area.eliminationGradeText} /></span
-      ><span
-        class="{kind}-grade-limits grade-limits grade"
-        title="The best/worst possible grade in this {label}">{gradeLimits}</span
+      ><span class="{kind}-grade-limits grade-limits grade" title={t.area.gradeLimitsTitle(kind)}
+        >{gradeLimits}</span
       >
     </div>
     <div
@@ -113,18 +112,14 @@
     </div>
   </div>
   <div class="row-controls">
-    <IconButton
-      icon="plus"
-      label={kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'}
-      onclick={onAdd}
-    /><IconButton
+    <IconButton icon="plus" label={t.area.add(kind)} onclick={onAdd} /><IconButton
       icon="pencil"
-      label="Edit this {label}"
+      label={t.area.edit(kind)}
       onclick={onEdit}
     />{#if onRemove}<IconButton
         icon="trash"
         variant="danger"
-        label="Remove this {label}"
+        label={t.area.remove(kind)}
         onclick={onRemove}
       />{/if}
   </div>

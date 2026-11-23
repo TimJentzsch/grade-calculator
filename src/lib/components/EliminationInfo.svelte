@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { getI18n } from '#lib/i18n/index.ts';
+
   interface Props {
     /** The CSS class prefix, e.g. `curriculum` or `module-area`. */
     kind: string;
@@ -15,6 +17,9 @@
     eliminatedModuleCount,
     eliminatedCredits,
   }: Props = $props();
+
+  const i18n = getI18n();
+  const t = $derived(i18n.t);
 
   const noEliminationAllowed = $derived(eliminationLimit === 0 || eliminationCPLimit === 0);
 
@@ -33,18 +38,16 @@
   );
 
   // The noun refers to the last number shown, e.g. "0/1 module" or "2 modules"
-  const moduleNoun = $derived(
-    (eliminationLimit || eliminatedModuleCount) === 1 ? 'module' : 'modules',
-  );
+  const moduleNoun = $derived(t.elimination.modules(eliminationLimit || eliminatedModuleCount));
 </script>
 
 <div class="{kind}-elimination elimination-container">
   {#if noEliminationAllowed}
     <span class="elimination-description" class:invalid-elimination={eliminatedModuleCount > 0}
-      >No elimination allowed</span
+      >{t.elimination.noneAllowed}</span
     >
   {:else}
-    <span class="elimination-description">{'Elimination: '}</span><span
+    <span class="elimination-description">{t.elimination.label}</span><span
       class="elimination-cp-container"
       class:invalid-elimination={invalidCP}
       ><span class="elimination-cp">{eliminatedCredits}</span><span class="elimination-cp-limit"

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { parseCredits } from '#lib/credits.ts';
+  import { getI18n } from '#lib/i18n/index.ts';
   import type Module from '#lib/model/module.svelte.ts';
   import { formatWeight, parseWeight } from '#lib/weight.ts';
   import EditableText from './EditableText.svelte';
@@ -16,8 +17,11 @@
 
   const { module, isNew = false, onRemove }: Props = $props();
 
-  /** The module name for the labels of the controls. */
-  const name = $derived(module.name || 'this module');
+  const i18n = getI18n();
+  const t = $derived(i18n.t);
+
+  /** The module name for the labels of the controls, if it has one. */
+  const name = $derived(module.name || undefined);
 
   /** A new module is removed again if no name was entered. */
   function onNameDone() {
@@ -29,15 +33,13 @@
 
 <div
   class={['module-display-container module-container row', { additional: module.additional }]}
-  title={module.additional
-    ? 'An additional module (Zusatzleistung), which counts towards neither the credits nor the grade'
-    : undefined}
+  title={module.additional ? t.module.additionalTitle : undefined}
 >
   <div class={['module-title row-title', { eliminated: module.isGraded && module.eliminated }]}>
     <EditableText
       bind:value={module.name}
-      label="module name"
-      placeholder="Unnamed module"
+      label={t.module.nameLabel}
+      placeholder={t.module.unnamed}
       startEditing={isNew}
       onDone={onNameDone}
     />
@@ -47,8 +49,8 @@
     <span class={['weight-value', { 'default-weight': module.weight === 1 }]}
       ><span aria-hidden="true">&#xd7;&#xFE0E;</span><NumberInput
         class="inline-input weight-input"
-        label="Weight of {name}"
-        hint="Enter the weighting of this module, e.g. 2.0 to count it twice or 0.0 to not count it"
+        label={t.module.weightLabel(name)}
+        hint={t.module.weightHint}
         parse={parseWeight}
         format={formatWeight}
         bind:value={module.weight}
@@ -69,8 +71,8 @@
             ><IconButton
               icon="ban"
               label={module.gradeUnknown
-                ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
-                : `Eliminate ${name}`}
+                ? t.module.staysEliminated(name)
+                : t.module.eliminate(name)}
               pressed={!!module.eliminated}
               disabled={module.gradeUnknown}
               onclick={() => (module.eliminated = !module.eliminated)}
@@ -79,7 +81,7 @@
         {/if}
         <GradeInput
           class="inline-input"
-          label="Grade of {name}"
+          label={t.module.gradeLabel(name)}
           allowTBD
           placeholder={module.gradeUnknown ? 'B' : undefined}
           bind:value={module.grade}
@@ -87,7 +89,7 @@
       {:else}
         <IconButton
           icon="circle-check"
-          label="Mark {name} as passed"
+          label={t.module.markPassed(name)}
           pressed={!!module.passed}
           onclick={() => (module.passed = !module.passed)}
         />
@@ -96,8 +98,8 @@
     <div class="module-credits-container credits-container">
       <NumberInput
         class="inline-input credit-points-input module-credits-value"
-        label="Credit points of {name}"
-        hint="Enter the credit points"
+        label={t.module.creditsLabel(name)}
+        hint={t.module.creditsHint}
         parse={parseCredits}
         bind:value={module.credits}
       /><span class="module-credits-description" aria-hidden="true">CP</span>
@@ -108,7 +110,7 @@
     <span class="additional-toggle"
       ><IconButton
         icon="sparkles"
-        label="Mark {name} as an additional module (Zusatzleistung), which doesn't count towards the credits or the grade"
+        label={t.module.markAdditional(name)}
         pressed={!!module.additional}
         onclick={() => module.setAdditional(!module.additional)}
       /></span
@@ -116,11 +118,11 @@
     <!-- Ungraded modules are the exception, so the toggle is only highlighted for them -->
     <IconButton
       icon="pass-fail"
-      label="Only pass or fail {name}, without a grade"
+      label={t.module.passFail(name)}
       pressed={!module.isGraded}
       onclick={() => module.setGraded(!module.isGraded)}
     />
-    <IconButton icon="trash" variant="danger" label="Remove {name}" onclick={onRemove} />
+    <IconButton icon="trash" variant="danger" label={t.module.remove(name)} onclick={onRemove} />
   </div>
 </div>
 

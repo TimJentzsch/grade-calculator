@@ -2,6 +2,7 @@
   import { untrack } from 'svelte';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import type ModuleArea from '#lib/model/module-area.svelte.ts';
+  import { getI18n } from '#lib/i18n/index.ts';
   import IconButton from './IconButton.svelte';
 
   interface Props {
@@ -12,6 +13,9 @@
   }
 
   const { kind, area, onSave, onDiscard }: Props = $props();
+
+  const i18n = getI18n();
+  const t = $derived(i18n.t);
 
   // The editor works on a draft that is only written back to the model on save.
   const initial = untrack(() => ({
@@ -49,18 +53,23 @@
 <div class="{kind}-edit-header edit-header editor-row">
   <div class="editor-fields">
     <label class="label name-label"
-      >Name: <input
+      >{t.editor.name}
+      <input
         class="input name-input"
         name="name-input"
         type="text"
         size="40"
-        placeholder={kind === 'curriculum' ? 'Curriculum name...' : 'Module area name...'}
+        placeholder={kind === 'curriculum'
+          ? t.editor.curriculumPlaceholder
+          : t.editor.moduleAreaPlaceholder}
         bind:value={name}
       /></label
     >
     <div class="elimination-input-container">
-      Elimination: <label class="label elimination-count-label"
-        >Limited count: <input
+      {t.editor.elimination}
+      <label class="label elimination-count-label"
+        >{t.editor.limitedCount}
+        <input
           class="checkbox elimination-count-checkbox"
           name="elimination-count-checkbox"
           type="checkbox"
@@ -77,7 +86,8 @@
           bind:value={count}
         /></label
       ><label class="label elimination-cp-label"
-        >Limited credits: <input
+        >{t.editor.limitedCredits}
+        <input
           class="checkbox elimination-cp-checkbox"
           name="elimination-cp-checkbox"
           type="checkbox"
@@ -96,10 +106,10 @@
       >
     </div>
     <div class="credit-limits-container">
-      Credits: <label
-        class="label min-credits-label"
-        title="The credits that have to be reached at least. Missing credits count towards the possible grade range."
-        >Minimum: <input
+      {t.editor.credits}
+      <label class="label min-credits-label" title={t.editor.minimumTitle}
+        >{t.editor.minimum}
+        <input
           class="checkbox min-credits-checkbox"
           name="min-credits-checkbox"
           type="checkbox"
@@ -115,10 +125,9 @@
           disabled={!minLimited}
           bind:value={minCredits}
         /></label
-      ><label
-        class="label max-credits-label"
-        title="The credits that may be reached at most. Mark further modules as additional modules."
-        >Maximum: <input
+      ><label class="label max-credits-label" title={t.editor.maximumTitle}
+        >{t.editor.maximum}
+        <input
           class="checkbox max-credits-checkbox"
           name="max-credits-checkbox"
           type="checkbox"
@@ -138,9 +147,9 @@
     </div>
   </div>
   <div class="editor-controls">
-    <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton
+    <IconButton icon="check" variant="primary" label={t.editor.save} onclick={save} /><IconButton
       icon="x"
-      label="Discard the changes"
+      label={t.editor.discard}
       onclick={onDiscard}
     />
   </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { formatGrade, MAX_GRADE, MIN_GRADE, parseGrade } from '#lib/grade.ts';
+  import { getI18n } from '#lib/i18n/index.ts';
 
   interface Props {
     /** The entered grade, `undefined` for "TBD". */
@@ -14,16 +15,19 @@
     class?: string;
   }
 
+  const i18n = getI18n();
+  const t = $derived(i18n.t);
+
   let {
     value = $bindable(),
     allowTBD = false,
     disabled = false,
-    placeholder = allowTBD ? 'TBD' : undefined,
+    placeholder,
     label,
     class: className,
   }: Props = $props();
 
-  const hint = `Enter a grade between ${MIN_GRADE.toFixed(1)} and ${MAX_GRADE.toFixed(1)}`;
+  const hint = $derived(t.grade.hint(MIN_GRADE.toFixed(1), MAX_GRADE.toFixed(1)));
 
   function format(grade: number | undefined): string {
     return grade === undefined ? '' : formatGrade(grade);
@@ -57,7 +61,7 @@
   inputmode="decimal"
   name="grade-input"
   size="4"
-  {placeholder}
+  placeholder={placeholder ?? (allowTBD ? t.grade.tbd : undefined)}
   title={hint}
   aria-label={label}
   aria-invalid={invalid}

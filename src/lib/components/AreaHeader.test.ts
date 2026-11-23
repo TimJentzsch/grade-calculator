@@ -1,5 +1,6 @@
 import { render } from 'svelte/server';
 import { describe, expect, test } from 'vitest';
+import { i18nContext } from '#lib/i18n/index.ts';
 import Curriculum from '#lib/model/curriculum.svelte.ts';
 import ModuleArea from '#lib/model/module-area.svelte.ts';
 import Module from '#lib/model/module.svelte.ts';
@@ -9,6 +10,7 @@ function html(area: ModuleArea | Curriculum): string {
   const kind = area instanceof Curriculum ? 'curriculum' : 'module-area';
   return render(AreaHeader, {
     props: { kind, area, onAdd: () => {}, onEdit: () => {} },
+    context: i18nContext('en'),
   }).body;
 }
 

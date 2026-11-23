@@ -1,5 +1,5 @@
-import { parseNotenspiegel } from './parse.ts';
-import { extractTextItems } from './pdf-text.ts';
+import { NotenspiegelParseError, parseNotenspiegel } from './parse.ts';
+import { extractTextItems, PdfReadError } from './pdf-text.ts';
 import type { NotenspiegelWorkerResponse } from './read-notenspiegel.ts';
 
 // Reads the PDF off the main thread, so the page stays responsive.
@@ -11,7 +11,15 @@ self.onmessage = (event: MessageEvent<ArrayBuffer>) => {
       notenspiegel: parseNotenspiegel(extractTextItems(new Uint8Array(event.data))),
     };
   } catch (error) {
-    response = { error: error instanceof Error ? error.message : String(error) };
+    response = {
+      reason:
+        error instanceof PdfReadError
+          ? 'not-pdf'
+          : error instanceof NotenspiegelParseError
+            ? error.reason
+            : 'failed',
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
   self.postMessage(response);
 };

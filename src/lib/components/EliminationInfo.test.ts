@@ -1,12 +1,16 @@
 import { render } from 'svelte/server';
 import { describe, expect, test } from 'vitest';
+import { i18nContext, type Locale } from '#lib/i18n/index.ts';
 import EliminationInfo from './EliminationInfo.svelte';
 
 type Props = Parameters<typeof EliminationInfo>[1];
 
 /** The text content of the rendered component. */
-function text(props: Omit<Props, 'kind'>): string {
-  return render(EliminationInfo, { props: { kind: 'module-area', ...props } })
+function text(props: Omit<Props, 'kind'>, locale: Locale = 'en'): string {
+  return render(EliminationInfo, {
+    props: { kind: 'module-area', ...props },
+    context: i18nContext(locale),
+  })
     .body.replace(/<[^>]*>/g, '')
     .trim();
 }
@@ -37,6 +41,14 @@ describe('EliminationInfo', () => {
     expect(
       text({ ...noLimits, eliminationLimit: 3, eliminationCPLimit: 30, eliminatedModuleCount: 1 }),
     ).toBe('Elimination: 0/30 CP, 1/3 modules');
+  });
+
+  test('is translated to German', () => {
+    expect(text({ ...noLimits, eliminatedModuleCount: 1, eliminatedCredits: 6 }, 'de')).toBe(
+      'Streichung: 6 CP, 1 Modul',
+    );
+    expect(text({ ...noLimits, eliminationLimit: 3 }, 'de')).toBe('Streichung: 0 CP, 0/3 Module');
+    expect(text({ ...noLimits, eliminationLimit: 0 }, 'de')).toBe('Keine Streichung erlaubt');
   });
 
   test('shows when no elimination is allowed', () => {
