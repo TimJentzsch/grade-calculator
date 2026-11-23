@@ -1,5 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte';
+  import { getI18n } from '#lib/i18n/index.ts';
   import Icon from './Icon.svelte';
 
   interface Props {
@@ -23,6 +24,9 @@
     onDone,
     class: className,
   }: Props = $props();
+
+  const i18n = getI18n();
+  const t = $derived(i18n.t);
 
   let editing = $state(untrack(() => initiallyEditing));
   let draft = $state(untrack(() => (initiallyEditing ? (value ?? '') : '')));
@@ -90,7 +94,7 @@
     type="button"
     class={['editable-text', className, { empty: !value }]}
     onclick={startEditing}
-    >{value || placeholder}<span class="visually-hidden">, edit {label}</span><span
+    >{value || placeholder}<span class="visually-hidden">{t.editableText.edit(label)}</span><span
       class="edit-hint"><Icon name="pencil" /></span
     ></button
   >

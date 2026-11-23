@@ -216,8 +216,6 @@ describe('importNotenspiegel for the M.Sc. PO 2023', () => {
     const { warnings } = load(
       mscRows({ eliminated: ['Effiziente Algorithmen', 'Komplexitätstheorie'] }),
     );
-    expect(warnings).toContain(
-      'The eliminated modules exceed the elimination limits of this curriculum.',
-    );
+    expect(warnings).toContainEqual({ kind: 'elimination-limits' });
   });
 });

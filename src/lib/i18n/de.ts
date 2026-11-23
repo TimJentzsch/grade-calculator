@@ -1,0 +1,152 @@
+/** What a curriculum header or editor refers to. */
+export type AreaKind = 'curriculum' | 'module-area';
+
+import type { ReadErrorReason } from '#lib/notenspiegel/read-notenspiegel.ts';
+
+/** The German texts, which are the default. The English texts follow the same structure. */
+const de = {
+  meta: {
+    title: 'Notenrechner für die RWTH Aachen',
+    description:
+      'Berechne deine Gesamtnote an der RWTH Aachen: mit Gewichtung, Streichung von Modulen, ' +
+      'bester und schlechtester möglicher Note und dem Import deines Notenspiegels aus RWTH Online.',
+    ogLocale: 'de_DE',
+  },
+  header: {
+    appName: 'Notenrechner',
+    university: 'für die RWTH Aachen',
+    githubTitle: 'Das Projekt auf GitHub ansehen',
+    githubLabel: 'GitHub-Repository',
+    languageLabel: 'Sprache',
+  },
+  noscript:
+    'Dein Browser unterstützt kein JavaScript oder du hast es blockiert. ' +
+    'Ohne JavaScript funktioniert diese Seite nicht. ' +
+    'Bitte aktiviere es in den Einstellungen oder nutze einen anderen Browser.',
+  toolbar: {
+    startFrom: 'Starten mit',
+    emptyCurriculum: 'Leerer Studienplan',
+    emptyCurriculumTitle: 'Einen neuen, leeren Studienplan anlegen',
+    loadTemplateTitle: (name: string) => `Den Studienplan ${name} laden`,
+    file: 'Datei',
+    load: 'Laden…',
+    loadTitle: 'Einen gespeicherten Studienplan aus einer Datei laden',
+    save: 'Speichern…',
+    saveTitle: 'Den Studienplan in einer Datei speichern',
+    defaultFileName: 'studienplan',
+    importNotenspiegel: 'Notenspiegel importieren…',
+    importing: 'Importiere…',
+    importTitle:
+      'Importiere deine Noten aus einem Notenspiegel-PDF aus RWTH Online. ' +
+      'Die Datei bleibt in deinem Browser.',
+    elimination: 'Streichung',
+    autoEliminate: 'Automatisch streichen',
+    calculating: 'Berechne…',
+    autoEliminateTitle: 'Module automatisch so streichen, dass die Note am besten ist',
+  },
+  import: {
+    success: 'Der Notenspiegel wurde importiert.',
+    warning: 'Der Notenspiegel wurde importiert, bitte prüfe aber Folgendes:',
+    error: 'Der Notenspiegel konnte nicht importiert werden.',
+    dismiss: 'Schließen',
+    unassigned: (name: string, credits: number) =>
+      `„${name}“ (${credits} CP) konnte keinem Modul zugeordnet werden.`,
+    eliminationLimits: 'Die gestrichenen Module überschreiten die Grenzen dieses Studienplans.',
+    gradeMismatch: (calculated: string, official: string) =>
+      `Die berechnete Note ${calculated} weicht von der Note ${official} im Notenspiegel ab.`,
+    unsupported: (program: string | undefined, supported: string) =>
+      `${program ?? 'Dieser Studiengang'} wird noch nicht unterstützt. Unterstützt: ${supported}.`,
+    readErrors: {
+      'not-pdf': 'Die Datei ist kein lesbares PDF.',
+      'no-table': 'Im PDF wurde keine Tabelle mit Modulen gefunden.',
+      'empty-table': 'Die Tabelle mit Modulen ist leer.',
+      failed: 'Der Notenspiegel konnte nicht gelesen werden.',
+    } satisfies Record<ReadErrorReason, string>,
+  },
+  area: {
+    /** Used in sentences like "Edit this curriculum". */
+    edit: (kind: AreaKind): string =>
+      kind === 'curriculum' ? 'Diesen Studienplan bearbeiten' : 'Diesen Modulbereich bearbeiten',
+    remove: (kind: AreaKind): string =>
+      kind === 'curriculum' ? 'Diesen Studienplan entfernen' : 'Diesen Modulbereich entfernen',
+    add: (kind: AreaKind): string =>
+      kind === 'curriculum' ? 'Einen neuen Modulbereich hinzufügen' : 'Ein neues Modul hinzufügen',
+    finalGradeTitle:
+      'Die Gesamtnote. Nur die erste Nachkommastelle zählt, ' +
+      'fahre mit der Maus darüber, um die abgeschnittene zweite zu sehen.',
+    areaGradeTitle: 'Die Durchschnittsnote dieses Modulbereichs',
+    gradeBeforeEliminationTitle: 'Die Note vor der Streichung',
+    gradeLimitsTitle: (kind: AreaKind): string =>
+      kind === 'curriculum'
+        ? 'Die bestmögliche/schlechtestmögliche Note in diesem Studienplan'
+        : 'Die bestmögliche/schlechtestmögliche Note in diesem Modulbereich',
+    creditsTitle: (kind: AreaKind): string =>
+      kind === 'curriculum'
+        ? 'Die Leistungspunkte der Module in diesem Studienplan'
+        : 'Die Leistungspunkte der Module in diesem Modulbereich',
+    belowMinCredits: (min: number, missing: number) =>
+      `, von mindestens ${min} benötigten. Es fehlen noch ${missing} CP.`,
+    aboveMaxCredits: (max: number, excess: number) =>
+      `, von höchstens ${max} erlaubten. Markiere Module mit ${excess} CP als Zusatzleistungen.`,
+  },
+  editor: {
+    name: 'Name:',
+    curriculumPlaceholder: 'Name des Studienplans…',
+    moduleAreaPlaceholder: 'Name des Modulbereichs…',
+    elimination: 'Streichung:',
+    limitedCount: 'Begrenzte Anzahl:',
+    limitedCredits: 'Begrenzte Leistungspunkte:',
+    credits: 'Leistungspunkte:',
+    minimum: 'Minimum:',
+    minimumTitle:
+      'Die Leistungspunkte, die mindestens erreicht werden müssen. ' +
+      'Fehlende Leistungspunkte fließen in den möglichen Notenbereich ein.',
+    maximum: 'Maximum:',
+    maximumTitle:
+      'Die Leistungspunkte, die höchstens erreicht werden dürfen. ' +
+      'Markiere weitere Module als Zusatzleistungen.',
+    save: 'Änderungen speichern',
+    discard: 'Änderungen verwerfen',
+  },
+  elimination: {
+    noneAllowed: 'Keine Streichung erlaubt',
+    label: 'Streichung: ',
+    modules: (count: number): string => (count === 1 ? 'Modul' : 'Module'),
+  },
+  module: {
+    unnamed: 'Unbenanntes Modul',
+    nameLabel: 'Modulname',
+    additionalTitle:
+      'Eine Zusatzleistung, die weder in die Leistungspunkte noch in die Note eingeht',
+    weightLabel: (name?: string) => (name ? `Gewichtung von ${name}` : 'Gewichtung dieses Moduls'),
+    weightHint:
+      'Gib die Gewichtung dieses Moduls ein, z. B. 2.0, um es doppelt zu zählen, ' +
+      'oder 0.0, um es nicht zu zählen',
+    eliminate: (name?: string) => (name ? `${name} streichen` : 'Dieses Modul streichen'),
+    staysEliminated: (name?: string) =>
+      `${name ?? 'Dieses Modul'} bleibt gestrichen, weil seine Note unbekannt ist. ` +
+      'Gib die Note ein, um das zu ändern.',
+    gradeLabel: (name?: string) => (name ? `Note von ${name}` : 'Note dieses Moduls'),
+    markPassed: (name?: string) =>
+      name ? `${name} als bestanden markieren` : 'Dieses Modul als bestanden markieren',
+    creditsLabel: (name?: string) =>
+      name ? `Leistungspunkte von ${name}` : 'Leistungspunkte dieses Moduls',
+    creditsHint: 'Gib die Leistungspunkte ein',
+    markAdditional: (name?: string) =>
+      `${name ?? 'Dieses Modul'} als Zusatzleistung markieren, ` +
+      'die weder in die Leistungspunkte noch in die Note eingeht',
+    passFail: (name?: string) => `${name ?? 'Dieses Modul'} nur bestehen, ohne Note (unbenotet)`,
+    remove: (name?: string) => (name ? `${name} entfernen` : 'Dieses Modul entfernen'),
+  },
+  editableText: {
+    /** Read by screen readers after the text, e.g. "Programming, edit module name". */
+    edit: (label: string) => `, ${label} bearbeiten`,
+  },
+  grade: {
+    /** Shown for a grade that isn't known yet. */
+    tbd: 'offen',
+    hint: (min: string, max: string) => `Gib eine Note zwischen ${min} und ${max} ein`,
+  },
+};
+
+export default de;

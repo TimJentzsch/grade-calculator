@@ -161,7 +161,7 @@ describe('importNotenspiegel', () => {
     const other = truncateGrade(grade + 0.3);
     const result = load(parse({ totalGrade: String(other).replace('.', ',') }));
     expect(result.warnings).toEqual([
-      `The calculated grade ${grade.toFixed(1)} differs from the grade ${other.toFixed(1)} in the Notenspiegel.`,
+      { kind: 'grade-mismatch', calculated: grade, official: other },
     ]);
   });
 
@@ -217,9 +217,11 @@ describe('importNotenspiegel', () => {
   test('warns about modules that could not be assigned', () => {
     const rows = completeRows();
     rows.push(...moduleRows(['Zusatzmodul', '1,0', 'BE', 5]));
-    expect(load(parse({ rows })).warnings).toContain(
-      '"Zusatzmodul" (5 CP) could not be assigned to a module.',
-    );
+    expect(load(parse({ rows })).warnings).toContainEqual({
+      kind: 'unassigned',
+      name: 'Zusatzmodul',
+      credits: 5,
+    });
   });
 
   test('warns if the eliminations exceed the limits', () => {
@@ -228,9 +230,7 @@ describe('importNotenspiegel', () => {
         ? { ...row, grade: 'B', annotation: row.annotation && 'G' }
         : row,
     );
-    expect(load(parse({ rows })).warnings).toContain(
-      'The eliminated modules exceed the elimination limits of this curriculum.',
-    );
+    expect(load(parse({ rows })).warnings).toContainEqual({ kind: 'elimination-limits' });
   });
 
   test('rejects other courses of study and examination regulations', () => {
