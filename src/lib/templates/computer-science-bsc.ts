@@ -1,9 +1,22 @@
 import type { CurriculumObject } from '../model/curriculum.svelte';
 
+/**
+ * The Computer Science B.Sc. at RWTH Aachen, PO 2018.
+ *
+ * Electives (24 CP) and the application subject (22 CP) are chosen freely, so their modules are
+ * added by the user (§ 5 (2)). If more electives are taken than required, they count in the
+ * order the exams were taken (§ 10 (4)); the others have to be marked as additional modules.
+ * The rule that at least one elective has to be from Theoretical Computer Science can't be
+ * expressed.
+ *
+ * If all modules are completed within the standard period of study, one module per area with
+ * at most 30 CP in total may be eliminated, but not the bachelor thesis (§ 10 (5)).
+ */
 const computerScienceBsc: CurriculumObject = {
   name: 'Computer Science B.Sc. (PO 2018)',
   eliminationCPLimit: 30,
   minCredits: 180,
+  maxCredits: 180,
   moduleAreas: [
     {
       name: 'Applied Computer Science',
@@ -122,12 +135,14 @@ const computerScienceBsc: CurriculumObject = {
       name: 'Elective Modules',
       eliminationLimit: 1,
       minCredits: 24,
+      maxCredits: 24,
       modules: [],
     },
     {
       name: 'Application Subject',
       eliminationLimit: 1,
       minCredits: 22,
+      maxCredits: 22,
       modules: [],
     },
     {
