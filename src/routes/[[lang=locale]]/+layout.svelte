@@ -18,7 +18,10 @@
   const i18n = setI18n(() => data.locale);
   const t = $derived(i18n.t);
 
-  /** The name of each language in that language, so that it can be found without knowing the current one. */
+  /**
+   * The name of each language in that language, so that it can be found without knowing the
+   * current one. Shown as tooltip and read by screen readers instead of the short code.
+   */
   const languageNames: Record<Locale, string> = { de: 'Deutsch', en: 'English' };
 
   // Client-side navigation doesn't rerender the `<html>` element
@@ -60,7 +63,9 @@
                 : resolve('/[[lang=locale]]', { lang: locale })}
               hreflang={locale}
               lang={locale}
-              aria-current={locale === data.locale ? 'page' : undefined}>{languageNames[locale]}</a
+              title={languageNames[locale]}
+              aria-label={languageNames[locale]}
+              aria-current={locale === data.locale ? 'page' : undefined}>{locale.toUpperCase()}</a
             >
           </li>
         {/each}
@@ -101,6 +106,13 @@
     gap: var(--space-sm);
     list-style: none;
     font-size: var(--font-size-sm);
+  }
+
+  /* Separates the languages like "DE / EN", the alternative text keeps screen readers quiet */
+  .language-switcher li + li::before {
+    content: '/' / '';
+    margin-right: var(--space-sm);
+    color: var(--color-text-muted);
   }
 
   .language-switcher a {
