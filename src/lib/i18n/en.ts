@@ -85,8 +85,6 @@ const en: Messages = {
     },
   },
   area: {
-    edit: (kind) => `Edit this ${kind === 'curriculum' ? 'curriculum' : 'module area'}`,
-    remove: (kind) => `Remove this ${kind === 'curriculum' ? 'curriculum' : 'module area'}`,
     add: (kind) => (kind === 'curriculum' ? 'Add a new module area' : 'Add a new module'),
     finalGradeTitle:
       'The final grade. Only the first decimal place counts, hover to see the cut off second one.',
@@ -102,22 +100,40 @@ const en: Messages = {
       `, of at most ${max} allowed. Mark modules with ${excess} CP as additional modules.`,
   },
   editor: {
-    name: 'Name:',
+    newTitle: 'Custom curriculum',
+    editTitle: 'Edit curriculum',
+    intro:
+      'Define the module areas, their fixed modules and the limits. ' +
+      'You enter your grades in the curriculum afterwards.',
+    name: 'Name',
     curriculumPlaceholder: 'Curriculum name…',
     moduleAreaPlaceholder: 'Module area name…',
-    elimination: 'Elimination:',
-    limitedCount: 'Limited count:',
-    limitedCredits: 'Limited credits:',
-    credits: 'Credits:',
-    minimum: 'Minimum:',
+    modulePlaceholder: 'Module name…',
+    elimination: 'Elimination',
+    limitedCount: 'Limit count',
+    limitedCredits: 'Limit credits',
+    credits: 'Credits',
+    minimum: 'Minimum',
     minimumTitle:
       'The credits that have to be reached at least. ' +
       'Missing credits count towards the possible grade range.',
-    maximum: 'Maximum:',
+    maximum: 'Maximum',
     maximumTitle:
       'The credits that may be reached at most. Mark further modules as additional modules.',
-    save: 'Save the changes',
-    discard: 'Discard the changes',
+    moduleAreas: 'Module areas',
+    addArea: 'Add module area',
+    removeArea: (name) => `Remove ${name ? `the module area ${name}` : 'this module area'}`,
+    openChoice: 'Modules are chosen freely, e.g. electives',
+    openChoiceTitle: 'You add the modules of this area yourself later',
+    noModules: 'No fixed modules',
+    addModule: 'Add fixed module',
+    removeModule: (name) => `Remove ${name ? `the module ${name}` : 'this module'}`,
+    moduleName: 'Module name',
+    moduleCredits: 'Credits',
+    moduleWeight: 'Weight',
+    moduleGraded: 'Graded',
+    save: 'Save',
+    cancel: 'Cancel',
   },
   elimination: {
     noneAllowed: 'No elimination allowed',

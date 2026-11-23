@@ -9,8 +9,7 @@
     importing: boolean;
     onImport: (file: File) => void;
     onChoose: (definition: CurriculumDefinition) => void;
-    /** Starts creating a custom curriculum. */
-    onCustom?: () => void;
+    onCustom: () => void;
     onLoad: () => void;
   }
 
@@ -92,11 +91,9 @@
     <div class="manual-group" role="group" aria-labelledby="other-label">
       <span id="other-label" class="manual-label">{t.start.otherOptions}</span>
       <div class="manual-buttons">
-        {#if onCustom}
-          <Button variant="secondary" title={t.start.customTitle} onclick={onCustom}
-            >{t.start.custom}</Button
-          >
-        {/if}
+        <Button variant="secondary" title={t.start.customTitle} onclick={onCustom}
+          >{t.start.custom}</Button
+        >
         <Button variant="secondary" title={t.toolbar.loadTitle} onclick={onLoad}
           >{t.toolbar.load}</Button
         >

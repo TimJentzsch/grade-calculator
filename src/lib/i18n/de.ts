@@ -91,11 +91,6 @@ const de = {
     } satisfies Record<ReadErrorReason, string>,
   },
   area: {
-    /** Used in sentences like "Edit this curriculum". */
-    edit: (kind: AreaKind): string =>
-      kind === 'curriculum' ? 'Diesen Studienplan bearbeiten' : 'Diesen Modulbereich bearbeiten',
-    remove: (kind: AreaKind): string =>
-      kind === 'curriculum' ? 'Diesen Studienplan entfernen' : 'Diesen Modulbereich entfernen',
     add: (kind: AreaKind): string =>
       kind === 'curriculum' ? 'Einen neuen Modulbereich hinzufügen' : 'Ein neues Modul hinzufügen',
     finalGradeTitle:
@@ -117,23 +112,43 @@ const de = {
       `, von höchstens ${max} erlaubten. Markiere Module mit ${excess} CP als Zusatzleistungen.`,
   },
   editor: {
-    name: 'Name:',
+    newTitle: 'Eigener Studienplan',
+    editTitle: 'Studienplan bearbeiten',
+    intro:
+      'Lege die Modulbereiche, ihre festen Module und die Grenzen fest. ' +
+      'Deine Noten trägst du danach im Studienplan ein.',
+    name: 'Name',
     curriculumPlaceholder: 'Name des Studienplans…',
     moduleAreaPlaceholder: 'Name des Modulbereichs…',
-    elimination: 'Streichung:',
-    limitedCount: 'Begrenzte Anzahl:',
-    limitedCredits: 'Begrenzte Leistungspunkte:',
-    credits: 'Leistungspunkte:',
-    minimum: 'Minimum:',
+    modulePlaceholder: 'Name des Moduls…',
+    elimination: 'Streichung',
+    limitedCount: 'Anzahl begrenzt',
+    limitedCredits: 'Leistungspunkte begrenzt',
+    credits: 'Leistungspunkte',
+    minimum: 'Minimum',
     minimumTitle:
       'Die Leistungspunkte, die mindestens erreicht werden müssen. ' +
       'Fehlende Leistungspunkte fließen in den möglichen Notenbereich ein.',
-    maximum: 'Maximum:',
+    maximum: 'Maximum',
     maximumTitle:
       'Die Leistungspunkte, die höchstens erreicht werden dürfen. ' +
       'Markiere weitere Module als Zusatzleistungen.',
-    save: 'Änderungen speichern',
-    discard: 'Änderungen verwerfen',
+    moduleAreas: 'Modulbereiche',
+    addArea: 'Modulbereich hinzufügen',
+    removeArea: (name: string | undefined) =>
+      name ? `Modulbereich ${name} entfernen` : 'Diesen Modulbereich entfernen',
+    openChoice: 'Module werden frei gewählt, z. B. Wahlpflichtmodule',
+    openChoiceTitle: 'Du fügst die Module dieses Bereichs später selbst hinzu',
+    noModules: 'Keine festen Module',
+    addModule: 'Festes Modul hinzufügen',
+    removeModule: (name: string | undefined) =>
+      name ? `Modul ${name} entfernen` : 'Dieses Modul entfernen',
+    moduleName: 'Modulname',
+    moduleCredits: 'Leistungspunkte',
+    moduleWeight: 'Gewichtung',
+    moduleGraded: 'Benotet',
+    save: 'Speichern',
+    cancel: 'Abbrechen',
   },
   elimination: {
     noneAllowed: 'Keine Streichung erlaubt',

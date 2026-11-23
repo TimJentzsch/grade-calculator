@@ -1,10 +1,12 @@
 <script lang="ts">
   import Button from '#lib/components/Button.svelte';
   import CurriculumView from '#lib/components/CurriculumView.svelte';
+  import DefinitionEditor from '#lib/components/DefinitionEditor.svelte';
   import Notice from '#lib/components/Notice.svelte';
   import StartView from '#lib/components/StartView.svelte';
   import runAutoElimination from '#lib/auto-elimination.ts';
   import type { CurriculumDefinition } from '#lib/curricula/definition.ts';
+  import { isBuiltIn } from '#lib/curricula/index.ts';
   import { formatGrade } from '#lib/grade.ts';
   import { getI18n, type Messages } from '#lib/i18n/index.ts';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
@@ -77,6 +79,34 @@
   function chooseCurriculum(definition: CurriculumDefinition) {
     notice = undefined;
     curriculum = buildCurriculum(definition, emptyStudy(definition));
+  }
+
+  /** The curriculum definition currently edited, see `DefinitionEditor`. */
+  let editing: { definition: CurriculumDefinition; isNew: boolean } | undefined = $state();
+
+  function createCustom() {
+    notice = undefined;
+    editing = { definition: { id: crypto.randomUUID(), name: '', moduleAreas: [] }, isNew: true };
+  }
+
+  /**
+   * Edits the curriculum. A built-in curriculum is copied, keeping the ids of its areas and
+   * modules, so that the entries of the user are kept.
+   */
+  function editCurriculum() {
+    const definition = curriculum?.definition;
+    if (!definition) {
+      return;
+    }
+    editing = isBuiltIn(definition)
+      ? { definition: { ...structuredClone(definition), id: crypto.randomUUID() }, isNew: true }
+      : { definition, isNew: false };
+  }
+
+  function saveDefinition(definition: CurriculumDefinition) {
+    const study = curriculum ? toStudy(curriculum) : emptyStudy(definition);
+    curriculum = buildCurriculum(definition, { ...study, curriculum: { custom: definition } });
+    editing = undefined;
   }
 
   function startOver() {
@@ -237,7 +267,7 @@
     hidden
     onchange={onNotenspiegelSelected}
   />
-  {#if curriculum}
+  {#if curriculum && !editing}
     <div class="toolbar">
       <div class="toolbar-group" role="group" aria-labelledby="import-label">
         <span id="import-label" class="toolbar-label">RWTH Online</span>
@@ -268,6 +298,17 @@
       <div class="toolbar-group" role="group" aria-labelledby="curriculum-label">
         <span id="curriculum-label" class="toolbar-label">{t.toolbar.curriculum}</span>
         <div class="toolbar-buttons">
+          {#if curriculum.definition && isBuiltIn(curriculum.definition)}
+            <Button variant="secondary" title={t.toolbar.duplicateTitle} onclick={editCurriculum}
+              >{t.toolbar.duplicate}</Button
+            >
+          {:else}
+            <Button
+              variant="secondary"
+              title={t.toolbar.editCurriculumTitle}
+              onclick={editCurriculum}>{t.toolbar.editCurriculum}</Button
+            >
+          {/if}
           <Button variant="secondary" title={t.toolbar.startOverTitle} onclick={startOver}
             >{t.toolbar.startOver}</Button
           >
@@ -297,7 +338,14 @@
     {/if}
   </div>
   <div id="content">
-    {#if curriculum}
+    {#if editing}
+      <DefinitionEditor
+        definition={editing.definition}
+        isNew={editing.isNew}
+        onSave={saveDefinition}
+        onCancel={() => (editing = undefined)}
+      />
+    {:else if curriculum}
       {#key curriculum}
         <CurriculumView {curriculum} />
       {/key}
@@ -306,6 +354,7 @@
         {importing}
         onImport={importFile}
         onChoose={chooseCurriculum}
+        onCustom={createCustom}
         onLoad={() => fileInput?.click()}
       />
     {/if}
