@@ -119,6 +119,7 @@ const de = {
     additionalTitle:
       'Eine Zusatzleistung, die weder in die Leistungspunkte noch in die Note eingeht',
     weightLabel: (name?: string) => (name ? `Gewichtung von ${name}` : 'Gewichtung dieses Moduls'),
+    fixedWeightTitle: 'Die Gewichtung in der Endnote laut Prüfungsordnung',
     weightHint:
       'Gib die Gewichtung dieses Moduls ein, z. B. 2.0, um es doppelt zu zählen, ' +
       'oder 0.0, um es nicht zu zählen',

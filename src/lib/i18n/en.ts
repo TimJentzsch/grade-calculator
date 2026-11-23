@@ -105,6 +105,7 @@ const en: Messages = {
     additionalTitle:
       'An additional module (Zusatzleistung), which counts towards neither the credits nor the grade',
     weightLabel: (name) => `Weight of ${name ?? 'this module'}`,
+    fixedWeightTitle: 'The weighting in the final grade given by the examination regulations',
     weightHint:
       'Enter the weighting of this module, e.g. 2.0 to count it twice or 0.0 to not count it',
     eliminate: (name) => `Eliminate ${name ?? 'this module'}`,

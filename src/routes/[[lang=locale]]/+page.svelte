@@ -52,13 +52,9 @@
     }
   });
 
-  /** Curricula created with "Empty Curriculum", which start in the editor. */
-  const emptyCurricula = new WeakSet<Curriculum>();
-
   function newCurriculum() {
     const definition: CurriculumDefinition = { id: crypto.randomUUID(), name: '', moduleAreas: [] };
     const empty = buildCurriculum(definition, emptyStudy(definition));
-    emptyCurricula.add(empty);
     curriculum = empty;
   }
 
@@ -288,7 +284,7 @@
   </div>
   <div id="content">
     {#key curriculum}
-      <CurriculumView {curriculum} startEditing={emptyCurricula.has(curriculum)} />
+      <CurriculumView {curriculum} />
     {/key}
   </div>
 </div>

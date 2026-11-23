@@ -9,7 +9,7 @@ import AreaHeader from './AreaHeader.svelte';
 function html(area: ModuleArea | Curriculum): string {
   const kind = area instanceof Curriculum ? 'curriculum' : 'module-area';
   return render(AreaHeader, {
-    props: { kind, area, onAdd: () => {}, onEdit: () => {} },
+    props: { kind, area },
     context: i18nContext('en'),
   }).body;
 }

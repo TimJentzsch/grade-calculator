@@ -10,13 +10,11 @@
   interface Props {
     kind: 'curriculum' | 'module-area';
     area: Curriculum | ModuleArea;
-    onAdd: () => void;
-    onEdit: () => void;
-    /** Only module areas can be removed. */
-    onRemove?: () => void;
+    /** Adds a module, only for areas whose modules are chosen by the student. */
+    onAdd?: () => void;
   }
 
-  const { kind, area, onAdd, onEdit, onRemove }: Props = $props();
+  const { kind, area, onAdd }: Props = $props();
 
   const i18n = getI18n();
   const t = $derived(i18n.t);
@@ -112,16 +110,7 @@
     </div>
   </div>
   <div class="row-controls">
-    <IconButton icon="plus" label={t.area.add(kind)} onclick={onAdd} /><IconButton
-      icon="pencil"
-      label={t.area.edit(kind)}
-      onclick={onEdit}
-    />{#if onRemove}<IconButton
-        icon="trash"
-        variant="danger"
-        label={t.area.remove(kind)}
-        onclick={onRemove}
-      />{/if}
+    {#if onAdd}<IconButton icon="plus" label={t.area.add(kind)} onclick={onAdd} />{/if}
   </div>
 </div>
 

@@ -20,6 +20,9 @@
   const i18n = getI18n();
   const t = $derived(i18n.t);
 
+  /** Modules given by the curriculum can't be changed, only their results. */
+  const fixed = $derived(module.definitionId !== undefined);
+
   /** The module name for the labels of the controls, if it has one. */
   const name = $derived(module.name || undefined);
 
@@ -36,26 +39,39 @@
   title={module.additional ? t.module.additionalTitle : undefined}
 >
   <div class={['module-title row-title', { eliminated: module.isGraded && module.eliminated }]}>
-    <EditableText
-      bind:value={module.name}
-      label={t.module.nameLabel}
-      placeholder={t.module.unnamed}
-      startEditing={isNew}
-      onDone={onNameDone}
-    />
+    {#if fixed}
+      <span class="module-name">{module.name}</span>
+    {:else}
+      <EditableText
+        bind:value={module.name}
+        label={t.module.nameLabel}
+        placeholder={t.module.unnamed}
+        startEditing={isNew}
+        onDone={onNameDone}
+      />
+    {/if}
   </div>
   <div class="row-details">
-    <!-- A weight of 1 is only shown on hover, but can still be edited -->
-    <span class={['weight-value', { 'default-weight': module.weight === 1 }]}
-      ><span aria-hidden="true">&#xd7;&#xFE0E;</span><NumberInput
-        class="inline-input weight-input"
-        label={t.module.weightLabel(name)}
-        hint={t.module.weightHint}
-        parse={parseWeight}
-        format={formatWeight}
-        bind:value={module.weight}
-      /></span
-    >
+    {#if fixed}
+      <!-- The weight is given by the curriculum, so it's only shown if it isn't 1 -->
+      <span class="weight-value fixed-weight" title={t.module.fixedWeightTitle}
+        >{#if module.weight !== 1}<span aria-hidden="true">&#xd7;&#xFE0E;</span><span
+            class="fixed-value">{formatWeight(module.weight)}</span
+          >{/if}</span
+      >
+    {:else}
+      <!-- A weight of 1 is only shown on hover, but can still be edited -->
+      <span class={['weight-value', { 'default-weight': module.weight === 1 }]}
+        ><span aria-hidden="true">&#xd7;&#xFE0E;</span><NumberInput
+          class="inline-input weight-input"
+          label={t.module.weightLabel(name)}
+          hint={t.module.weightHint}
+          parse={parseWeight}
+          format={formatWeight}
+          bind:value={module.weight}
+        /></span
+      >
+    {/if}
     <div
       class={[
         'module-grade-container grade-container',
@@ -96,33 +112,41 @@
       {/if}
     </div>
     <div class="module-credits-container credits-container">
-      <NumberInput
-        class="inline-input credit-points-input module-credits-value"
-        label={t.module.creditsLabel(name)}
-        hint={t.module.creditsHint}
-        parse={parseCredits}
-        bind:value={module.credits}
-      /><span class="module-credits-description" aria-hidden="true">CP</span>
+      {#if fixed}
+        <span class="fixed-value credit-points-input module-credits-value">{module.credits}</span
+        ><span class="module-credits-description">CP</span>
+      {:else}
+        <NumberInput
+          class="inline-input credit-points-input module-credits-value"
+          label={t.module.creditsLabel(name)}
+          hint={t.module.creditsHint}
+          parse={parseCredits}
+          bind:value={module.credits}
+        /><span class="module-credits-description" aria-hidden="true">CP</span>
+      {/if}
     </div>
   </div>
+  <!-- Modules given by the curriculum can't be changed, so they have no controls -->
   <div class="row-controls">
-    <!-- Stays visible without hover for additional modules, see app.css -->
-    <span class="additional-toggle"
-      ><IconButton
-        icon="sparkles"
-        label={t.module.markAdditional(name)}
-        pressed={!!module.additional}
-        onclick={() => module.setAdditional(!module.additional)}
-      /></span
-    >
-    <!-- Ungraded modules are the exception, so the toggle is only highlighted for them -->
-    <IconButton
-      icon="pass-fail"
-      label={t.module.passFail(name)}
-      pressed={!module.isGraded}
-      onclick={() => module.setGraded(!module.isGraded)}
-    />
-    <IconButton icon="trash" variant="danger" label={t.module.remove(name)} onclick={onRemove} />
+    {#if !fixed}
+      <!-- Stays visible without hover for additional modules, see app.css -->
+      <span class="additional-toggle"
+        ><IconButton
+          icon="sparkles"
+          label={t.module.markAdditional(name)}
+          pressed={!!module.additional}
+          onclick={() => module.setAdditional(!module.additional)}
+        /></span
+      >
+      <!-- Ungraded modules are the exception, so the toggle is only highlighted for them -->
+      <IconButton
+        icon="pass-fail"
+        label={t.module.passFail(name)}
+        pressed={!module.isGraded}
+        onclick={() => module.setGraded(!module.isGraded)}
+      />
+      <IconButton icon="trash" variant="danger" label={t.module.remove(name)} onclick={onRemove} />
+    {/if}
   </div>
 </div>
 
@@ -136,6 +160,19 @@
   /* Without the elimination toggle, the grade stays in its column */
   .no-elimination > :global(*) {
     grid-column: 2;
+  }
+
+  /* Text that lines up with the inputs of other modules */
+  .fixed-value {
+    display: inline-block;
+    box-sizing: border-box;
+    padding: var(--space-2xs) var(--space-xs);
+    border: 1px solid transparent;
+  }
+
+  .fixed-weight {
+    min-width: 3.5em;
+    justify-content: flex-end;
   }
 
   .additional-toggle,
