@@ -22,7 +22,7 @@
   function addModuleArea() {
     const moduleArea = new ModuleArea('', []);
     addedModuleAreas.add(moduleArea);
-    curriculum.addModuleArea(moduleArea);
+    curriculum.moduleAreas.push(moduleArea);
   }
 </script>
 

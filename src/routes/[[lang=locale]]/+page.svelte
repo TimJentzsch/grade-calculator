@@ -5,30 +5,42 @@
   import runAutoElimination from '#lib/auto-elimination.ts';
   import { formatGrade } from '#lib/grade.ts';
   import { getI18n, type Messages } from '#lib/i18n/index.ts';
-  import Curriculum, { type CurriculumObject } from '#lib/model/curriculum.svelte.ts';
+  import { builtInCurricula, computerScienceBsc2018 } from '#lib/curricula/index.ts';
+  import type { CurriculumDefinition } from '#lib/curricula/definition.ts';
+  import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import {
     importNotenspiegel,
     UnsupportedProgramError,
     type ImportWarning,
   } from '#lib/notenspiegel/import.ts';
   import readNotenspiegel, { NotenspiegelReadError } from '#lib/notenspiegel/read-notenspiegel.ts';
-  import { loadSavedCurriculum, saveCurriculum } from '#lib/storage.ts';
-  import templates, { computerScienceBsc } from '#lib/templates/index.ts';
+  import { loadSavedStudy, saveStudy } from '#lib/storage.ts';
+  import {
+    buildCurriculum,
+    curriculumOf,
+    emptyStudy,
+    parseStudy,
+    type StudyObject,
+    toStudy,
+  } from '#lib/study.ts';
   import { onMount } from 'svelte';
 
   const i18n = getI18n();
   const t = $derived(i18n.t);
 
-  let curriculum = $state(Curriculum.fromObject(computerScienceBsc));
+  let curriculum: Curriculum = $state(
+    buildCurriculum(computerScienceBsc2018, emptyStudy(computerScienceBsc2018)),
+  );
 
   /** Whether the saved curriculum has been restored, so that changes can be saved. */
   let restored = $state(false);
 
   // The page is prerendered, so the saved curriculum is only available in the browser
   onMount(() => {
-    const saved = loadSavedCurriculum(localStorage);
-    if (saved) {
-      curriculum = Curriculum.fromObject(saved);
+    const saved = loadSavedStudy(localStorage);
+    const restoredCurriculum = saved && curriculumOf(saved);
+    if (restoredCurriculum) {
+      curriculum = restoredCurriculum;
     }
     restored = true;
   });
@@ -36,7 +48,7 @@
   // Save every change, so that nothing is lost when the page is closed
   $effect(() => {
     if (restored) {
-      saveCurriculum(localStorage, curriculum.toObject());
+      saveStudy(localStorage, toStudy(curriculum));
     }
   });
 
@@ -44,13 +56,21 @@
   const emptyCurricula = new WeakSet<Curriculum>();
 
   function newCurriculum() {
-    const empty = new Curriculum(undefined, []);
+    const definition: CurriculumDefinition = { id: crypto.randomUUID(), name: '', moduleAreas: [] };
+    const empty = buildCurriculum(definition, emptyStudy(definition));
     emptyCurricula.add(empty);
     curriculum = empty;
   }
 
-  function loadConfig(config: CurriculumObject) {
-    curriculum = Curriculum.fromObject(config);
+  function loadStudy(study: StudyObject | undefined) {
+    const loaded = study && curriculumOf(study);
+    if (loaded) {
+      curriculum = loaded;
+    }
+  }
+
+  function loadDefinition(definition: CurriculumDefinition) {
+    curriculum = buildCurriculum(definition, emptyStudy(definition));
   }
 
   let fileInput: HTMLInputElement | undefined = $state();
@@ -60,7 +80,7 @@
 
     const reader = new FileReader();
     reader.onload = () => {
-      loadConfig(JSON.parse(reader.result as string));
+      loadStudy(parseStudy(JSON.parse(reader.result as string)));
     };
     if (input.files && input.files.length > 0) {
       console.info('Loading configuration...');
@@ -125,7 +145,7 @@
     importNotice = undefined;
     try {
       const result = importNotenspiegel(await readNotenspiegel(file));
-      loadConfig(result.curriculum);
+      loadStudy(result.study);
       importNotice =
         result.warnings.length > 0
           ? {
@@ -162,7 +182,7 @@
 
   const saveHref = $derived(
     `data:application/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(curriculum.toObject(), null, 2),
+      JSON.stringify(toStudy(curriculum), null, 2),
     )}`,
   );
 
@@ -183,11 +203,11 @@
         <Button variant="secondary" title={t.toolbar.emptyCurriculumTitle} onclick={newCurriculum}
           >{t.toolbar.emptyCurriculum}</Button
         >
-        {#each templates as template (template.name)}
+        {#each builtInCurricula as template (template.id)}
           <Button
             variant="secondary"
             title={t.toolbar.loadTemplateTitle(template.name ?? '')}
-            onclick={() => loadConfig(template)}>{template.name}</Button
+            onclick={() => loadDefinition(template)}>{template.name}</Button
           >
         {/each}
       </div>

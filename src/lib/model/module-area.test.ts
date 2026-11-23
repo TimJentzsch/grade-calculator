@@ -571,70 +571,7 @@ describe('ModuleArea', () => {
       expect(moduleArea.worstCase()).toEqual(worstCase);
     });
   });
-  // To object
-  describe('toObject', () => {
-    test('mixed moduleArea equality', () => {
-      const moduleArea = new ModuleArea('Test module area', [
-        new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
-        new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
-        new Module('Test module 3', 3, undefined, undefined, true, true),
-      ]);
-      const expectedObj = {
-        name: 'Test module area',
-        modules: [
-          {
-            name: 'Test module 1',
-            credits: 6,
-            weight: 1.5,
-          },
-          {
-            name: 'Test module 2',
-            credits: 7,
-            grade: 2.3,
-          },
-          {
-            name: 'Test module 3',
-            credits: 3,
-            notGraded: true,
-            passed: true,
-          },
-        ],
-      };
-      expect(moduleArea.toObject()).toEqual(expectedObj);
-    });
-  });
   // From object
-  describe('fromObject', () => {
-    test('mixed moduleArea equality', () => {
-      const obj = {
-        name: 'Test module area',
-        modules: [
-          {
-            name: 'Test module 1',
-            credits: 6,
-            weight: 1.5,
-          },
-          {
-            name: 'Test module 2',
-            credits: 7,
-            grade: 2.3,
-          },
-          {
-            name: 'Test module 3',
-            credits: 3,
-            notGraded: true,
-            passed: true,
-          },
-        ],
-      };
-      const expectedModuleArea = new ModuleArea('Test module area', [
-        new Module('Test module 1', 6, undefined, 1.5, undefined, undefined),
-        new Module('Test module 2', 7, 2.3, undefined, undefined, undefined),
-        new Module('Test module 3', 3, undefined, undefined, true, true),
-      ]);
-      expect(ModuleArea.fromObject(obj)).toEqual(expectedModuleArea);
-    });
-  });
 
   describe('unknown grade', () => {
     test('the grade before elimination only uses known grades', () => {
@@ -727,14 +664,6 @@ describe('ModuleArea', () => {
       const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)]);
       expect(area.belowMinCredits).toBe(false);
       expect(area.aboveMaxCredits).toBe(false);
-    });
-
-    test('survives saving and loading', () => {
-      const area = moduleArea();
-      area.maxCredits = 30;
-      const loaded = ModuleArea.fromObject(area.toObject());
-      expect(loaded.minCredits).toBe(20);
-      expect(loaded.maxCredits).toBe(30);
     });
   });
 

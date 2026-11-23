@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import type { ModuleAreaObject } from '../model/module-area.svelte';
+import type { StudyObject } from '../study';
 import { addModules, thesisGrade } from './entries';
 import type { NotenspiegelEntry } from './parse';
 
@@ -9,10 +9,17 @@ function module(name: string, grade: number, credits: number): NotenspiegelEntry
 
 describe('addModules', () => {
   test('adds the modules in order', () => {
-    const area: ModuleAreaObject = { name: 'Electives', modules: [] };
+    const study: StudyObject = {
+      version: 1,
+      curriculum: { id: 'test' },
+      results: {},
+      chosenModules: {},
+    };
     const used: string[] = [];
-    addModules(area, [module('A', 1.3, 6), module('B', 2.0, 8)], (entry) => used.push(entry.name));
-    expect(area.modules).toEqual([
+    addModules(study, 'electives', [module('A', 1.3, 6), module('B', 2.0, 8)], (entry) =>
+      used.push(entry.name),
+    );
+    expect(study.chosenModules.electives).toEqual([
       { name: 'A', credits: 6, grade: 1.3 },
       { name: 'B', credits: 8, grade: 2.0 },
     ]);

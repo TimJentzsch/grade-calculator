@@ -1,13 +1,13 @@
 import { truncateGrade } from '../grade.ts';
-import Curriculum, { type CurriculumObject } from '../model/curriculum.svelte.ts';
+import { buildCurriculum, type StudyObject } from '../study.ts';
 import { allEntries, modulesOf, type ProgramImporter } from './entries.ts';
 import type { Notenspiegel, NotenspiegelEntry } from './parse.ts';
 import computerScienceBsc2018 from './programs/computer-science-bsc-2018.ts';
 import computerScienceMsc2023 from './programs/computer-science-msc-2023.ts';
 
-/** The curriculum filled with the grades of a Notenspiegel. */
+/** The results of a Notenspiegel for its built-in curriculum. */
 export interface ImportResult {
-  curriculum: CurriculumObject;
+  study: StudyObject;
   /** Problems the user should check, e.g. modules that could not be assigned. */
   warnings: ImportWarning[];
 }
@@ -33,7 +33,7 @@ export class UnsupportedProgramError extends Error {
   constructor(notenspiegel: Notenspiegel) {
     const po = notenspiegel.poYear ? ` (PO ${notenspiegel.poYear})` : '';
     const program = notenspiegel.program ? `${notenspiegel.program}${po}` : undefined;
-    const supported = importers.map((importer) => importer.name);
+    const supported = importers.map((importer) => importer.curriculum.name);
     super(
       `${program ?? `This course of study${po}`} is not supported yet. ` +
         `Supported: ${supported.join(', ')}.`,
@@ -45,7 +45,7 @@ export class UnsupportedProgramError extends Error {
 }
 
 /**
- * Fills the matching curriculum template with the grades of a Notenspiegel.
+ * Detects the curriculum of a Notenspiegel and collects its results.
  * @throws {UnsupportedProgramError} If the course of study or its version is not supported.
  */
 export function importNotenspiegel(notenspiegel: Notenspiegel): ImportResult {
@@ -55,7 +55,7 @@ export function importNotenspiegel(notenspiegel: Notenspiegel): ImportResult {
   }
 
   const used = new Set<NotenspiegelEntry>();
-  const curriculumObject = importer.toCurriculum(notenspiegel, (entry) => {
+  const study = importer.toStudy(notenspiegel, (entry) => {
     for (const descendant of allEntries(entry)) {
       used.add(descendant);
     }
@@ -70,7 +70,7 @@ export function importNotenspiegel(notenspiegel: Notenspiegel): ImportResult {
     warnings.push({ kind: 'unassigned', name: entry.name, credits: entry.credits });
   }
 
-  const curriculum = Curriculum.fromObject(curriculumObject);
+  const curriculum = buildCurriculum(importer.curriculum, study);
   if (!curriculum.isValidElimination) {
     warnings.push({ kind: 'elimination-limits' });
   }
@@ -88,5 +88,5 @@ export function importNotenspiegel(notenspiegel: Notenspiegel): ImportResult {
     });
   }
 
-  return { curriculum: curriculumObject, warnings };
+  return { study, warnings };
 }

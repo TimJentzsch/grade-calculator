@@ -1,7 +1,8 @@
-import type { CurriculumObject } from '../../model/curriculum.svelte.ts';
-import computerScienceBsc from '../../templates/computer-science-bsc.ts';
+import computerScienceBsc2018Curriculum from '../../curricula/computer-science-bsc-2018.ts';
+import { emptyStudy } from '../../study.ts';
 import {
   addModules,
+  addResult,
   applyEntry,
   findEntry,
   modulesOf,
@@ -9,72 +10,42 @@ import {
   thesisGrade,
 } from '../entries.ts';
 
-/** The German and English names of the modules in the Notenspiegel, by template module name. */
+/** The German and English names of the modules in the Notenspiegel, by module id. */
 const MODULE_NAMES: Record<string, string[]> = {
-  'Programming (Progra)': ['Programmierung', 'Programming Concepts'],
-  'Data Structures and Algorithms (DsAl)': [
-    'Datenstrukturen und Algorithmen',
-    'Data Structures and Algorithms',
-  ],
-  'Databases and Information Systems (DbIs)': [
-    'Datenbanken und Informationssysteme',
-    'Databases and Information Systems',
-  ],
-  'Software Engineering (SWT)': ['Softwaretechnik', 'Software Engineering'],
-  'System Programming (PSP)': ['Systemprogrammierung', 'System Programming'],
-  'Introduction to Computer Engineering (TI)': [
-    'Einführung in die Technische Informatik',
-    'Introduction to Computer Engineering',
-  ],
-  'Operating Systems and System Software (BuS)': [
-    'Betriebssysteme und Systemsoftware',
-    'Operating Systems and System Software',
-  ],
-  'Data Communication and Security (DatKom)': [
-    'Datenkommunikation und Sicherheit',
-    'Data Communication and Security',
-  ],
-  'Formal Systems, Automata, Processes (FoSAP)': [
-    'Formale Systeme, Automaten, Prozesse',
-    'Formal Systems, Automata, Processes',
-  ],
-  'Computability and Complexity (BuK)': [
-    'Berechenbarkeit und Komplexität',
-    'Computability and Complexity',
-  ],
-  'Mathematical Logic I (MaLo)': ['Mathematische Logik I', 'Mathematical Logic I'],
-  'Discrete Structures (DS)': ['Diskrete Strukturen', 'Discrete Structures'],
-  'Calculus for Computer Science (AfI)': [
-    'Analysis für Informatik',
-    'Calculus for Computer Science',
-  ],
-  'Linear Algebra (LA)': ['Lineare Algebra', 'Linear Algebra'],
-  'Introduction to Applied Stochastics (Stocha)': [
-    'Einführung in die angewandte Stochastik',
-    'Introduction to Applied Stochastics',
-  ],
-  'Mentoring in Informatics': ['Mentoring Informatik', 'Mentoring in Informatics'],
-  'Non-Technical Elective Module (NTW)': [
-    'Nicht-technisches Wahlfach',
-    'Non-Technical Elective Module',
-  ],
-  'Software Project Lab (SPP)': ['Software-Projektpraktikum', 'Software Project Lab'],
-  'Proseminar Computer Science': [
+  progra: ['Programmierung', 'Programming Concepts'],
+  dsal: ['Datenstrukturen und Algorithmen', 'Data Structures and Algorithms'],
+  dbis: ['Datenbanken und Informationssysteme', 'Databases and Information Systems'],
+  swt: ['Softwaretechnik', 'Software Engineering'],
+  psp: ['Systemprogrammierung', 'System Programming'],
+  ti: ['Einführung in die Technische Informatik', 'Introduction to Computer Engineering'],
+  bus: ['Betriebssysteme und Systemsoftware', 'Operating Systems and System Software'],
+  datkom: ['Datenkommunikation und Sicherheit', 'Data Communication and Security'],
+  fosap: ['Formale Systeme, Automaten, Prozesse', 'Formal Systems, Automata, Processes'],
+  buk: ['Berechenbarkeit und Komplexität', 'Computability and Complexity'],
+  malo: ['Mathematische Logik I', 'Mathematical Logic I'],
+  ds: ['Diskrete Strukturen', 'Discrete Structures'],
+  afi: ['Analysis für Informatik', 'Calculus for Computer Science'],
+  la: ['Lineare Algebra', 'Linear Algebra'],
+  stocha: ['Einführung in die angewandte Stochastik', 'Introduction to Applied Stochastics'],
+  mentoring: ['Mentoring Informatik', 'Mentoring in Informatics'],
+  ntw: ['Nicht-technisches Wahlfach', 'Non-Technical Elective Module'],
+  spp: ['Software-Projektpraktikum', 'Software Project Lab'],
+  proseminar: [
     'Einführung in das wissenschaftliche Arbeiten (Proseminar Informatik)',
     'Introduction to Scientific Working (Proseminar Computer Science)',
   ],
-  'Seminar Computer Science': ['Seminar Informatik', 'Seminar Computer Science'],
+  seminar: ['Seminar Informatik', 'Seminar Computer Science'],
 };
 
-const ELECTIVES_AREA = 'Elective Modules';
+const ELECTIVES_AREA = 'electives';
 const ELECTIVES_NAMES = ['Module im Wahlpflichtbereich', 'Elective Modules'];
-const APPLICATION_AREA = 'Application Subject';
+const APPLICATION_AREA = 'application-subject';
 const APPLICATION_NAMES = ['Anwendungsfach', 'Application Subject'];
-const THESIS_AREA = 'Bachelor Thesis';
+const THESIS = 'thesis';
 
 /** Informatik / Computer Science B.Sc. at RWTH Aachen, PO 2018. */
 const computerScienceBsc2018: ProgramImporter = {
-  name: 'Computer Science B.Sc. (PO 2018)',
+  curriculum: computerScienceBsc2018Curriculum,
 
   matches(notenspiegel) {
     return (
@@ -84,40 +55,41 @@ const computerScienceBsc2018: ProgramImporter = {
     );
   },
 
-  toCurriculum(notenspiegel, use) {
-    const curriculum: CurriculumObject = structuredClone(computerScienceBsc);
+  toStudy(notenspiegel, use) {
+    const study = emptyStudy(this.curriculum);
 
-    for (const area of curriculum.moduleAreas) {
-      if (area.name === ELECTIVES_AREA) {
-        const electivesArea = findEntry(notenspiegel.root, ELECTIVES_NAMES);
-        addModules(area, electivesArea ? modulesOf(electivesArea) : [], use);
-      } else if (area.name === APPLICATION_AREA) {
-        // The application subject counts as one module, e.g. "Anwendungsfach Biologie"
-        const entry = findEntry(notenspiegel.root, APPLICATION_NAMES);
-        if (entry) {
-          use(entry);
-          const subject = entry.children.length === 1 ? entry.children[0] : entry;
-          area.modules.push(applyEntry({ name: subject.name, credits: entry.credits }, entry));
-        }
-      } else if (area.name === THESIS_AREA) {
-        if (notenspiegel.thesis) {
-          use(notenspiegel.thesis);
-          area.modules[0] = { ...area.modules[0], grade: thesisGrade(notenspiegel.thesis) };
-        }
-      } else {
-        area.modules = area.modules.map((module) => {
-          const names = module.name ? MODULE_NAMES[module.name] : undefined;
-          const entry = names ? findEntry(notenspiegel.root, names) : undefined;
-          if (!entry) {
-            return module;
-          }
-          use(entry);
-          return applyEntry(module, entry);
-        });
+    const electivesArea = findEntry(notenspiegel.root, ELECTIVES_NAMES);
+    addModules(study, ELECTIVES_AREA, electivesArea ? modulesOf(electivesArea) : [], use);
+
+    // The application subject counts as one module, e.g. "Anwendungsfach Biologie"
+    const application = findEntry(notenspiegel.root, APPLICATION_NAMES);
+    if (application) {
+      use(application);
+      const subject = application.children.length === 1 ? application.children[0] : application;
+      study.chosenModules[APPLICATION_AREA] = [
+        applyEntry({ name: subject.name, credits: application.credits }, application),
+      ];
+    }
+
+    if (notenspiegel.thesis) {
+      use(notenspiegel.thesis);
+      const grade = thesisGrade(notenspiegel.thesis);
+      if (grade !== undefined) {
+        study.results[THESIS] = { grade };
       }
     }
 
-    return curriculum;
+    for (const area of this.curriculum.moduleAreas) {
+      for (const module of area.modules) {
+        const names = MODULE_NAMES[module.id] as string[] | undefined;
+        const entry = names ? findEntry(notenspiegel.root, names) : undefined;
+        if (entry) {
+          addResult(study, module, entry, use);
+        }
+      }
+    }
+
+    return study;
   },
 };
 
