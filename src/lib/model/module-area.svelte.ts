@@ -59,8 +59,13 @@ export default class ModuleArea {
     this.maxCredits = maxCredits;
   }
 
+  /** The modules that count towards the curriculum, i.e. all except the additional modules. */
+  get countedModules(): Module[] {
+    return this.modules.filter((module) => !module.additional);
+  }
+
   get credits(): number {
-    return sum(this.modules, (module) => module.credits);
+    return sum(this.countedModules, (module) => module.credits);
   }
 
   /** The credits that are still missing to reach the required credits, without open modules. */
@@ -93,11 +98,11 @@ export default class ModuleArea {
   }
 
   get completedModules(): Module[] {
-    return this.modules.filter((module) => module.completed);
+    return this.countedModules.filter((module) => module.completed);
   }
 
   get gradedModules(): Module[] {
-    return this.modules.filter((module) => module.isGraded && module.weight !== 0);
+    return this.countedModules.filter((module) => module.isGraded && module.weight !== 0);
   }
 
   get eliminationGradedModules(): Module[] {
@@ -118,7 +123,7 @@ export default class ModuleArea {
   }
 
   get ungradedModules(): Module[] {
-    return this.modules.filter((module) => !module.isGraded || module.weight === 0);
+    return this.countedModules.filter((module) => !module.isGraded || module.weight === 0);
   }
 
   get completedUngradedModules(): Module[] {
@@ -158,7 +163,7 @@ export default class ModuleArea {
     if (this.isGraded) {
       return this.completedGradedModules.length === this.gradedModules.length;
     }
-    return this.completedModules.length === this.modules.length;
+    return this.completedModules.length === this.countedModules.length;
   }
 
   get gradePartiallyCompleted(): boolean {

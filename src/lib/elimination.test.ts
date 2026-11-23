@@ -20,7 +20,7 @@ function referenceBestElimination(curriculum: Curriculum, index: number): Curric
   if (!module) return curriculum;
 
   const noElimBest = referenceBestElimination(curriculum, index + 1);
-  if (!module.completed || !module.hasGrade) return noElimBest;
+  if (!module.completed || !module.hasGrade || module.additional) return noElimBest;
 
   const elim = curriculum.clone();
   elim.modules[index].eliminated = true;
@@ -78,6 +78,7 @@ function randomCurriculum(random: () => number): Curriculum {
             random() < 0.15,
             pick([undefined, true, false]),
             random() < 0.3,
+            random() < 0.15,
           );
         }),
         limit(),
@@ -194,6 +195,22 @@ describe('elimination', () => {
       );
 
       expect(bestIndices(curriculum)).toEqual([]);
+    });
+
+    test('ignores additional modules', () => {
+      const curriculum = new Curriculum(
+        'Test curriculum',
+        [
+          new ModuleArea('Test module area', [
+            new Module('Test module 1', 6, 1.3),
+            new Module('Test module 2', 6, 3.7, undefined, false, undefined, false, true),
+            new Module('Test module 3', 6, 2.0),
+          ]),
+        ],
+        1,
+      );
+
+      expect(bestIndices(curriculum)).toEqual([2]);
     });
 
     test('ignores existing eliminations', () => {

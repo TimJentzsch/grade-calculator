@@ -743,4 +743,47 @@ describe('ModuleArea', () => {
       expect(loaded.toObject()).not.toHaveProperty('requiredCredits');
     });
   });
+
+  describe('additional modules', () => {
+    const additional = (name: string, credits: number, grade?: number) =>
+      new Module(name, credits, grade, undefined, false, undefined, undefined, true);
+
+    const moduleArea = () =>
+      new ModuleArea(
+        'Electives',
+        [new Module('Module 1', 6, 2.0), additional('Module 2', 6, 4.0), additional('Module 3', 4)],
+        undefined,
+        undefined,
+        10,
+        6,
+      );
+
+    test('do not count towards the credits', () => {
+      const area = moduleArea();
+      expect(area.credits).toBe(6);
+      expect(area.missingCredits).toBe(4);
+      expect(area.aboveMaxCredits).toBe(false);
+    });
+
+    test('do not count towards the grade', () => {
+      expect(moduleArea().grade).toBe(2.0);
+      expect(moduleArea().eliminationGrade).toBe(2.0);
+    });
+
+    test('do not keep the area from being completed', () => {
+      expect(moduleArea().gradeCompleted).toBe(true);
+    });
+
+    test('do not count towards the best and worst case', () => {
+      // (2.0·6 + 1.0·4) / 10 and (2.0·6 + 4.0·4) / 10
+      expect(moduleArea().bestCase().grade).toBeCloseTo(1.6);
+      expect(moduleArea().worstCase().grade).toBeCloseTo(2.8);
+    });
+
+    test('an area of only additional modules is not graded', () => {
+      const area = new ModuleArea('Extra', [additional('Module', 6, 1.0)]);
+      expect(area.isGraded).toBe(false);
+      expect(area.gradeText).toBe('TBD');
+    });
+  });
 });

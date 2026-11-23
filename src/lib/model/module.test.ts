@@ -306,6 +306,28 @@ describe('Module', () => {
     });
   });
 
+  describe('additional', () => {
+    test('survives saving and loading', () => {
+      const module = new Module('Test module', 5, 2.3);
+      module.setAdditional(true);
+      expect(module.toObject().additional).toBe(true);
+      expect(Module.fromObject(module.toObject()).additional).toBe(true);
+      expect(module.clone().additional).toBe(true);
+    });
+
+    test('is omitted from the saved object if not set', () => {
+      expect(new Module('Test module', 5, 2.3).toObject().additional).toBeUndefined();
+    });
+
+    test('resets the elimination', () => {
+      const module = new Module('Test module', 5, 2.3, 1, false, undefined, true);
+      module.setAdditional(true);
+      expect(module.eliminated).toBeUndefined();
+      module.setAdditional(false);
+      expect(module.additional).toBeUndefined();
+    });
+  });
+
   describe('unknown grade', () => {
     /** An eliminated module imported from a Notenspiegel, which only shows "B". */
     const unknownGrade = () => new Module('Test module', 6, undefined, 1, false, true, true);

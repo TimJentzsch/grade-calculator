@@ -27,7 +27,12 @@
   }
 </script>
 
-<div class="module-display-container module-container row">
+<div
+  class={['module-display-container module-container row', { additional: module.additional }]}
+  title={module.additional
+    ? 'An additional module (Zusatzleistung), which counts towards neither the credits nor the grade'
+    : undefined}
+>
   <div class={['module-title row-title', { eliminated: module.isGraded && module.eliminated }]}>
     <EditableText
       bind:value={module.name}
@@ -52,13 +57,16 @@
     <div class={['module-grade-container grade-container', { ungraded: !module.isGraded }]}>
       {#if module.isGraded}
         <!-- Without a grade, the module can't be part of the grade, so it stays eliminated -->
+        <!-- Additional modules don't count towards the grade, so they can't be eliminated -->
         <IconButton
           icon="ban"
           label={module.gradeUnknown
             ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
-            : `Eliminate ${name}`}
+            : module.additional
+              ? `${name} can't be eliminated, because it is an additional module`
+              : `Eliminate ${name}`}
           pressed={!!module.eliminated}
-          disabled={module.gradeUnknown}
+          disabled={module.gradeUnknown || !!module.additional}
           onclick={() => (module.eliminated = !module.eliminated)}
         />
         <GradeInput
@@ -88,6 +96,12 @@
     </div>
   </div>
   <div class="row-controls">
+    <IconButton
+      icon="circle-plus"
+      label="Mark {name} as an additional module (Zusatzleistung), which doesn't count towards the credits or the grade"
+      pressed={!!module.additional}
+      onclick={() => module.setAdditional(!module.additional)}
+    />
     <!-- Ungraded modules are the exception, so the toggle is only highlighted for them -->
     <IconButton
       icon="pass-fail"
@@ -98,3 +112,16 @@
     <IconButton icon="trash" variant="danger" label="Remove {name}" onclick={onRemove} />
   </div>
 </div>
+
+<style>
+  /* Additional modules don't count, so they are shown muted */
+  .additional {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .additional :global(input) {
+    color: inherit;
+    font-style: inherit;
+  }
+</style>

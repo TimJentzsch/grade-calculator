@@ -9,6 +9,8 @@ export interface EliminationModule {
   passed: boolean | undefined;
   /** Whether the module is currently eliminated, used as the starting point of the search. */
   eliminated?: boolean;
+  /** Whether the module is an additional module, which doesn't count at all. */
+  additional?: boolean;
 }
 
 /** The data of a module area that is relevant for the elimination. */
@@ -51,6 +53,7 @@ export function toEliminationCurriculum(curriculum: Curriculum): EliminationCurr
         isGraded: module.isGraded,
         passed: module.passed,
         eliminated: Boolean(module.eliminated),
+        additional: Boolean(module.additional),
       })),
       eliminationLimit: moduleArea.eliminationLimit,
       eliminationCPLimit: moduleArea.eliminationCPLimit,
@@ -99,7 +102,7 @@ export function hasGrade(module: EliminationModule, eliminated: boolean): boolea
 
 /** Mirrors the filter of `ModuleArea.gradedModules`. */
 export function countsForGrade(module: EliminationModule): boolean {
-  return module.isGraded && module.weight !== 0;
+  return !module.additional && module.isGraded && module.weight !== 0;
 }
 
 /** The elimination-related values of a module area, as computed by `ModuleArea`. */
@@ -126,6 +129,11 @@ function getModuleAreaStats(
   const eliminatedModules: EliminationModule[] = [];
 
   moduleArea.modules.forEach((module, index) => {
+    // Mirrors `ModuleArea.countedModules`
+    if (module.additional) {
+      return;
+    }
+
     // Modules with an unknown grade can't be part of the grade, so they stay eliminated
     const eliminated = elimination[offset + index] || isGradeUnknown(module);
     const completed = isCompleted(module);

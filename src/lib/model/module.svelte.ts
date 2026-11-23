@@ -9,6 +9,7 @@ export interface ModuleObject {
   notGraded?: boolean;
   passed?: boolean;
   eliminated?: boolean;
+  additional?: boolean;
 }
 
 export default class Module {
@@ -19,6 +20,7 @@ export default class Module {
   isGraded: boolean = $state(true);
   passed: boolean | undefined = $state();
   eliminated: boolean | undefined = $state();
+  additional: boolean | undefined = $state();
 
   /**
    * Creates a new module.
@@ -29,6 +31,8 @@ export default class Module {
    * @param notGraded - The indicator if this module is not graded.
    * @param passed - The indicator if this module has been passed.
    * @param eliminated - The indicator if this module's grade has been eliminated.
+   * @param additional - The indicator if this module is an additional module (Zusatzleistung),
+   * which counts towards neither the credits nor the grade (RWTH ÜPO § 8 Abs. 3).
    */
   constructor(
     name?: string,
@@ -38,6 +42,7 @@ export default class Module {
     notGraded?: boolean,
     passed?: boolean,
     eliminated?: boolean,
+    additional?: boolean,
   ) {
     this.name = name;
     this.credits = credits === undefined ? 0 : credits;
@@ -48,6 +53,7 @@ export default class Module {
     this.isGraded = !notGraded;
     this.passed = passed;
     this.eliminated = eliminated;
+    this.additional = additional;
   }
 
   get hasGrade(): boolean {
@@ -119,6 +125,17 @@ export default class Module {
     this.isGraded = isGraded;
   }
 
+  /**
+   * Switches between an additional module and one that counts towards the curriculum.
+   * Additional modules don't count towards the grade, so they can't be eliminated.
+   */
+  setAdditional(additional: boolean) {
+    if (additional) {
+      this.eliminated = undefined;
+    }
+    this.additional = additional || undefined;
+  }
+
   get isEmpty(): boolean {
     return !this.name;
   }
@@ -156,6 +173,7 @@ export default class Module {
       !this.isGraded,
       this.passed,
       this.eliminated,
+      this.additional,
     );
   }
 
@@ -168,6 +186,7 @@ export default class Module {
       notGraded: !this.isGraded || undefined,
       passed: this.passed || undefined,
       eliminated: this.eliminated || undefined,
+      additional: this.additional || undefined,
     };
   }
 
@@ -180,6 +199,7 @@ export default class Module {
       obj.notGraded,
       obj.passed,
       obj.eliminated,
+      obj.additional,
     );
   }
 }
