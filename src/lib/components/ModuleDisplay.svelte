@@ -97,7 +97,7 @@
   </div>
   <div class="row-controls">
     <IconButton
-      icon="circle-plus"
+      icon="sparkles"
       label="Mark {name} as an additional module (Zusatzleistung), which doesn't count towards the credits or the grade"
       pressed={!!module.additional}
       onclick={() => module.setAdditional(!module.additional)}

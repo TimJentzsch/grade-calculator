@@ -9,7 +9,12 @@
     ban: ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M5.6 5.6l12.8 12.8'],
     'pass-fail': ['M3 12.5l2.5 2.5L10 9.5', 'M14.5 9.5l5.5 5.5', 'M20 9.5L14.5 15'],
     'circle-check': ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M8 12.5l2.5 2.5L16 9.5'],
-    'circle-plus': ['M12 3a9 9 0 1 0 0 18a9 9 0 1 0 0-18z', 'M12 8v8', 'M8 12h8'],
+    sparkles: [
+      'M10 3.5l1.6 4.4l4.4 1.6l-4.4 1.6L10 15.5l-1.6-4.4L4 9.5l4.4-1.6z',
+      'M17.5 14l.8 2.2l2.2.8l-2.2.8l-.8 2.2l-.8-2.2l-2.2-.8l2.2-.8z',
+      'M18 3v4',
+      'M16 5h4',
+    ],
   } satisfies Record<string, string[]>;
 
   export type IconName = keyof typeof icons;
