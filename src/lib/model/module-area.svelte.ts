@@ -11,8 +11,6 @@ export interface ModuleAreaObject {
   minCredits?: number;
   /** The credits that may be reached at most. Further modules have to be additional modules. */
   maxCredits?: number;
-  /** @deprecated The former name of `minCredits`, only read when loading. */
-  requiredCredits?: number;
 }
 
 /** The name of the module that stands for missing credits in the best and worst case. */
@@ -320,7 +318,7 @@ export default class ModuleArea {
       obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),
       obj.eliminationLimit,
       obj.eliminationCPLimit,
-      obj.minCredits ?? obj.requiredCredits,
+      obj.minCredits,
       obj.maxCredits,
     );
   }

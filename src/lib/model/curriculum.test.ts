@@ -948,10 +948,6 @@ describe('Curriculum', () => {
       expect(loaded.maxCredits).toBe(40);
     });
 
-    test('loads the former required credits as minimum credits', () => {
-      expect(Curriculum.fromObject({ moduleAreas: [], requiredCredits: 180 }).minCredits).toBe(180);
-    });
-
     test('warns about credits below the minimum and above the maximum', () => {
       const original = curriculum();
       expect(original.belowMinCredits).toBe(true);

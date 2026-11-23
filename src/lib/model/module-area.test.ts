@@ -736,12 +736,6 @@ describe('ModuleArea', () => {
       expect(loaded.minCredits).toBe(20);
       expect(loaded.maxCredits).toBe(30);
     });
-
-    test('loads the former required credits as minimum credits', () => {
-      const loaded = ModuleArea.fromObject({ name: 'Electives', modules: [], requiredCredits: 20 });
-      expect(loaded.minCredits).toBe(20);
-      expect(loaded.toObject()).not.toHaveProperty('requiredCredits');
-    });
   });
 
   describe('additional modules', () => {

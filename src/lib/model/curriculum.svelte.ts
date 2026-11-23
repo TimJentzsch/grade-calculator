@@ -12,8 +12,6 @@ export interface CurriculumObject {
   minCredits?: number;
   /** The credits that may be reached at most. Further modules have to be additional modules. */
   maxCredits?: number;
-  /** @deprecated The former name of `minCredits`, only read when loading. */
-  requiredCredits?: number;
 }
 
 function sum<T>(items: T[], value: (item: T) => number): number {
@@ -288,7 +286,7 @@ export default class Curriculum {
       obj.moduleAreas.map((moduleAreaObj) => ModuleArea.fromObject(moduleAreaObj)),
       obj.eliminationLimit,
       obj.eliminationCPLimit,
-      obj.minCredits ?? obj.requiredCredits,
+      obj.minCredits,
       obj.maxCredits,
     );
   }
