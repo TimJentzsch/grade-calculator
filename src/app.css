@@ -250,20 +250,30 @@ input[type='text'].weight-input {
 }
 
 /*
- * On devices with a mouse, the controls and the default weight of a module are only shown
- * on hover or focus. On touch devices, they are always shown.
+ * On devices with a mouse, the controls, the default weight and the elimination toggle of a
+ * module are only shown on hover or focus, the elimination toggle also while it is eliminated.
+ * On touch devices, they are always shown.
  */
 @media (hover: hover) {
-  .module-display-container .row-controls,
-  .module-display-container .default-weight {
+  /* The controls are hidden one by one, so that single ones can stay visible */
+  .module-display-container .row-controls > *,
+  .module-display-container .default-weight,
+  .module-display-container .elimination-toggle:not(.active) {
     opacity: 0;
   }
 
   /* Only keyboard focus counts, so that clicking a button doesn't keep them visible */
-  .module-display-container:hover .row-controls,
-  .module-display-container:has(:focus-visible) .row-controls,
+  .module-display-container:hover .row-controls > *,
+  .module-display-container:has(:focus-visible) .row-controls > *,
   .module-display-container:hover .default-weight,
-  .module-display-container:has(:focus-visible) .default-weight {
+  .module-display-container:has(:focus-visible) .default-weight,
+  .module-display-container:hover .elimination-toggle,
+  .module-display-container:has(:focus-visible) .elimination-toggle {
+    opacity: 1;
+  }
+
+  /* Additional modules always show their toggle, so they can be told apart at a glance */
+  .module-display-container.additional .row-controls > .additional-toggle {
     opacity: 1;
   }
 }
@@ -408,7 +418,20 @@ header h1 {
   color: var(--color-primary);
 }
 
-/* Decimal places of a grade that are cut off, shown to indicate how close the next grade is */
+/*
+ * Decimal places of a grade that are cut off, which show how close the next grade is.
+ * On devices with a mouse, they are only shown on hover. On touch devices, they are always shown.
+ */
 .truncated-digits {
   color: var(--color-text-muted);
+}
+
+@media (hover: hover) {
+  .truncated-digits {
+    display: none;
+  }
+
+  .grade-container:hover .truncated-digits {
+    display: inline;
+  }
 }

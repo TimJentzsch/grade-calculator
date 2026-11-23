@@ -659,7 +659,7 @@ describe('ModuleArea', () => {
     });
   });
 
-  describe('required credits', () => {
+  describe('credit limits', () => {
     const moduleArea = () =>
       new ModuleArea(
         'Electives',
@@ -681,7 +681,7 @@ describe('ModuleArea', () => {
       expect(area.plannedCredits).toBe(22);
     });
 
-    test('has no missing credits without required credits', () => {
+    test('has no missing credits without minimum credits', () => {
       const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)]);
       expect(area.missingCredits).toBe(0);
     });
@@ -702,8 +702,82 @@ describe('ModuleArea', () => {
       expect(moduleArea().worstCase().grade).toBeCloseTo(3.4);
     });
 
+    test('is below the minimum credits until they are reached', () => {
+      const area = moduleArea();
+      expect(area.belowMinCredits).toBe(true);
+      area.addModule(new Module('Module 3', 8, 1.0));
+      expect(area.belowMinCredits).toBe(false);
+    });
+
+    test('is above the maximum credits once they are exceeded', () => {
+      const area = moduleArea();
+      area.maxCredits = 12;
+      expect(area.aboveMaxCredits).toBe(false);
+      area.addModule(new Module('Module 3', 1, 1.0));
+      expect(area.aboveMaxCredits).toBe(true);
+    });
+
+    test('the maximum credits do not change the grade range', () => {
+      const area = moduleArea();
+      area.maxCredits = 10;
+      expect(area.bestCase().grade).toBeCloseTo(1.3);
+    });
+
+    test('has no credit warnings without limits', () => {
+      const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)]);
+      expect(area.belowMinCredits).toBe(false);
+      expect(area.aboveMaxCredits).toBe(false);
+    });
+
     test('survives saving and loading', () => {
-      expect(ModuleArea.fromObject(moduleArea().toObject()).requiredCredits).toBe(20);
+      const area = moduleArea();
+      area.maxCredits = 30;
+      const loaded = ModuleArea.fromObject(area.toObject());
+      expect(loaded.minCredits).toBe(20);
+      expect(loaded.maxCredits).toBe(30);
+    });
+  });
+
+  describe('additional modules', () => {
+    const additional = (name: string, credits: number, grade?: number) =>
+      new Module(name, credits, grade, undefined, false, undefined, undefined, true);
+
+    const moduleArea = () =>
+      new ModuleArea(
+        'Electives',
+        [new Module('Module 1', 6, 2.0), additional('Module 2', 6, 4.0), additional('Module 3', 4)],
+        undefined,
+        undefined,
+        10,
+        6,
+      );
+
+    test('do not count towards the credits', () => {
+      const area = moduleArea();
+      expect(area.credits).toBe(6);
+      expect(area.missingCredits).toBe(4);
+      expect(area.aboveMaxCredits).toBe(false);
+    });
+
+    test('do not count towards the grade', () => {
+      expect(moduleArea().grade).toBe(2.0);
+      expect(moduleArea().eliminationGrade).toBe(2.0);
+    });
+
+    test('do not keep the area from being completed', () => {
+      expect(moduleArea().gradeCompleted).toBe(true);
+    });
+
+    test('do not count towards the best and worst case', () => {
+      // (2.0·6 + 1.0·4) / 10 and (2.0·6 + 4.0·4) / 10
+      expect(moduleArea().bestCase().grade).toBeCloseTo(1.6);
+      expect(moduleArea().worstCase().grade).toBeCloseTo(2.8);
+    });
+
+    test('an area of only additional modules is not graded', () => {
+      const area = new ModuleArea('Extra', [additional('Module', 6, 1.0)]);
+      expect(area.isGraded).toBe(false);
+      expect(area.gradeText).toBe('TBD');
     });
   });
 });

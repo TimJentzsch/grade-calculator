@@ -20,8 +20,10 @@
     count: area.eliminationLimit ?? 0,
     cpLimited: area.eliminationCPLimit !== undefined,
     cp: area.eliminationCPLimit ?? 0,
-    creditsRequired: area.requiredCredits !== undefined,
-    requiredCredits: area.requiredCredits ?? 0,
+    minLimited: area.minCredits !== undefined,
+    minCredits: area.minCredits ?? 0,
+    maxLimited: area.maxCredits !== undefined,
+    maxCredits: area.maxCredits ?? 0,
   }));
 
   let name = $state(initial.name);
@@ -29,14 +31,17 @@
   let count: number | null = $state(initial.count);
   let cpLimited = $state(initial.cpLimited);
   let cp: number | null = $state(initial.cp);
-  let creditsRequired = $state(initial.creditsRequired);
-  let requiredCredits: number | null = $state(initial.requiredCredits);
+  let minLimited = $state(initial.minLimited);
+  let minCredits: number | null = $state(initial.minCredits);
+  let maxLimited = $state(initial.maxLimited);
+  let maxCredits: number | null = $state(initial.maxCredits);
 
   function save() {
     area.name = name;
     area.eliminationLimit = countLimited ? (count ?? 0) : undefined;
     area.eliminationCPLimit = cpLimited ? (cp ?? 0) : undefined;
-    area.requiredCredits = creditsRequired ? (requiredCredits ?? 0) : undefined;
+    area.minCredits = minLimited ? (minCredits ?? 0) : undefined;
+    area.maxCredits = maxLimited ? (maxCredits ?? 0) : undefined;
     onSave();
   }
 </script>
@@ -90,26 +95,47 @@
         /></label
       >
     </div>
-    <label
-      class="label required-credits-label"
-      title="The credits that have to be reached. Missing credits count towards the possible grade range."
-      >Required credits: <input
-        class="checkbox required-credits-checkbox"
-        name="required-credits-checkbox"
-        type="checkbox"
-        bind:checked={creditsRequired}
-      /><input
-        class="input required-credits-input"
-        name="required-credits-input"
-        type="number"
-        step="1"
-        min="0"
-        placeholder="0"
-        size="3"
-        disabled={!creditsRequired}
-        bind:value={requiredCredits}
-      /></label
-    >
+    <div class="credit-limits-container">
+      Credits: <label
+        class="label min-credits-label"
+        title="The credits that have to be reached at least. Missing credits count towards the possible grade range."
+        >Minimum: <input
+          class="checkbox min-credits-checkbox"
+          name="min-credits-checkbox"
+          type="checkbox"
+          bind:checked={minLimited}
+        /><input
+          class="input min-credits-input"
+          name="min-credits-input"
+          type="number"
+          step="1"
+          min="0"
+          placeholder="0"
+          size="3"
+          disabled={!minLimited}
+          bind:value={minCredits}
+        /></label
+      ><label
+        class="label max-credits-label"
+        title="The credits that may be reached at most. Mark further modules as additional modules."
+        >Maximum: <input
+          class="checkbox max-credits-checkbox"
+          name="max-credits-checkbox"
+          type="checkbox"
+          bind:checked={maxLimited}
+        /><input
+          class="input max-credits-input"
+          name="max-credits-input"
+          type="number"
+          step="1"
+          min="0"
+          placeholder="0"
+          size="3"
+          disabled={!maxLimited}
+          bind:value={maxCredits}
+        /></label
+      >
+    </div>
   </div>
   <div class="editor-controls">
     <IconButton icon="check" variant="primary" label="Save the changes" onclick={save} /><IconButton

@@ -16,14 +16,43 @@ describe('AreaHeader', () => {
   test('shows the credits', () => {
     const body = html(new ModuleArea('Area', [new Module('Module', 6, 2.0)]));
     expect(body).toMatch(/module-area-credits-value[^"]*">6</);
-    expect(body).not.toContain('required-credits');
+    expect(body).not.toContain('credit-limit');
   });
 
-  test('shows the required credits', () => {
+  test('shows the minimum credits if they are not reached', () => {
     const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)], undefined, undefined, 24);
     const body = html(area);
-    expect(body).toMatch(/required-credits[^"]*">\/24</);
-    expect(body).toContain('of 24 required');
+    expect(body).toMatch(/min-credits[^"]*">\s*&lt; 24 CP</);
+    expect(body).toContain('of at least 24 required');
+  });
+
+  test('hides credit limits that are kept', () => {
+    const area = new ModuleArea(
+      'Area',
+      [new Module('Module', 12, 2.0)],
+      undefined,
+      undefined,
+      6,
+      12,
+    );
+    const body = html(area);
+    expect(body).not.toContain('credit-limit');
+    expect(body).not.toContain('credits-warning');
+  });
+
+  test('highlights credits above the maximum', () => {
+    const area = new ModuleArea(
+      'Area',
+      [new Module('A', 6, 2.0), new Module('B', 8, 2.0)],
+      undefined,
+      undefined,
+      undefined,
+      10,
+    );
+    const body = html(area);
+    expect(body).toContain('credits-warning');
+    expect(body).toMatch(/max-credits[^"]*">\s*(&gt;|>) 10 CP</);
+    expect(body).toContain('Mark modules with 4 CP as additional modules.');
   });
 
   test('includes the missing credits in the grade range', () => {
@@ -35,14 +64,14 @@ describe('AreaHeader', () => {
   test('highlights missing credits', () => {
     const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)], undefined, undefined, 12);
     const body = html(area);
-    expect(body).toContain('credits-missing');
+    expect(body).toContain('credits-warning');
     expect(body).toContain('6 CP are still missing.');
   });
 
   test('does not highlight reached credits', () => {
     const area = new ModuleArea('Area', [new Module('Module', 12, 2.0)], undefined, undefined, 12);
-    expect(html(area)).not.toContain('credits-missing');
-    expect(html(new ModuleArea('Area', []))).not.toContain('credits-missing');
+    expect(html(area)).not.toContain('credits-warning');
+    expect(html(new ModuleArea('Area', []))).not.toContain('credits-warning');
   });
 
   test('highlights a curriculum whose areas are still missing credits', () => {
@@ -55,7 +84,7 @@ describe('AreaHeader', () => {
       30,
     );
     const body = html(curriculum);
-    expect(body).toContain('credits-missing');
+    expect(body).toContain('credits-warning');
     expect(body).toContain('24 CP are still missing.');
   });
 });

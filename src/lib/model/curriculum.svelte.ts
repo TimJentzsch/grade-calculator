@@ -8,8 +8,10 @@ export interface CurriculumObject {
   moduleAreas: ModuleAreaObject[];
   eliminationLimit?: number;
   eliminationCPLimit?: number;
-  /** The credits that have to be reached to complete the curriculum. */
-  requiredCredits?: number;
+  /** The credits that have to be reached at least, e.g. for areas whose modules are chosen freely. */
+  minCredits?: number;
+  /** The credits that may be reached at most. Further modules have to be additional modules. */
+  maxCredits?: number;
 }
 
 function sum<T>(items: T[], value: (item: T) => number): number {
@@ -25,7 +27,8 @@ export default class Curriculum {
   moduleAreas: ModuleArea[] = $state([]);
   eliminationLimit: number | undefined = $state();
   eliminationCPLimit: number | undefined = $state();
-  requiredCredits: number | undefined = $state();
+  minCredits: number | undefined = $state();
+  maxCredits: number | undefined = $state();
 
   /**
    * Creates a new curriculum.
@@ -33,20 +36,23 @@ export default class Curriculum {
    * @param moduleAreas - The module areas available in the curriculum.
    * @param eliminationLimit - The maximum number of modules that can be eliminated.
    * @param eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
-   * @param requiredCredits - The credits that have to be reached to complete the curriculum.
+   * @param minCredits - The credits that have to be reached at least in this curriculum.
+   * @param maxCredits - The credits that may be reached at most in this curriculum.
    */
   constructor(
     name: string | undefined,
     moduleAreas: ModuleArea[],
     eliminationLimit?: number,
     eliminationCPLimit?: number,
-    requiredCredits?: number,
+    minCredits?: number,
+    maxCredits?: number,
   ) {
     this.name = name;
     this.moduleAreas = moduleAreas;
     this.eliminationLimit = eliminationLimit;
     this.eliminationCPLimit = eliminationCPLimit;
-    this.requiredCredits = requiredCredits;
+    this.minCredits = minCredits;
+    this.maxCredits = maxCredits;
   }
 
   get credits(): number {
@@ -59,7 +65,16 @@ export default class Curriculum {
    */
   get missingCredits(): number {
     const planned = sum(this.moduleAreas, (moduleArea) => moduleArea.plannedCredits);
-    return Math.max(0, (this.requiredCredits ?? 0) - planned);
+    return Math.max(0, (this.minCredits ?? 0) - planned);
+  }
+  /** Whether the credits are below the minimum credits. */
+  get belowMinCredits(): boolean {
+    return this.minCredits !== undefined && this.credits < this.minCredits;
+  }
+
+  /** Whether the credits are above the maximum credits. */
+  get aboveMaxCredits(): boolean {
+    return this.maxCredits !== undefined && this.credits > this.maxCredits;
   }
 
   /** Determines how many credits have been eliminated in total. */
@@ -260,7 +275,8 @@ export default class Curriculum {
       moduleAreas: this.moduleAreas.map((moduleArea) => moduleArea.toObject()),
       eliminationLimit: this.eliminationLimit,
       eliminationCPLimit: this.eliminationCPLimit,
-      requiredCredits: this.requiredCredits,
+      minCredits: this.minCredits,
+      maxCredits: this.maxCredits,
     };
   }
 
@@ -270,7 +286,8 @@ export default class Curriculum {
       obj.moduleAreas.map((moduleAreaObj) => ModuleArea.fromObject(moduleAreaObj)),
       obj.eliminationLimit,
       obj.eliminationCPLimit,
-      obj.requiredCredits,
+      obj.minCredits,
+      obj.maxCredits,
     );
   }
 
@@ -303,7 +320,8 @@ export default class Curriculum {
       moduleAreas,
       this.eliminationLimit,
       this.eliminationCPLimit,
-      this.requiredCredits,
+      this.minCredits,
+      this.maxCredits,
     );
   }
 
@@ -323,7 +341,8 @@ export default class Curriculum {
       this.moduleAreas.map((moduleArea) => moduleArea.clone()),
       this.eliminationLimit,
       this.eliminationCPLimit,
-      this.requiredCredits,
+      this.minCredits,
+      this.maxCredits,
     );
   }
 }

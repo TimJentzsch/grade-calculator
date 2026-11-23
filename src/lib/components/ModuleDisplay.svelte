@@ -27,7 +27,12 @@
   }
 </script>
 
-<div class="module-display-container module-container row">
+<div
+  class={['module-display-container module-container row', { additional: module.additional }]}
+  title={module.additional
+    ? 'An additional module (Zusatzleistung), which counts towards neither the credits nor the grade'
+    : undefined}
+>
   <div class={['module-title row-title', { eliminated: module.isGraded && module.eliminated }]}>
     <EditableText
       bind:value={module.name}
@@ -49,18 +54,29 @@
         bind:value={module.weight}
       /></span
     >
-    <div class={['module-grade-container grade-container', { ungraded: !module.isGraded }]}>
+    <div
+      class={[
+        'module-grade-container grade-container',
+        { ungraded: !module.isGraded, 'no-elimination': module.additional },
+      ]}
+    >
       {#if module.isGraded}
         <!-- Without a grade, the module can't be part of the grade, so it stays eliminated -->
-        <IconButton
-          icon="ban"
-          label={module.gradeUnknown
-            ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
-            : `Eliminate ${name}`}
-          pressed={!!module.eliminated}
-          disabled={module.gradeUnknown}
-          onclick={() => (module.eliminated = !module.eliminated)}
-        />
+        <!-- Additional modules don't count towards the grade, so they can't be eliminated -->
+        {#if !module.additional}
+          <!-- Only shown on hover or while eliminated, see app.css -->
+          <span class={['elimination-toggle', { active: module.eliminated }]}
+            ><IconButton
+              icon="ban"
+              label={module.gradeUnknown
+                ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
+                : `Eliminate ${name}`}
+              pressed={!!module.eliminated}
+              disabled={module.gradeUnknown}
+              onclick={() => (module.eliminated = !module.eliminated)}
+            /></span
+          >
+        {/if}
         <GradeInput
           class="inline-input"
           label="Grade of {name}"
@@ -88,6 +104,15 @@
     </div>
   </div>
   <div class="row-controls">
+    <!-- Stays visible without hover for additional modules, see app.css -->
+    <span class="additional-toggle"
+      ><IconButton
+        icon="sparkles"
+        label="Mark {name} as an additional module (Zusatzleistung), which doesn't count towards the credits or the grade"
+        pressed={!!module.additional}
+        onclick={() => module.setAdditional(!module.additional)}
+      /></span
+    >
     <!-- Ungraded modules are the exception, so the toggle is only highlighted for them -->
     <IconButton
       icon="pass-fail"
@@ -98,3 +123,26 @@
     <IconButton icon="trash" variant="danger" label="Remove {name}" onclick={onRemove} />
   </div>
 </div>
+
+<style>
+  /* Additional modules don't count, so they are shown muted */
+  .additional {
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  /* Without the elimination toggle, the grade stays in its column */
+  .no-elimination > :global(*) {
+    grid-column: 2;
+  }
+
+  .additional-toggle,
+  .elimination-toggle {
+    display: inline-flex;
+  }
+
+  .additional :global(input) {
+    color: inherit;
+    font-style: inherit;
+  }
+</style>
