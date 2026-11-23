@@ -908,7 +908,7 @@ describe('Curriculum', () => {
     });
   });
 
-  describe('required credits', () => {
+  describe('credit limits', () => {
     const curriculum = () =>
       new Curriculum(
         'Test curriculum',
@@ -941,7 +941,24 @@ describe('Curriculum', () => {
     });
 
     test('survives saving and loading', () => {
-      expect(Curriculum.fromObject(curriculum().toObject()).requiredCredits).toBe(30);
+      const original = curriculum();
+      original.maxCredits = 40;
+      const loaded = Curriculum.fromObject(original.toObject());
+      expect(loaded.minCredits).toBe(30);
+      expect(loaded.maxCredits).toBe(40);
+    });
+
+    test('loads the former required credits as minimum credits', () => {
+      expect(Curriculum.fromObject({ moduleAreas: [], requiredCredits: 180 }).minCredits).toBe(180);
+    });
+
+    test('warns about credits below the minimum and above the maximum', () => {
+      const original = curriculum();
+      expect(original.belowMinCredits).toBe(true);
+      original.minCredits = 10;
+      original.maxCredits = 12;
+      expect(original.belowMinCredits).toBe(false);
+      expect(original.aboveMaxCredits).toBe(true);
     });
   });
 });

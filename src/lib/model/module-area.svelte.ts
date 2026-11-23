@@ -7,7 +7,11 @@ export interface ModuleAreaObject {
   modules: ModuleObject[];
   eliminationLimit?: number;
   eliminationCPLimit?: number;
-  /** The credits that have to be reached, e.g. for areas whose modules are chosen freely. */
+  /** The credits that have to be reached at least, e.g. for areas whose modules are chosen freely. */
+  minCredits?: number;
+  /** The credits that may be reached at most. Further modules have to be additional modules. */
+  maxCredits?: number;
+  /** @deprecated The former name of `minCredits`, only read when loading. */
   requiredCredits?: number;
 }
 
@@ -27,7 +31,8 @@ export default class ModuleArea {
   modules: Module[] = $state([]);
   eliminationLimit: number | undefined = $state();
   eliminationCPLimit: number | undefined = $state();
-  requiredCredits: number | undefined = $state();
+  minCredits: number | undefined = $state();
+  maxCredits: number | undefined = $state();
 
   /**
    * Creates a new module area.
@@ -35,20 +40,23 @@ export default class ModuleArea {
    * @param modules - The modules available in this module area.
    * @param eliminationLimit - The maximum number of modules that can be eliminated.
    * @param eliminationCPLimit - The maximum sum of credits the eliminated modules can have.
-   * @param requiredCredits - The credits that have to be reached in this module area.
+   * @param minCredits - The credits that have to be reached at least in this module area.
+   * @param maxCredits - The credits that may be reached at most in this module area.
    */
   constructor(
     name: string | undefined,
     modules: Module[],
     eliminationLimit?: number,
     eliminationCPLimit?: number,
-    requiredCredits?: number,
+    minCredits?: number,
+    maxCredits?: number,
   ) {
     this.name = name;
     this.modules = modules;
     this.eliminationLimit = eliminationLimit;
     this.eliminationCPLimit = eliminationCPLimit;
-    this.requiredCredits = requiredCredits;
+    this.minCredits = minCredits;
+    this.maxCredits = maxCredits;
   }
 
   get credits(): number {
@@ -57,7 +65,16 @@ export default class ModuleArea {
 
   /** The credits that are still missing to reach the required credits, without open modules. */
   get missingCredits(): number {
-    return Math.max(0, (this.requiredCredits ?? 0) - this.credits);
+    return Math.max(0, (this.minCredits ?? 0) - this.credits);
+  }
+  /** Whether the credits are below the minimum credits. */
+  get belowMinCredits(): boolean {
+    return this.minCredits !== undefined && this.credits < this.minCredits;
+  }
+
+  /** Whether the credits are above the maximum credits. */
+  get aboveMaxCredits(): boolean {
+    return this.maxCredits !== undefined && this.credits > this.maxCredits;
   }
 
   /** The credits this module area will have in the end, at least the required credits. */
@@ -255,7 +272,8 @@ export default class ModuleArea {
       modules,
       this.eliminationLimit,
       this.eliminationCPLimit,
-      this.requiredCredits,
+      this.minCredits,
+      this.maxCredits,
     );
   }
 
@@ -275,7 +293,8 @@ export default class ModuleArea {
       this.modules.map((module) => module.clone()),
       this.eliminationLimit,
       this.eliminationCPLimit,
-      this.requiredCredits,
+      this.minCredits,
+      this.maxCredits,
     );
   }
 
@@ -285,7 +304,8 @@ export default class ModuleArea {
       modules: this.modules.map((module) => module.toObject()),
       eliminationLimit: this.eliminationLimit,
       eliminationCPLimit: this.eliminationCPLimit,
-      requiredCredits: this.requiredCredits,
+      minCredits: this.minCredits,
+      maxCredits: this.maxCredits,
     };
   }
 
@@ -295,7 +315,8 @@ export default class ModuleArea {
       obj.modules.map((moduleObj) => Module.fromObject(moduleObj)),
       obj.eliminationLimit,
       obj.eliminationCPLimit,
-      obj.requiredCredits,
+      obj.minCredits ?? obj.requiredCredits,
+      obj.maxCredits,
     );
   }
 }

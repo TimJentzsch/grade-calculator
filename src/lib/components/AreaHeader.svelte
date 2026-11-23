@@ -45,19 +45,17 @@
       : 'The average grade of this module area',
   );
 
-  /**
-   * The credits the modules are short of the required credits.
-   * For the curriculum, this includes the credits missing in its module areas.
-   */
-  const shortCredits = $derived(Math.max(0, (area.requiredCredits ?? 0) - area.credits));
-  const creditsMissing = $derived(shortCredits > 0);
-
   const creditsTitle = $derived.by(() => {
-    if (area.requiredCredits === undefined) {
-      return `The total credit points of this ${label}`;
+    const title = `The credit points of the modules in this ${label}`;
+    if (area.belowMinCredits) {
+      const missing = (area.minCredits as number) - area.credits;
+      return `${title}, of at least ${area.minCredits} required. ${missing} CP are still missing.`;
     }
-    const title = `The credit points of the modules in this ${label}, of ${area.requiredCredits} required`;
-    return creditsMissing ? `${title}. ${shortCredits} CP are still missing.` : title;
+    if (area.aboveMaxCredits) {
+      const excess = area.credits - (area.maxCredits as number);
+      return `${title}, of at most ${area.maxCredits} allowed. Mark modules with ${excess} CP as additional modules.`;
+    }
+    return title;
   });
 
   const gradeBeforeElimination = $derived(
@@ -100,14 +98,17 @@
       class={[
         'credits-container',
         `${kind}-credits-container`,
-        { 'credits-missing': creditsMissing },
+        { 'credits-warning': area.belowMinCredits || area.aboveMaxCredits },
       ]}
       title={creditsTitle}
     >
-      <span class="{kind}-credits-value">{area.credits}</span
-      >{#if area.requiredCredits !== undefined}<span class="required-credits"
-          >/{area.requiredCredits}</span
-        >{/if}<span class="{kind}-credits-description">{' CP'}</span>
+      <span class="{kind}-credits-value">{area.credits}</span><span
+        class="{kind}-credits-description">{' CP'}</span
+      >{#if area.belowMinCredits}<span class="credit-limit min-credits"
+          >{` < ${area.minCredits} CP`}</span
+        >{:else if area.aboveMaxCredits}<span class="credit-limit max-credits"
+          >{` > ${area.maxCredits} CP`}</span
+        >{/if}
     </div>
   </div>
   <div class="row-controls">
@@ -129,8 +130,8 @@
 </div>
 
 <style>
-  /* The required credits are not reached yet */
-  .credits-missing {
+  /* The credits are below the minimum or above the maximum */
+  .credits-warning {
     color: var(--color-warning);
   }
 </style>

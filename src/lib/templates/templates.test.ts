@@ -5,14 +5,14 @@ import { computerScienceBsc, computerScienceMsc } from './index';
 describe('templates', () => {
   test('the B.Sc. requires 180 CP', () => {
     const curriculum = Curriculum.fromObject(computerScienceBsc);
-    expect(curriculum.requiredCredits).toBe(180);
+    expect(curriculum.minCredits).toBe(180);
     // The electives and the application subject are added by the user
     expect(curriculum.bestCase().credits).toBe(180);
   });
 
   test('the M.Sc. requires 120 CP', () => {
     const curriculum = Curriculum.fromObject(computerScienceMsc);
-    expect(curriculum.requiredCredits).toBe(120);
+    expect(curriculum.minCredits).toBe(120);
     expect(curriculum.bestCase().credits).toBe(120);
   });
 

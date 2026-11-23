@@ -14,14 +14,14 @@ const computerScienceMsc: CurriculumObject = {
   name: 'Computer Science M.Sc. (PO 2023)',
   eliminationLimit: 1,
   eliminationCPLimit: 15,
-  requiredCredits: 120,
+  minCredits: 120,
   moduleAreas: [
-    { name: 'Theoretical Computer Science', requiredCredits: 12, modules: [] },
+    { name: 'Theoretical Computer Science', minCredits: 12, modules: [] },
     { name: 'Graphics and Interaction', modules: [] },
     { name: 'Hardware/Software Systems', modules: [] },
     { name: 'AI & Data', modules: [] },
     { name: 'Software Development Methods and Tools', modules: [] },
-    { name: 'Application Area', requiredCredits: 10, modules: [] },
+    { name: 'Application Area', minCredits: 10, modules: [] },
     {
       name: 'Seminar and Lab',
       modules: [

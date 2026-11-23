@@ -3,7 +3,7 @@ import type { CurriculumObject } from '../model/curriculum.svelte';
 const computerScienceBsc: CurriculumObject = {
   name: 'Computer Science B.Sc. (PO 2018)',
   eliminationCPLimit: 30,
-  requiredCredits: 180,
+  minCredits: 180,
   moduleAreas: [
     {
       name: 'Applied Computer Science',
@@ -121,13 +121,13 @@ const computerScienceBsc: CurriculumObject = {
     {
       name: 'Elective Modules',
       eliminationLimit: 1,
-      requiredCredits: 24,
+      minCredits: 24,
       modules: [],
     },
     {
       name: 'Application Subject',
       eliminationLimit: 1,
-      requiredCredits: 22,
+      minCredits: 22,
       modules: [],
     },
     {

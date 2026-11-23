@@ -659,7 +659,7 @@ describe('ModuleArea', () => {
     });
   });
 
-  describe('required credits', () => {
+  describe('credit limits', () => {
     const moduleArea = () =>
       new ModuleArea(
         'Electives',
@@ -681,7 +681,7 @@ describe('ModuleArea', () => {
       expect(area.plannedCredits).toBe(22);
     });
 
-    test('has no missing credits without required credits', () => {
+    test('has no missing credits without minimum credits', () => {
       const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)]);
       expect(area.missingCredits).toBe(0);
     });
@@ -702,8 +702,45 @@ describe('ModuleArea', () => {
       expect(moduleArea().worstCase().grade).toBeCloseTo(3.4);
     });
 
+    test('is below the minimum credits until they are reached', () => {
+      const area = moduleArea();
+      expect(area.belowMinCredits).toBe(true);
+      area.addModule(new Module('Module 3', 8, 1.0));
+      expect(area.belowMinCredits).toBe(false);
+    });
+
+    test('is above the maximum credits once they are exceeded', () => {
+      const area = moduleArea();
+      area.maxCredits = 12;
+      expect(area.aboveMaxCredits).toBe(false);
+      area.addModule(new Module('Module 3', 1, 1.0));
+      expect(area.aboveMaxCredits).toBe(true);
+    });
+
+    test('the maximum credits do not change the grade range', () => {
+      const area = moduleArea();
+      area.maxCredits = 10;
+      expect(area.bestCase().grade).toBeCloseTo(1.3);
+    });
+
+    test('has no credit warnings without limits', () => {
+      const area = new ModuleArea('Area', [new Module('Module', 6, 2.0)]);
+      expect(area.belowMinCredits).toBe(false);
+      expect(area.aboveMaxCredits).toBe(false);
+    });
+
     test('survives saving and loading', () => {
-      expect(ModuleArea.fromObject(moduleArea().toObject()).requiredCredits).toBe(20);
+      const area = moduleArea();
+      area.maxCredits = 30;
+      const loaded = ModuleArea.fromObject(area.toObject());
+      expect(loaded.minCredits).toBe(20);
+      expect(loaded.maxCredits).toBe(30);
+    });
+
+    test('loads the former required credits as minimum credits', () => {
+      const loaded = ModuleArea.fromObject({ name: 'Electives', modules: [], requiredCredits: 20 });
+      expect(loaded.minCredits).toBe(20);
+      expect(loaded.toObject()).not.toHaveProperty('requiredCredits');
     });
   });
 });
