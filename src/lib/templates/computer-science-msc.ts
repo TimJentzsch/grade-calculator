@@ -4,8 +4,10 @@ import type { CurriculumObject } from '../model/curriculum.svelte';
  * The Computer Science M.Sc. at RWTH Aachen, PO 2023.
  *
  * Electives (58–66 CP, at least 12 CP in three areas, one of them Theoretical Computer Science)
- * and the application area (10–18 CP) are chosen freely, so their modules are added by the user.
- * Only the minimum credits are required per area, the rest follows from the 120 CP in total.
+ * and the application area (10–18 CP) are chosen freely, so their modules are added by the user
+ * (§ 4 (2)). The 58–66 CP span all five elective areas, which the per-area limits can't express,
+ * and neither can the 12 CP in two further areas. They follow from the 120 CP in total instead.
+ * Credits beyond the limits have to be marked as additional modules (ÜPO § 8).
  *
  * If all modules are completed within the standard period of study, one module with at most
  * 15 CP may be eliminated, but not the focus colloquium (§ 8 (5)).
@@ -15,13 +17,14 @@ const computerScienceMsc: CurriculumObject = {
   eliminationLimit: 1,
   eliminationCPLimit: 15,
   minCredits: 120,
+  maxCredits: 120,
   moduleAreas: [
     { name: 'Theoretical Computer Science', minCredits: 12, modules: [] },
     { name: 'Graphics and Interaction', modules: [] },
     { name: 'Hardware/Software Systems', modules: [] },
     { name: 'AI & Data', modules: [] },
     { name: 'Software Development Methods and Tools', modules: [] },
-    { name: 'Application Area', minCredits: 10, modules: [] },
+    { name: 'Application Area', minCredits: 10, maxCredits: 18, modules: [] },
     {
       name: 'Seminar and Lab',
       modules: [
