@@ -273,7 +273,6 @@
         <span id="import-label" class="toolbar-label">RWTH Online</span>
         <div class="toolbar-buttons">
           <Button
-            variant="secondary"
             title={t.toolbar.importTitle}
             onclick={() => notenspiegelInput?.click()}
             disabled={importing}
@@ -318,6 +317,7 @@
         <span id="elimination-label" class="toolbar-label">{t.toolbar.elimination}</span>
         <div class="toolbar-buttons" aria-live="polite">
           <Button
+            variant="secondary"
             title={t.toolbar.autoEliminateTitle}
             onclick={autoElimination}
             disabled={eliminating}
@@ -392,7 +392,7 @@
     gap: var(--space-sm);
   }
 
-  /* The main action, aligned to the right if there is enough space */
+  /* Aligned to the right if there is enough space */
   .elimination-group {
     margin-left: auto;
   }
