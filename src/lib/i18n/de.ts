@@ -24,25 +24,51 @@ const de = {
     'Ohne JavaScript funktioniert diese Seite nicht. ' +
     'Bitte aktiviere es in den Einstellungen oder nutze einen anderen Browser.',
   toolbar: {
-    startFrom: 'Starten mit',
-    emptyCurriculum: 'Leerer Studienplan',
-    emptyCurriculumTitle: 'Einen neuen, leeren Studienplan anlegen',
-    loadTemplateTitle: (name: string) => `Den Studienplan ${name} laden`,
     file: 'Datei',
     load: 'Laden…',
-    loadTitle: 'Einen gespeicherten Studienplan aus einer Datei laden',
+    loadTitle: 'Gespeicherte Noten aus einer Datei laden',
+    loadError: 'Die Datei enthält keine gespeicherten Noten dieses Notenrechners.',
     save: 'Speichern…',
-    saveTitle: 'Den Studienplan in einer Datei speichern',
-    defaultFileName: 'studienplan',
+    saveTitle: 'Deine Noten in einer Datei speichern',
+    defaultFileName: 'noten',
     importNotenspiegel: 'Notenspiegel importieren…',
     importing: 'Importiere…',
     importTitle:
       'Importiere deine Noten aus einem Notenspiegel-PDF aus RWTH Online. ' +
       'Die Datei bleibt in deinem Browser.',
+    curriculum: 'Studienplan',
+    duplicate: 'Als eigenen Studienplan kopieren',
+    duplicateTitle:
+      'Den Studienplan kopieren, um Modulbereiche, Module und Grenzen zu ändern. ' +
+      'Deine Noten bleiben erhalten.',
+    editCurriculum: 'Studienplan bearbeiten',
+    editCurriculumTitle: 'Modulbereiche, Module und Grenzen dieses Studienplans ändern',
+    startOver: 'Neu beginnen',
+    startOverTitle: 'Alle Eingaben entfernen und einen anderen Studienplan wählen',
+    confirmStartOver:
+      'Alle deine Noten und Module entfernen? Das kann nicht rückgängig gemacht werden.',
+    confirmReplace:
+      'Deine bisherigen Noten und Module durch die importierten ersetzen? ' +
+      'Das kann nicht rückgängig gemacht werden.',
     elimination: 'Streichung',
     autoEliminate: 'Automatisch streichen',
     calculating: 'Berechne…',
     autoEliminateTitle: 'Module automatisch so streichen, dass die Note am besten ist',
+  },
+  start: {
+    title: 'Lade deinen Notenspiegel hoch',
+    description:
+      'Exportiere deinen Notenspiegel in RWTH Online als PDF und lade ihn hier hoch. ' +
+      'Dein Studiengang und deine Prüfungsordnung werden automatisch erkannt.',
+    chooseFile: 'PDF auswählen…',
+    dropHint: 'oder hierher ziehen',
+    privacy: 'Die Datei wird nur in deinem Browser gelesen und nirgendwo hochgeladen.',
+    manualTitle: 'Ohne Notenspiegel starten',
+    chooseCurriculum: 'Studienplan wählen',
+    chooseTitle: (name: string) => `Mit dem Studienplan ${name} starten`,
+    otherOptions: 'Weitere Möglichkeiten',
+    custom: 'Eigener Studienplan',
+    customTitle: 'Einen eigenen Studienplan mit Modulbereichen, Modulen und Grenzen anlegen',
   },
   import: {
     success: 'Der Notenspiegel wurde importiert.',
@@ -55,7 +81,8 @@ const de = {
     gradeMismatch: (calculated: string, official: string) =>
       `Die berechnete Note ${calculated} weicht von der Note ${official} im Notenspiegel ab.`,
     unsupported: (program: string | undefined, supported: string) =>
-      `${program ?? 'Dieser Studiengang'} wird noch nicht unterstützt. Unterstützt: ${supported}.`,
+      `${program ?? 'Dieser Studiengang'} wird noch nicht unterstützt. Unterstützt: ${supported}. ` +
+      'Du kannst aber einen eigenen Studienplan anlegen.',
     readErrors: {
       'not-pdf': 'Die Datei ist kein lesbares PDF.',
       'no-table': 'Im PDF wurde keine Tabelle mit Modulen gefunden.',
