@@ -254,16 +254,22 @@ input[type='text'].weight-input {
  * on hover or focus. On touch devices, they are always shown.
  */
 @media (hover: hover) {
-  .module-display-container .row-controls,
+  /* The controls are hidden one by one, so that single ones can stay visible */
+  .module-display-container .row-controls > *,
   .module-display-container .default-weight {
     opacity: 0;
   }
 
   /* Only keyboard focus counts, so that clicking a button doesn't keep them visible */
-  .module-display-container:hover .row-controls,
-  .module-display-container:has(:focus-visible) .row-controls,
+  .module-display-container:hover .row-controls > *,
+  .module-display-container:has(:focus-visible) .row-controls > *,
   .module-display-container:hover .default-weight,
   .module-display-container:has(:focus-visible) .default-weight {
+    opacity: 1;
+  }
+
+  /* Additional modules always show their toggle, so they can be told apart at a glance */
+  .module-display-container.additional .row-controls > .additional-toggle {
     opacity: 1;
   }
 }

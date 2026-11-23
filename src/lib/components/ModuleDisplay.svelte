@@ -96,12 +96,15 @@
     </div>
   </div>
   <div class="row-controls">
-    <IconButton
-      icon="sparkles"
-      label="Mark {name} as an additional module (Zusatzleistung), which doesn't count towards the credits or the grade"
-      pressed={!!module.additional}
-      onclick={() => module.setAdditional(!module.additional)}
-    />
+    <!-- Stays visible without hover for additional modules, see app.css -->
+    <span class="additional-toggle"
+      ><IconButton
+        icon="sparkles"
+        label="Mark {name} as an additional module (Zusatzleistung), which doesn't count towards the credits or the grade"
+        pressed={!!module.additional}
+        onclick={() => module.setAdditional(!module.additional)}
+      /></span
+    >
     <!-- Ungraded modules are the exception, so the toggle is only highlighted for them -->
     <IconButton
       icon="pass-fail"
@@ -118,6 +121,10 @@
   .additional {
     color: var(--color-text-muted);
     font-style: italic;
+  }
+
+  .additional-toggle {
+    display: inline-flex;
   }
 
   .additional :global(input) {
