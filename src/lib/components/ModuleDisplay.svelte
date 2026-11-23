@@ -54,21 +54,26 @@
         bind:value={module.weight}
       /></span
     >
-    <div class={['module-grade-container grade-container', { ungraded: !module.isGraded }]}>
+    <div
+      class={[
+        'module-grade-container grade-container',
+        { ungraded: !module.isGraded, 'no-elimination': module.additional },
+      ]}
+    >
       {#if module.isGraded}
         <!-- Without a grade, the module can't be part of the grade, so it stays eliminated -->
         <!-- Additional modules don't count towards the grade, so they can't be eliminated -->
-        <IconButton
-          icon="ban"
-          label={module.gradeUnknown
-            ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
-            : module.additional
-              ? `${name} can't be eliminated, because it is an additional module`
+        {#if !module.additional}
+          <IconButton
+            icon="ban"
+            label={module.gradeUnknown
+              ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
               : `Eliminate ${name}`}
-          pressed={!!module.eliminated}
-          disabled={module.gradeUnknown || !!module.additional}
-          onclick={() => (module.eliminated = !module.eliminated)}
-        />
+            pressed={!!module.eliminated}
+            disabled={module.gradeUnknown}
+            onclick={() => (module.eliminated = !module.eliminated)}
+          />
+        {/if}
         <GradeInput
           class="inline-input"
           label="Grade of {name}"
@@ -121,6 +126,11 @@
   .additional {
     color: var(--color-text-muted);
     font-style: italic;
+  }
+
+  /* Without the elimination toggle, the grade stays in its column */
+  .no-elimination > :global(*) {
+    grid-column: 2;
   }
 
   .additional-toggle {
