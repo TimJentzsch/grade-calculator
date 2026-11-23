@@ -120,6 +120,8 @@ const computerScienceBsc: CurriculumObject = {
         {
           name: 'Software Project Lab (SPP)',
           credits: 6,
+          // § 10 (4) excludes the SPP from the final grade, but the ZPA counts it:
+          // real Notenspiegels only match their final grade when it counts
         },
         {
           name: 'Proseminar Computer Science',
