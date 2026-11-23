@@ -41,7 +41,7 @@
 
   const gradeTitle = $derived(
     kind === 'curriculum'
-      ? 'The final grade. Only the first decimal place counts, the gray digit is cut off.'
+      ? 'The final grade. Only the first decimal place counts, hover to see the cut off second one.'
       : 'The average grade of this module area',
   );
 
@@ -86,7 +86,8 @@
     <div class="{kind}-grade-container grade-container">
       <span
         class="{kind}-eliminated-grade-value grade eliminated"
-        title="The grade before elimination">{gradeBeforeElimination}</span
+        title="The grade before elimination"
+        >{#if gradeBeforeElimination}<GradeText text={gradeBeforeElimination} />{/if}</span
       ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
         ><GradeText text={area.eliminationGradeText} /></span
       ><span

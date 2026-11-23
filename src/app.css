@@ -418,7 +418,20 @@ header h1 {
   color: var(--color-primary);
 }
 
-/* Decimal places of a grade that are cut off, shown to indicate how close the next grade is */
+/*
+ * Decimal places of a grade that are cut off, which show how close the next grade is.
+ * On devices with a mouse, they are only shown on hover. On touch devices, they are always shown.
+ */
 .truncated-digits {
   color: var(--color-text-muted);
+}
+
+@media (hover: hover) {
+  .truncated-digits {
+    display: none;
+  }
+
+  .grade-container:hover .truncated-digits {
+    display: inline;
+  }
 }
