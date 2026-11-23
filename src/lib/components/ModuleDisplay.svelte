@@ -64,15 +64,18 @@
         <!-- Without a grade, the module can't be part of the grade, so it stays eliminated -->
         <!-- Additional modules don't count towards the grade, so they can't be eliminated -->
         {#if !module.additional}
-          <IconButton
-            icon="ban"
-            label={module.gradeUnknown
-              ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
-              : `Eliminate ${name}`}
-            pressed={!!module.eliminated}
-            disabled={module.gradeUnknown}
-            onclick={() => (module.eliminated = !module.eliminated)}
-          />
+          <!-- Only shown on hover or while eliminated, see app.css -->
+          <span class={['elimination-toggle', { active: module.eliminated }]}
+            ><IconButton
+              icon="ban"
+              label={module.gradeUnknown
+                ? `${name} stays eliminated, because its grade is unknown. Enter the grade to change this.`
+                : `Eliminate ${name}`}
+              pressed={!!module.eliminated}
+              disabled={module.gradeUnknown}
+              onclick={() => (module.eliminated = !module.eliminated)}
+            /></span
+          >
         {/if}
         <GradeInput
           class="inline-input"
@@ -133,7 +136,8 @@
     grid-column: 2;
   }
 
-  .additional-toggle {
+  .additional-toggle,
+  .elimination-toggle {
     display: inline-flex;
   }
 

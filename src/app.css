@@ -250,13 +250,15 @@ input[type='text'].weight-input {
 }
 
 /*
- * On devices with a mouse, the controls and the default weight of a module are only shown
- * on hover or focus. On touch devices, they are always shown.
+ * On devices with a mouse, the controls, the default weight and the elimination toggle of a
+ * module are only shown on hover or focus, the elimination toggle also while it is eliminated.
+ * On touch devices, they are always shown.
  */
 @media (hover: hover) {
   /* The controls are hidden one by one, so that single ones can stay visible */
   .module-display-container .row-controls > *,
-  .module-display-container .default-weight {
+  .module-display-container .default-weight,
+  .module-display-container .elimination-toggle:not(.active) {
     opacity: 0;
   }
 
@@ -264,7 +266,9 @@ input[type='text'].weight-input {
   .module-display-container:hover .row-controls > *,
   .module-display-container:has(:focus-visible) .row-controls > *,
   .module-display-container:hover .default-weight,
-  .module-display-container:has(:focus-visible) .default-weight {
+  .module-display-container:has(:focus-visible) .default-weight,
+  .module-display-container:hover .elimination-toggle,
+  .module-display-container:has(:focus-visible) .elimination-toggle {
     opacity: 1;
   }
 
