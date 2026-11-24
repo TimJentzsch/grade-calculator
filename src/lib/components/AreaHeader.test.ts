@@ -1,20 +1,33 @@
 import { render } from 'svelte/server';
 import { describe, expect, test } from 'vitest';
+import { disabledEliminationContext } from '#lib/elimination-context.ts';
 import { i18nContext } from '#lib/i18n/index.ts';
 import Curriculum from '#lib/model/curriculum.svelte.ts';
 import ModuleArea from '#lib/model/module-area.svelte.ts';
 import Module from '#lib/model/module.svelte.ts';
 import AreaHeader from './AreaHeader.svelte';
 
-function html(area: ModuleArea | Curriculum): string {
+function html(area: ModuleArea | Curriculum, eliminationEnabled = true): string {
   const kind = area instanceof Curriculum ? 'curriculum' : 'module-area';
-  return render(AreaHeader, {
-    props: { kind, area },
-    context: i18nContext('en'),
-  }).body;
+  const context = new Map<symbol, unknown>([
+    ...i18nContext('en'),
+    ...(eliminationEnabled ? [] : disabledEliminationContext()),
+  ]);
+  return render(AreaHeader, { props: { kind, area }, context }).body;
 }
 
 describe('AreaHeader', () => {
+  test('ignores the elimination outside the Regelstudienzeit', () => {
+    const area = new ModuleArea('Area', [new Module('A', 6, 1.0), new Module('B', 6, 3.0, 1)]);
+    area.modules[1].eliminated = true;
+    expect(html(area)).toContain('Elimination');
+    expect(html(area)).toMatch(/grade-value[^>]*>(<[^>]*>)*1\.0</);
+    const body = html(area, false);
+    expect(body).not.toContain('Elimination');
+    expect(body).not.toContain('elimination-container');
+    expect(body).toMatch(/grade-value[^>]*>(<[^>]*>)*2\.0</);
+  });
+
   test('shows the credits', () => {
     const body = html(new ModuleArea('Area', [new Module('Module', 6, 2.0)]));
     expect(body).toMatch(/module-area-credits-value[^"]*">6</);

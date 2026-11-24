@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getEliminationContext } from '#lib/elimination-context.ts';
   import { formatGrade } from '#lib/grade.ts';
   import { getI18n } from '#lib/i18n/index.ts';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
@@ -18,14 +19,20 @@
 
   const i18n = getI18n();
   const t = $derived(i18n.t);
+  const elimination = getEliminationContext();
 
   /**
    * A limit of the possible grade range, e.g. `1.4`.
    * Only shows the first decimal place like the final grade, as the user can't change the range.
    */
   function formatLimit(limit: Curriculum | ModuleArea): string {
-    const grade = limit.eliminationGrade;
-    return grade === undefined ? limit.eliminationGradeText : formatGrade(grade);
+    const grade = elimination.enabled ? limit.eliminationGrade : limit.grade;
+    return grade === undefined ? gradeTextOf(limit) : formatGrade(grade);
+  }
+
+  /** The grade text, ignoring eliminated modules if elimination isn't enabled. */
+  function gradeTextOf(limit: Curriculum | ModuleArea): string {
+    return elimination.enabled ? limit.eliminationGradeText : limit.gradeText;
   }
 
   const gradeLimits = $derived.by(() => {
@@ -57,7 +64,7 @@
   });
 
   const gradeBeforeElimination = $derived(
-    area.gradeText !== area.eliminationGradeText ? area.gradeText : '',
+    elimination.enabled && area.gradeText !== area.eliminationGradeText ? area.gradeText : '',
   );
 </script>
 
@@ -72,13 +79,15 @@
     {:else}
       <h3 class="module-area-name">{area.name ?? ''}</h3>
     {/if}
-    <EliminationInfo
-      {kind}
-      eliminationLimit={area.eliminationLimit}
-      eliminationCPLimit={area.eliminationCPLimit}
-      eliminatedModuleCount={area.eliminatedModuleCount}
-      eliminatedCredits={area.eliminatedCredits}
-    />
+    {#if elimination.enabled}
+      <EliminationInfo
+        {kind}
+        eliminationLimit={area.eliminationLimit}
+        eliminationCPLimit={area.eliminationCPLimit}
+        eliminatedModuleCount={area.eliminatedModuleCount}
+        eliminatedCredits={area.eliminatedCredits}
+      />
+    {/if}
   </div>
   <div class="row-details">
     <div class="{kind}-grade-container grade-container">
@@ -87,7 +96,7 @@
         title={t.area.gradeBeforeEliminationTitle}
         >{#if gradeBeforeElimination}<GradeText text={gradeBeforeElimination} />{/if}</span
       ><span class="{kind}-grade-value grade-value grade" title={gradeTitle}
-        ><GradeText text={area.eliminationGradeText} /></span
+        ><GradeText text={gradeTextOf(area)} /></span
       ><span class="{kind}-grade-limits grade-limits grade" title={t.area.gradeLimitsTitle(kind)}
         >{gradeLimits}</span
       >
