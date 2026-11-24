@@ -4,6 +4,7 @@
   import DefinitionEditor from '#lib/components/DefinitionEditor.svelte';
   import Notice from '#lib/components/Notice.svelte';
   import StartView from '#lib/components/StartView.svelte';
+  import Switch from '#lib/components/Switch.svelte';
   import runAutoElimination from '#lib/auto-elimination.ts';
   import type { CurriculumDefinition } from '#lib/curricula/definition.ts';
   import { isBuiltIn } from '#lib/curricula/index.ts';
@@ -319,23 +320,21 @@
         aria-labelledby="regelstudienzeit-label"
       >
         <span id="regelstudienzeit-label" class="toolbar-label">{t.toolbar.regelstudienzeit}</span>
-        <div class="toolbar-buttons" aria-live="polite">
-          <label class="toggle"
-            ><input
-              type="checkbox"
-              aria-describedby="regelstudienzeit-hint"
-              bind:checked={curriculum.regelstudienzeit}
-            />{t.toolbar.regelstudienzeitToggle}</label
-          >
-          <Button
-            variant="secondary"
-            title={t.toolbar.autoEliminateTitle}
-            onclick={autoElimination}
-            disabled={eliminating || !curriculum.regelstudienzeit}
-            >{eliminating ? t.toolbar.calculating : t.toolbar.autoEliminate}</Button
-          >
+        <div class="regelstudienzeit-row">
+          <div class="toolbar-buttons" aria-live="polite">
+            <Switch bind:checked={curriculum.regelstudienzeit} describedby="regelstudienzeit-hint"
+              >{t.toolbar.regelstudienzeitToggle}</Switch
+            >
+            <Button
+              variant="secondary"
+              title={t.toolbar.autoEliminateTitle}
+              onclick={autoElimination}
+              disabled={eliminating || !curriculum.regelstudienzeit}
+              >{eliminating ? t.toolbar.calculating : t.toolbar.autoEliminate}</Button
+            >
+          </div>
+          <p id="regelstudienzeit-hint" class="toolbar-hint">{t.toolbar.regelstudienzeitHint}</p>
         </div>
-        <p id="regelstudienzeit-hint" class="toolbar-hint">{t.toolbar.regelstudienzeitHint}</p>
       </div>
     </div>
   {/if}
@@ -404,19 +403,23 @@
     gap: var(--space-sm);
   }
 
-  /* Aligned to the right if there is enough space */
+  /* A row of its own below the other groups, as it explains the controls next to them */
   .regelstudienzeit-group {
-    margin-left: auto;
+    flex-basis: 100%;
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-border);
   }
 
-  .toggle {
-    display: inline-flex;
+  .regelstudienzeit-row {
+    display: flex;
+    flex-flow: row wrap;
     align-items: center;
-    gap: var(--space-xs);
+    gap: var(--space-sm) var(--space-lg);
   }
 
   .toolbar-hint {
-    max-width: 36em;
+    flex: 1 1 20em;
+    max-width: 40em;
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--font-size-sm);
