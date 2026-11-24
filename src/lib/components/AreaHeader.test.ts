@@ -18,12 +18,11 @@ function html(area: ModuleArea | Curriculum, eliminationEnabled = true): string 
 
 describe('AreaHeader', () => {
   test('ignores the elimination outside the Regelstudienzeit', () => {
-    const area = new ModuleArea('Area', [new Module('A', 6, 1.0), new Module('B', 6, 3.0, 1)]);
+    const area = new ModuleArea('Area', [new Module('A', 6, 1.0), new Module('B', 6, 3.0, 1)], 0);
     area.modules[1].eliminated = true;
-    expect(html(area)).toContain('Elimination');
+    expect(html(area)).toContain('No elimination allowed');
     expect(html(area)).toMatch(/grade-value[^>]*>(<[^>]*>)*1\.0</);
     const body = html(area, false);
-    expect(body).not.toContain('Elimination');
     expect(body).not.toContain('elimination-container');
     expect(body).toMatch(/grade-value[^>]*>(<[^>]*>)*2\.0</);
   });

@@ -41,24 +41,23 @@
   const moduleNoun = $derived(t.elimination.modules(eliminationLimit || eliminatedModuleCount));
 </script>
 
-<div class="{kind}-elimination elimination-container">
-  {#if noEliminationAllowed}
-    <span class="elimination-description" class:invalid-elimination={eliminatedModuleCount > 0}
-      >{t.elimination.noneAllowed}</span
-    >
-  {:else}
-    <span class="elimination-description">{t.elimination.label}</span><span
-      class="elimination-cp-container"
-      class:invalid-elimination={invalidCP}
-      ><span class="elimination-cp">{eliminatedCredits}</span><span class="elimination-cp-limit"
-        >{eliminationCPLimit ? `/${eliminationCPLimit}` : ''}</span
-      ><span class="elimination-cp-description">{' CP'}</span></span
-    ><span class="elimination-seperator">{', '}</span><span
-      class="elimination-count-container"
-      class:invalid-elimination={invalidCount}
-      ><span class="elimination-count">{eliminatedModuleCount}</span><span
-        class="elimination-count-limit">{eliminationLimit ? `/${eliminationLimit}` : ''}</span
-      ><span class="elimination-count-description">{` ${moduleNoun}`}</span></span
-    >
-  {/if}
-</div>
+<!-- Like the credit limits, the elimination is only shown if it exceeds the limits -->
+{#if noEliminationAllowed && eliminatedModuleCount > 0}
+  <div class="{kind}-elimination elimination-container invalid-elimination">
+    <span class="elimination-description">{t.elimination.noneAllowed}</span>
+  </div>
+{:else if invalidCP || invalidCount}
+  <div class="{kind}-elimination elimination-container invalid-elimination">
+    <span class="elimination-description">{t.elimination.label}</span>{#if invalidCP}<span
+        class="elimination-cp-container"
+        ><span class="elimination-cp">{eliminatedCredits}</span><span class="elimination-cp-limit"
+          >{`/${eliminationCPLimit}`}</span
+        ><span class="elimination-cp-description">{' CP'}</span></span
+      >{/if}{#if invalidCP && invalidCount}<span class="elimination-seperator">{', '}</span
+      >{/if}{#if invalidCount}<span class="elimination-count-container"
+        ><span class="elimination-count">{eliminatedModuleCount}</span><span
+          class="elimination-count-limit">{`/${eliminationLimit}`}</span
+        ><span class="elimination-count-description">{` ${moduleNoun}`}</span></span
+      >{/if}
+  </div>
+{/if}
