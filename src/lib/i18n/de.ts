@@ -23,15 +23,28 @@ const de = {
     'Dein Browser unterstützt kein JavaScript oder du hast es blockiert. ' +
     'Ohne JavaScript funktioniert diese Seite nicht. ' +
     'Bitte aktiviere es in den Einstellungen oder nutze einen anderen Browser.',
+  footer: {
+    disclaimer:
+      'Alle Angaben ohne Gewähr. Maßgeblich sind allein deine Prüfungsordnung und die ' +
+      'offiziellen Angaben der RWTH Aachen.',
+    unofficial:
+      'Dies ist ein privates Projekt und kein offizielles Angebot der RWTH Aachen University.',
+    privacy:
+      'Deine Noten werden nur lokal in deinem Browser gespeichert und nicht an einen Server ' +
+      'übertragen.',
+    linksLabel: 'Projekt-Links',
+    github: 'Quellcode auf GitHub',
+    reportIssue: 'Fehler melden',
+  },
   toolbar: {
     file: 'Datei',
-    load: 'Laden…',
+    load: 'Laden',
     loadTitle: 'Gespeicherte Noten aus einer Datei laden',
     loadError: 'Die Datei enthält keine gespeicherten Noten dieses Notenrechners.',
-    save: 'Speichern…',
+    save: 'Speichern',
     saveTitle: 'Deine Noten in einer Datei speichern',
     defaultFileName: 'noten',
-    importNotenspiegel: 'Notenspiegel importieren…',
+    importNotenspiegel: 'Notenspiegel importieren',
     importing: 'Importiere…',
     importTitle:
       'Importiere deine Noten aus einem Notenspiegel-PDF aus RWTH Online. ' +
@@ -59,13 +72,13 @@ const de = {
     autoEliminateTitle: 'Module automatisch so streichen, dass die Note am besten ist',
   },
   start: {
-    title: 'Lade deinen Notenspiegel hoch',
+    title: 'Importiere deinen Notenspiegel',
     description:
-      'Exportiere deinen Notenspiegel in RWTH Online als PDF und lade ihn hier hoch. ' +
+      'Exportiere deinen Notenspiegel in RWTH Online als PDF und wähle ihn hier aus. ' +
       'Dein Studiengang und deine Prüfungsordnung werden automatisch erkannt.',
-    chooseFile: 'PDF auswählen…',
+    chooseFile: 'PDF auswählen',
     dropHint: 'oder hierher ziehen',
-    privacy: 'Die Datei wird nur in deinem Browser gelesen und nirgendwo hochgeladen.',
+    privacy: 'Die Datei wird nur in deinem Browser gelesen und verlässt nie dein Gerät.',
     manualTitle: 'Ohne Notenspiegel starten',
     chooseCurriculum: 'Studienplan wählen',
     chooseTitle: (name: string) => `Mit dem Studienplan ${name} starten`,

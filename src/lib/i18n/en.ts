@@ -20,15 +20,25 @@ const en: Messages = {
     'Your browser does not support JavaScript or you have blocked script execution. ' +
     'This website will not work without JavaScript. ' +
     'Please enable it in your settings or switch to another browser.',
+  footer: {
+    disclaimer:
+      'All information is provided without guarantee. Only your examination regulations ' +
+      'and the official information of RWTH Aachen University are authoritative.',
+    unofficial: 'This is a private project and not an official service of RWTH Aachen University.',
+    privacy: 'Your grades are only stored locally in your browser and are never sent to a server.',
+    linksLabel: 'Project links',
+    github: 'Source code on GitHub',
+    reportIssue: 'Report an issue',
+  },
   toolbar: {
     file: 'File',
-    load: 'Load…',
+    load: 'Load',
     loadTitle: 'Load saved grades from a file',
     loadError: "The file doesn't contain grades saved by this grade calculator.",
-    save: 'Save…',
+    save: 'Save',
     saveTitle: 'Save your grades to a file',
     defaultFileName: 'grades',
-    importNotenspiegel: 'Import Notenspiegel…',
+    importNotenspiegel: 'Import Notenspiegel',
     importing: 'Importing…',
     importTitle:
       'Import your grades from a Notenspiegel PDF exported from RWTH Online. ' +
@@ -55,13 +65,13 @@ const en: Messages = {
     autoEliminateTitle: 'Automatically eliminate modules for the best grade',
   },
   start: {
-    title: 'Upload your Notenspiegel',
+    title: 'Import your Notenspiegel',
     description:
-      'Export your Notenspiegel from RWTH Online as a PDF and upload it here. ' +
+      'Export your Notenspiegel from RWTH Online as a PDF and select it here. ' +
       'Your course of study and its examination regulations are detected automatically.',
-    chooseFile: 'Choose PDF…',
+    chooseFile: 'Choose PDF',
     dropHint: 'or drop it here',
-    privacy: 'The file is only read in your browser and never uploaded.',
+    privacy: 'The file is only read in your browser and never leaves your device.',
     manualTitle: 'Start without a Notenspiegel',
     chooseCurriculum: 'Choose a curriculum',
     chooseTitle: (name) => `Start with the ${name} curriculum`,
