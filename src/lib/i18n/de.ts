@@ -53,8 +53,7 @@ const de = {
     regelstudienzeit: 'Regelstudienzeit',
     regelstudienzeitToggle: 'Abschluss in Regelstudienzeit',
     regelstudienzeitHint:
-      'Schließt du dein Studium in der Regelstudienzeit ab (oder wirst es voraussichtlich), ' +
-      'darfst du einige deiner Noten streichen.',
+      'Schließt du dein Studium in der Regelstudienzeit ab, darfst du einige deiner Noten streichen.',
     autoEliminate: 'Automatisch streichen',
     calculating: 'Berechne…',
     autoEliminateTitle: 'Module automatisch so streichen, dass die Note am besten ist',

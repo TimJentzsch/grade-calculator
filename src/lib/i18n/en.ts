@@ -48,8 +48,8 @@ const en: Messages = {
     regelstudienzeit: 'Regelstudienzeit',
     regelstudienzeitToggle: 'Graduating within Regelstudienzeit',
     regelstudienzeitHint:
-      'If you complete (or expect to complete) your studies within the standard period of ' +
-      'study (Regelstudienzeit), you may eliminate some of your grades.',
+      'If you complete your studies within the standard period of study (Regelstudienzeit), ' +
+      'you may eliminate some of your grades.',
     autoEliminate: 'Auto-eliminate',
     calculating: 'Calculating…',
     autoEliminateTitle: 'Automatically eliminate modules for the best grade',
