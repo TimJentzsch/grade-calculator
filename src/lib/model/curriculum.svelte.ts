@@ -20,6 +20,11 @@ export default class Curriculum {
   eliminationCPLimit: number | undefined = $state();
   minCredits: number | undefined = $state();
   maxCredits: number | undefined = $state();
+  /**
+   * Whether the student completes the studies in the standard period of study
+   * (Regelstudienzeit). Only then can grades be eliminated.
+   */
+  regelstudienzeit = $state(false);
 
   /**
    * Creates a new curriculum.
@@ -267,9 +272,10 @@ export default class Curriculum {
     });
   }
 
-  /** Copies the reference to the curriculum definition to the given curriculum. */
+  /** Copies the curriculum definition and the Regelstudienzeit to the given curriculum. */
   private withDefinition(curriculum: Curriculum): Curriculum {
     curriculum.definition = this.definition;
+    curriculum.regelstudienzeit = this.regelstudienzeit;
     return curriculum;
   }
 

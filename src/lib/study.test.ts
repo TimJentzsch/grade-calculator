@@ -43,6 +43,7 @@ const study: StudyObject = {
       { name: 'Y', credits: 6, grade: 1.0, additional: true },
     ],
   },
+  regelstudienzeit: true,
 };
 
 describe('emptyStudy', () => {
@@ -107,10 +108,24 @@ describe('buildCurriculum', () => {
     expect(built.moduleAreas[0].modules.map((module) => module.name)).toEqual(['A', 'B', 'C']);
   });
 
+  test('takes the Regelstudienzeit from the study', () => {
+    expect(buildCurriculum(custom, { ...study, regelstudienzeit: false }).regelstudienzeit).toBe(
+      false,
+    );
+  });
+
+  test('assumes the Regelstudienzeit if modules are eliminated', () => {
+    expect(
+      buildCurriculum(custom, { ...study, regelstudienzeit: undefined }).regelstudienzeit,
+    ).toBe(true);
+    expect(buildCurriculum(custom, emptyStudy(custom)).regelstudienzeit).toBe(false);
+  });
+
   test('keeps the definition in copies', () => {
     expect(curriculum.clone().definition).toBe(custom);
     expect(curriculum.bestCase().moduleAreas[1].openChoice).toBe(true);
     expect(curriculum.clone().modules[0].definitionId).toBe('a');
+    expect(curriculum.clone().regelstudienzeit).toBe(true);
   });
 });
 
@@ -132,7 +147,7 @@ describe('toStudy', () => {
     const changed = toStudy(
       buildCurriculum(computerScienceBsc2018, emptyStudy(computerScienceBsc2018)),
     );
-    expect(changed).toEqual(emptyStudy(computerScienceBsc2018));
+    expect(changed).toEqual({ ...emptyStudy(computerScienceBsc2018), regelstudienzeit: false });
   });
 
   test('requires a definition', () => {

@@ -36,6 +36,7 @@ const study: StudyObject = {
   curriculum: { id: 'rwth-computer-science-bsc-2018' },
   results: { progra: { grade: 1.7 } },
   chosenModules: { electives: [{ name: 'Module', credits: 6, grade: 1.7 }] },
+  regelstudienzeit: true,
 };
 
 const customStudy: StudyObject = {
@@ -80,6 +81,7 @@ describe('storage', () => {
     ['an unknown version', JSON.stringify({ ...study, version: 2 })],
     ['an unknown curriculum', JSON.stringify({ ...study, curriculum: { id: 'unknown' } })],
     ['missing results', JSON.stringify({ ...study, results: undefined })],
+    ['an invalid Regelstudienzeit', JSON.stringify({ ...study, regelstudienzeit: 'yes' })],
     [
       'a custom curriculum without areas',
       JSON.stringify({ ...customStudy, curriculum: { custom: { id: 'custom' } } }),

@@ -26,6 +26,11 @@ export interface StudyObject {
   results: Record<string, ModuleResult>;
   /** The modules chosen by the user, by area id. */
   chosenModules: Record<string, ChosenModule[]>;
+  /**
+   * Whether the student completes the studies in the Regelstudienzeit, which allows eliminating
+   * grades. If missing, e.g. in older files, it is assumed when any module is eliminated.
+   */
+  regelstudienzeit?: boolean;
 }
 
 /** A study without any results for the given curriculum. */
@@ -94,6 +99,7 @@ export function buildCurriculum(definition: CurriculumDefinition, study: StudyOb
     definition.maxCredits,
   );
   curriculum.definition = definition;
+  curriculum.regelstudienzeit = study.regelstudienzeit ?? curriculum.eliminatedModuleCount > 0;
   return curriculum;
 }
 
@@ -115,7 +121,10 @@ export function toStudy(curriculum: Curriculum): StudyObject {
   if (!definition) {
     throw new Error('The curriculum has no definition.');
   }
-  const study = emptyStudy(definition);
+  const study: StudyObject = {
+    ...emptyStudy(definition),
+    regelstudienzeit: curriculum.regelstudienzeit,
+  };
 
   for (const moduleArea of curriculum.moduleAreas) {
     const chosen: ChosenModule[] = [];
@@ -173,7 +182,8 @@ export function parseStudy(value: unknown): StudyObject | undefined {
     !isRecord(value.curriculum) ||
     !isRecord(value.results) ||
     !isRecord(value.chosenModules) ||
-    !Object.values(value.chosenModules).every(Array.isArray)
+    !Object.values(value.chosenModules).every(Array.isArray) ||
+    !['boolean', 'undefined'].includes(typeof value.regelstudienzeit)
   ) {
     return undefined;
   }
