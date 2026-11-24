@@ -24,6 +24,11 @@
    */
   const languageNames: Record<Locale, string> = { de: 'Deutsch', en: 'English' };
 
+  const REPOSITORY_URL = 'https://github.com/TimJentzsch/grade-calculator';
+  /** The year of the first release, the copyright notice spans from it to the current year. */
+  const COPYRIGHT_START_YEAR = 2020;
+  const currentYear = new Date().getFullYear();
+
   // Client-side navigation doesn't rerender the `<html>` element
   $effect(() => {
     document.documentElement.lang = data.locale;
@@ -72,7 +77,7 @@
       </ul>
       <a
         class="github-link"
-        href="https://github.com/TimJentzsch/grade-calculator"
+        href={REPOSITORY_URL}
         title={t.header.githubTitle}
         aria-label={t.header.githubLabel}
       >
@@ -88,7 +93,67 @@
 
 {@render children()}
 
+<footer>
+  <div id="footer-content">
+    <p class="disclaimer">{t.footer.disclaimer}</p>
+    <p>{t.footer.unofficial} {t.footer.privacy}</p>
+    <div class="footer-bottom">
+      <p>© {COPYRIGHT_START_YEAR}–{currentYear} Tim Jentzsch</p>
+      <nav aria-label={t.footer.linksLabel}>
+        <ul class="footer-links">
+          <li><a href={REPOSITORY_URL}>{t.footer.github}</a></li>
+          <li><a href="{REPOSITORY_URL}/issues">{t.footer.reportIssue}</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</footer>
+
 <style>
+  footer {
+    margin-top: var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-header);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+  }
+
+  #footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg) var(--space-md);
+    margin: auto;
+    max-width: 1100px;
+  }
+
+  .disclaimer {
+    color: var(--color-text);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-lg);
+  }
+
+  .footer-links {
+    display: flex;
+    flex-flow: row wrap;
+    gap: var(--space-lg);
+    list-style: none;
+  }
+
+  .footer-links a {
+    color: var(--color-text-muted);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-text);
+  }
+
   /* Only the app's purpose is highlighted, the university is secondary */
   .title-university {
     color: var(--color-text);

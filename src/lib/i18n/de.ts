@@ -23,6 +23,19 @@ const de = {
     'Dein Browser unterstützt kein JavaScript oder du hast es blockiert. ' +
     'Ohne JavaScript funktioniert diese Seite nicht. ' +
     'Bitte aktiviere es in den Einstellungen oder nutze einen anderen Browser.',
+  footer: {
+    disclaimer:
+      'Alle Angaben ohne Gewähr. Maßgeblich sind allein deine Prüfungsordnung und die ' +
+      'offiziellen Angaben der RWTH Aachen.',
+    unofficial:
+      'Dies ist ein privates Projekt und kein offizielles Angebot der RWTH Aachen University.',
+    privacy:
+      'Deine Noten werden nur lokal in deinem Browser gespeichert und nicht an einen Server ' +
+      'übertragen.',
+    linksLabel: 'Projekt-Links',
+    github: 'Quellcode auf GitHub',
+    reportIssue: 'Fehler melden',
+  },
   toolbar: {
     file: 'Datei',
     load: 'Laden…',

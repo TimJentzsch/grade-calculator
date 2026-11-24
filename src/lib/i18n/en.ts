@@ -20,6 +20,16 @@ const en: Messages = {
     'Your browser does not support JavaScript or you have blocked script execution. ' +
     'This website will not work without JavaScript. ' +
     'Please enable it in your settings or switch to another browser.',
+  footer: {
+    disclaimer:
+      'All information is provided without guarantee. Only your examination regulations ' +
+      'and the official information of RWTH Aachen University are authoritative.',
+    unofficial: 'This is a private project and not an official service of RWTH Aachen University.',
+    privacy: 'Your grades are only stored locally in your browser and are never sent to a server.',
+    linksLabel: 'Project links',
+    github: 'Source code on GitHub',
+    reportIssue: 'Report an issue',
+  },
   toolbar: {
     file: 'File',
     load: 'Load…',
