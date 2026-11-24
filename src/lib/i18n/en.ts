@@ -32,13 +32,13 @@ const en: Messages = {
   },
   toolbar: {
     file: 'File',
-    load: 'Load…',
+    load: 'Load',
     loadTitle: 'Load saved grades from a file',
     loadError: "The file doesn't contain grades saved by this grade calculator.",
-    save: 'Save…',
+    save: 'Save',
     saveTitle: 'Save your grades to a file',
     defaultFileName: 'grades',
-    importNotenspiegel: 'Import Notenspiegel…',
+    importNotenspiegel: 'Import Notenspiegel',
     importing: 'Importing…',
     importTitle:
       'Import your grades from a Notenspiegel PDF exported from RWTH Online. ' +
@@ -69,7 +69,7 @@ const en: Messages = {
     description:
       'Export your Notenspiegel from RWTH Online as a PDF and select it here. ' +
       'Your course of study and its examination regulations are detected automatically.',
-    chooseFile: 'Choose PDF…',
+    chooseFile: 'Choose PDF',
     dropHint: 'or drop it here',
     privacy: 'The file is only read in your browser and never leaves your device.',
     manualTitle: 'Start without a Notenspiegel',

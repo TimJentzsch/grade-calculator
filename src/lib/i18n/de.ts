@@ -38,13 +38,13 @@ const de = {
   },
   toolbar: {
     file: 'Datei',
-    load: 'Laden…',
+    load: 'Laden',
     loadTitle: 'Gespeicherte Noten aus einer Datei laden',
     loadError: 'Die Datei enthält keine gespeicherten Noten dieses Notenrechners.',
-    save: 'Speichern…',
+    save: 'Speichern',
     saveTitle: 'Deine Noten in einer Datei speichern',
     defaultFileName: 'noten',
-    importNotenspiegel: 'Notenspiegel importieren…',
+    importNotenspiegel: 'Notenspiegel importieren',
     importing: 'Importiere…',
     importTitle:
       'Importiere deine Noten aus einem Notenspiegel-PDF aus RWTH Online. ' +
@@ -76,7 +76,7 @@ const de = {
     description:
       'Exportiere deinen Notenspiegel in RWTH Online als PDF und wähle ihn hier aus. ' +
       'Dein Studiengang und deine Prüfungsordnung werden automatisch erkannt.',
-    chooseFile: 'PDF auswählen…',
+    chooseFile: 'PDF auswählen',
     dropHint: 'oder hierher ziehen',
     privacy: 'Die Datei wird nur in deinem Browser gelesen und verlässt nie dein Gerät.',
     manualTitle: 'Ohne Notenspiegel starten',
