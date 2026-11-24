@@ -65,13 +65,13 @@ const en: Messages = {
     autoEliminateTitle: 'Automatically eliminate modules for the best grade',
   },
   start: {
-    title: 'Upload your Notenspiegel',
+    title: 'Import your Notenspiegel',
     description:
-      'Export your Notenspiegel from RWTH Online as a PDF and upload it here. ' +
+      'Export your Notenspiegel from RWTH Online as a PDF and select it here. ' +
       'Your course of study and its examination regulations are detected automatically.',
     chooseFile: 'Choose PDF…',
     dropHint: 'or drop it here',
-    privacy: 'The file is only read in your browser and never uploaded.',
+    privacy: 'The file is only read in your browser and never leaves your device.',
     manualTitle: 'Start without a Notenspiegel',
     chooseCurriculum: 'Choose a curriculum',
     chooseTitle: (name) => `Start with the ${name} curriculum`,

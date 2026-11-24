@@ -50,12 +50,12 @@
 <div class="start">
   <section
     class={['drop-zone', { dragging }]}
-    aria-labelledby="upload-heading"
+    aria-labelledby="import-heading"
     {ondragover}
     ondragleave={() => (dragging = false)}
     {ondrop}
   >
-    <h2 id="upload-heading">{t.start.title}</h2>
+    <h2 id="import-heading">{t.start.title}</h2>
     <p>{t.start.description}</p>
     <div class="drop-actions">
       <Button onclick={() => fileInput?.click()} disabled={importing}

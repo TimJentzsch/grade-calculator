@@ -72,13 +72,13 @@ const de = {
     autoEliminateTitle: 'Module automatisch so streichen, dass die Note am besten ist',
   },
   start: {
-    title: 'Lade deinen Notenspiegel hoch',
+    title: 'Importiere deinen Notenspiegel',
     description:
-      'Exportiere deinen Notenspiegel in RWTH Online als PDF und lade ihn hier hoch. ' +
+      'Exportiere deinen Notenspiegel in RWTH Online als PDF und wähle ihn hier aus. ' +
       'Dein Studiengang und deine Prüfungsordnung werden automatisch erkannt.',
     chooseFile: 'PDF auswählen…',
     dropHint: 'oder hierher ziehen',
-    privacy: 'Die Datei wird nur in deinem Browser gelesen und nirgendwo hochgeladen.',
+    privacy: 'Die Datei wird nur in deinem Browser gelesen und verlässt nie dein Gerät.',
     manualTitle: 'Ohne Notenspiegel starten',
     chooseCurriculum: 'Studienplan wählen',
     chooseTitle: (name: string) => `Mit dem Studienplan ${name} starten`,
