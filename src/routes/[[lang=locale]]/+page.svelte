@@ -313,17 +313,29 @@
           >
         </div>
       </div>
-      <div class="toolbar-group elimination-group" role="group" aria-labelledby="elimination-label">
-        <span id="elimination-label" class="toolbar-label">{t.toolbar.elimination}</span>
+      <div
+        class="toolbar-group regelstudienzeit-group"
+        role="group"
+        aria-labelledby="regelstudienzeit-label"
+      >
+        <span id="regelstudienzeit-label" class="toolbar-label">{t.toolbar.regelstudienzeit}</span>
         <div class="toolbar-buttons" aria-live="polite">
+          <label class="toggle"
+            ><input
+              type="checkbox"
+              aria-describedby="regelstudienzeit-hint"
+              bind:checked={curriculum.regelstudienzeit}
+            />{t.toolbar.regelstudienzeitToggle}</label
+          >
           <Button
             variant="secondary"
             title={t.toolbar.autoEliminateTitle}
             onclick={autoElimination}
-            disabled={eliminating}
+            disabled={eliminating || !curriculum.regelstudienzeit}
             >{eliminating ? t.toolbar.calculating : t.toolbar.autoEliminate}</Button
           >
         </div>
+        <p id="regelstudienzeit-hint" class="toolbar-hint">{t.toolbar.regelstudienzeitHint}</p>
       </div>
     </div>
   {/if}
@@ -393,7 +405,20 @@
   }
 
   /* Aligned to the right if there is enough space */
-  .elimination-group {
+  .regelstudienzeit-group {
     margin-left: auto;
+  }
+
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .toolbar-hint {
+    max-width: 36em;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
   }
 </style>
