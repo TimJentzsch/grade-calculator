@@ -45,7 +45,11 @@ const en: Messages = {
     confirmStartOver: "Remove all your grades and modules? This can't be undone.",
     confirmReplace:
       "Replace your current grades and modules with the imported ones? This can't be undone.",
-    elimination: 'Elimination',
+    regelstudienzeit: 'Regelstudienzeit',
+    regelstudienzeitToggle: 'Graduating within Regelstudienzeit',
+    regelstudienzeitHint:
+      'If you complete your studies within the standard period of study (Regelstudienzeit), ' +
+      'you may eliminate some of your grades.',
     autoEliminate: 'Auto-eliminate',
     calculating: 'Calculating…',
     autoEliminateTitle: 'Automatically eliminate modules for the best grade',

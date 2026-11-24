@@ -21,4 +21,5 @@
   /* Border radii */
   --radius-sm: 0.25rem; /* 4px */
   --radius-md: 0.375rem; /* 6px */
+  --radius-full: 9999px; /* Fully rounded, e.g. pills and circles */
 }

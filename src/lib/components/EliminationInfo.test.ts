@@ -23,35 +23,43 @@ const noLimits = {
 };
 
 describe('EliminationInfo', () => {
-  test('uses the singular for exactly one module', () => {
-    expect(text({ ...noLimits, eliminatedModuleCount: 1, eliminatedCredits: 6 })).toBe(
-      'Elimination: 6 CP, 1 module',
-    );
-  });
-
-  test('uses the plural for other counts', () => {
-    expect(text(noLimits)).toBe('Elimination: 0 CP, 0 modules');
-    expect(text({ ...noLimits, eliminatedModuleCount: 2, eliminatedCredits: 14 })).toBe(
-      'Elimination: 14 CP, 2 modules',
-    );
-  });
-
-  test('matches the noun to the limit if there is one', () => {
-    expect(text({ ...noLimits, eliminationLimit: 1 })).toBe('Elimination: 0 CP, 0/1 module');
+  test('hides eliminations within the limits', () => {
+    expect(text(noLimits)).toBe('');
+    expect(text({ ...noLimits, eliminatedModuleCount: 2, eliminatedCredits: 14 })).toBe('');
     expect(
-      text({ ...noLimits, eliminationLimit: 3, eliminationCPLimit: 30, eliminatedModuleCount: 1 }),
-    ).toBe('Elimination: 0/30 CP, 1/3 modules');
+      text({ ...noLimits, eliminationLimit: 3, eliminationCPLimit: 30, eliminatedModuleCount: 3 }),
+    ).toBe('');
+    expect(text({ ...noLimits, eliminationLimit: 0 })).toBe('');
+  });
+
+  test('shows only the exceeded limits', () => {
+    const exceeded = { ...noLimits, eliminationLimit: 1, eliminationCPLimit: 15 };
+    expect(text({ ...exceeded, eliminatedModuleCount: 2, eliminatedCredits: 12 })).toBe(
+      'Elimination: 2/1 module',
+    );
+    expect(text({ ...exceeded, eliminatedModuleCount: 1, eliminatedCredits: 20 })).toBe(
+      'Elimination: 20/15 CP',
+    );
+    expect(
+      text({ ...exceeded, eliminationLimit: 2, eliminatedModuleCount: 3, eliminatedCredits: 20 }),
+    ).toBe('Elimination: 20/15 CP, 3/2 modules');
+  });
+
+  test('shows eliminations where none are allowed', () => {
+    expect(text({ ...noLimits, eliminationLimit: 0, eliminatedModuleCount: 1 })).toBe(
+      'No elimination allowed',
+    );
   });
 
   test('is translated to German', () => {
-    expect(text({ ...noLimits, eliminatedModuleCount: 1, eliminatedCredits: 6 }, 'de')).toBe(
-      'Streichung: 6 CP, 1 Modul',
+    expect(
+      text(
+        { ...noLimits, eliminationLimit: 3, eliminatedModuleCount: 4, eliminatedCredits: 6 },
+        'de',
+      ),
+    ).toBe('Streichung: 4/3 Module');
+    expect(text({ ...noLimits, eliminationCPLimit: 0, eliminatedModuleCount: 1 }, 'de')).toBe(
+      'Keine Streichung erlaubt',
     );
-    expect(text({ ...noLimits, eliminationLimit: 3 }, 'de')).toBe('Streichung: 0 CP, 0/3 Module');
-    expect(text({ ...noLimits, eliminationLimit: 0 }, 'de')).toBe('Keine Streichung erlaubt');
-  });
-
-  test('shows when no elimination is allowed', () => {
-    expect(text({ ...noLimits, eliminationLimit: 0 })).toBe('No elimination allowed');
   });
 });

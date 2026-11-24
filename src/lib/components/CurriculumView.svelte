@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { setEliminationContext } from '#lib/elimination-context.ts';
   import type Curriculum from '#lib/model/curriculum.svelte.ts';
   import AreaHeader from './AreaHeader.svelte';
   import ModuleAreaView from './ModuleAreaView.svelte';
@@ -8,6 +9,9 @@
   }
 
   const { curriculum }: Props = $props();
+
+  // Grades can only be eliminated within the Regelstudienzeit
+  setEliminationContext(() => curriculum.regelstudienzeit);
 </script>
 
 <div id="curriculum" class="curriculum-container">

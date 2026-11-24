@@ -50,7 +50,10 @@ const de = {
     confirmReplace:
       'Deine bisherigen Noten und Module durch die importierten ersetzen? ' +
       'Das kann nicht rückgängig gemacht werden.',
-    elimination: 'Streichung',
+    regelstudienzeit: 'Regelstudienzeit',
+    regelstudienzeitToggle: 'Abschluss in Regelstudienzeit',
+    regelstudienzeitHint:
+      'Schließt du dein Studium in der Regelstudienzeit ab, darfst du einige deiner Noten streichen.',
     autoEliminate: 'Automatisch streichen',
     calculating: 'Berechne…',
     autoEliminateTitle: 'Module automatisch so streichen, dass die Note am besten ist',

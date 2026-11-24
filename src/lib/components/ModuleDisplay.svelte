@@ -1,5 +1,6 @@
 <script lang="ts">
   import { parseCredits } from '#lib/credits.ts';
+  import { getEliminationContext } from '#lib/elimination-context.ts';
   import { getI18n } from '#lib/i18n/index.ts';
   import type Module from '#lib/model/module.svelte.ts';
   import { formatWeight, parseWeight } from '#lib/weight.ts';
@@ -19,6 +20,10 @@
 
   const i18n = getI18n();
   const t = $derived(i18n.t);
+  const elimination = getEliminationContext();
+
+  /** Additional modules don't count towards the grade, so they can't be eliminated. */
+  const canEliminate = $derived(elimination.enabled && !module.additional);
 
   /** Modules given by the curriculum can't be changed, only their results. */
   const fixed = $derived(module.definitionId !== undefined);
@@ -38,7 +43,12 @@
   class={['module-display-container module-container row', { additional: module.additional }]}
   title={module.additional ? t.module.additionalTitle : undefined}
 >
-  <div class={['module-title row-title', { eliminated: module.isGraded && module.eliminated }]}>
+  <div
+    class={[
+      'module-title row-title',
+      { eliminated: elimination.enabled && module.isGraded && module.eliminated },
+    ]}
+  >
     {#if fixed}
       <span class="module-name">{module.name}</span>
     {:else}
@@ -75,13 +85,12 @@
     <div
       class={[
         'module-grade-container grade-container',
-        { ungraded: !module.isGraded, 'no-elimination': module.additional },
+        { ungraded: !module.isGraded, 'no-elimination': !canEliminate },
       ]}
     >
       {#if module.isGraded}
         <!-- Without a grade, the module can't be part of the grade, so it stays eliminated -->
-        <!-- Additional modules don't count towards the grade, so they can't be eliminated -->
-        {#if !module.additional}
+        {#if canEliminate}
           <!-- Only shown on hover or while eliminated, see app.css -->
           <span class={['elimination-toggle', { active: module.eliminated }]}
             ><IconButton
